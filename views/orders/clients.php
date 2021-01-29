@@ -27,42 +27,29 @@ $this->title = "Smartbook DMS – Mijozlar";
             <form class="xl:flex sm:mr-auto" id="tabulator-html-filter-form">
                 <div class="sm:flex items-center sm:mr-4">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Shahar</label>
-                    <select class="input w-full border col-span-4" name="worker_id" id="tabulator-html-filter-field">
+                    <select data-element="client-row" class="input w-full border col-span-4 filter-dropdown-db" name="worker_id" id="tabulator-html-filter-field">
                         <option value="all" selected="">Hamma</option>
-                        <option value="Toshkent">Toshkent</option>
-                        <option value="Namangan">Namangan</option>
-                        <option value="Samarqand">Samarqand</option>
-                        <option value="Andijon">Andijon</option>
-                        <option value="Nukus">Nukus</option>
-                        <option value="Fargʻona">Fargʻona</option>
-                        <option value="Buxoro">Buxoro</option>
-                        <option value="Qarshi">Qarshi</option>
-                        <option value="Qoʻqon">Qoʻqon</option>
-                        <option value="Margʻilon">Margʻilon</option>
-                        <option value="Angren">Angren</option>
-                        <option value="Termiz">Termiz</option>
-                        <option value="overall">Jizzax</option>
-                        <option value="overall">Chirchiq</option>
-                        <option value="overall">Navoiy</option>
-                        <option value="overall">Urganch</option>
-                        <option value="overall">Shahrisabz</option>
-                        <option value="overall">Guliston</option>
-                        <option value="overall">Xiva</option>
-                        <option value="overall">Kattaqoʻrgʻon</option>
+                        <?php
+                        foreach ($cities as $city) {
+                            ?>
+                                <option value="<?= $city['name']?>"><?= $city['name']?></option>
+                            <?php
+                        }
+                        ?>
                     </select>
                 </div>
 
-                <div class="sm:flex items-center sm:mr-4">
+                <!-- <div class="sm:flex items-center sm:mr-4">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Vaqt</label>
                     <select class="input w-full border col-span-4" name="worker_id" id="tabulator-html-filter-field">
                         <option value="monthly" selected="">Birinchisi yangi</option>
                         <option value="yearly">Birinchisi eskisi</option>
                         <option value="dayli">Ko'pro sotib oganla</option>
                     </select>
-                </div>
+                </div> -->
                 <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                    <input type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border"
+                    <input data-element="client-row" type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
                         id="tabulator-html-filter-value" placeholder="Mijozlar">
                 </div>
             </form>
@@ -88,7 +75,7 @@ $this->title = "Smartbook DMS – Mijozlar";
                     $i = 0;
                     foreach ($clients as $client) {
                     ?>
-                        <tr <?= $i % 2 ? 'class="bg-gray-100 dark:bg-dark-1"' : ''?>>
+                        <tr <?= $i % 2 ? 'class="bg-gray-100 dark:bg-dark-1 client-row"' : 'class="client-row"'?>>
                             <td class="border-b dark:border-dark-5"><?= $client['id']?></td>
                             <td class="border-b dark:border-dark-5"><?= $client['name']?></td>
                             <td class="border-b dark:border-dark-5"><a

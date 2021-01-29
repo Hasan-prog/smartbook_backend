@@ -81,6 +81,18 @@ class ProductsController extends AppController
         
         if ($model->load(Yii::$app->request->post())) {
             $history = Yii::$app->request->post('History');
+
+            // Decrease in-stock of a product 
+            $products = explode('/', $history['products_id']);
+            foreach ($products as $product) {
+                $product_explode = explode(',', $product);
+                $product_id = $product_explode[0];
+                $product_qty = explode(':', $product_explode[2])[1];
+                $product_db = Products::findOne($product_id);
+                $product_db->in_stock -= $product_qty;
+                $product_db->save();
+            }
+
             $model->products_id = $history['products_id'];
             $model->city_id = $history['city_id'];
             $model->courier_id = $history['courier_id'];

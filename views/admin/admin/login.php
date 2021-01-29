@@ -16,10 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div
         class="mb-auto mx-auto xl:ml-20 lg:my-auto md:my-4 bg-white xl:bg-transparent px-5 sm:px-8 py-8 xl:p-0 rounded-md shadow-md xl:shadow-none w-full sm:w-3/4 lg:w-2/4 xl:w-auto">
         <h2 class="intro-x font-bold text-2xl xl:text-3xl text-center xl:text-left">
-            Kirish
+            Admin Kirish
         </h2>
-        <div class="intro-x mt-2 text-gray-500 xl:text-left text-center">Yangi menejer hisobini ro'yxatdan o'tkazish
-            uchun <br> mavjud menejer sizga yordam berishkerak</div>
+        <div class="intro-x mt-2 text-gray-500 xl:text-left text-center">Bu faqat administrator uchun kirish, <br> menejer hisobi bilan kirishga urinmang.</div>
         <?php $form = ActiveForm::begin()?>
         <div class="intro-x mt-8">
             <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'class' => 'intro-x login__input input input--lg border border-gray-300 block', 'placeholder' => 'Login'])->label(false) ?>

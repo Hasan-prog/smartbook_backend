@@ -8,7 +8,7 @@ use Yii;
 use app\models\Orders;
 use app\models\Couriers;
 
-class OrdersController extends Controller
+class OrdersController extends AppCourierController
 {
 
     public function actionIndex() {

@@ -22,18 +22,18 @@ $this->title = "Smartbook DMS – Shaharlar";
                 <form class="xl:flex sm:mr-auto" id="tabulator-html-filter-form">
                     <div class="sm:flex items-center sm:mr-4">
                         <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Natija</label>
-                        <select class="input w-full border col-span-4" name="worker_id"
+                        <select class="input w-full border col-span-4 filter-range" name="worker_id"
                             id="tabulator-html-filter-field">
                             <option value="monthly" selected="">Oyli</option>
-                            <option value="dayli">Kunli</option>
-                            <option value="yearly">Yillik</option>
+                            <option value="daily">Kunli</option>
+                            <option value="annual">Yillik</option>
                             <option value="overall">Jami</option>
                         </select>
                     </div>
                     <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
                         <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                        <input type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border"
-                            id="tabulator-html-filter-value" placeholder="Shahar...">
+                        <input type="text" data-element="city-card" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
+                            id="tabulator-html-filter-value" placeholder="Shahar..." style="text-transform: capitalize;">
                     </div>
                 </form>
             </div>
@@ -50,7 +50,7 @@ $this->title = "Smartbook DMS – Shaharlar";
                         $couriers_routing = '';
                         $courier_id = '';
                     } ?>
-                <a href="<?= Url::to(['cities/monthly-list' . $couriers_routing . '?city=' . $city['id']]) . $courier_id?>" class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y">
+                <a href="<?= Url::to(['cities/monthly-list' . $couriers_routing . '?city=' . $city['id']]) . $courier_id?>" class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y city-card">
                     <div class="report-box zoom-in">
                         <div class="box p-5">
                             <div class="flex">
@@ -77,18 +77,62 @@ $this->title = "Smartbook DMS – Shaharlar";
                                         <?php 
                                         $i = 0;
                                         $o = 0;
+                                        $daily_success = 0;
+                                        $daily = 0;
+                                        $monthly_success = 0;
+                                        $monthly = 0;
+                                        $annual_success = 0;
+                                        $annual = 0;
+                                        $overall_success = 0;
+                                        $overall = 0;
                                         foreach ($city['orders'] as $order) {
-                                            if ($order['status'] == 'delivered') {
-                                                $i++;
+                                            
+                                            // Getting daily
+                                            if (date('d', strtotime($order['datetime'])) == date('d', time() + 19200)) {
+                                                if ($order['status'] == 'delivered') {
+                                                    $daily_success++;
+                                                }
+                                                $daily++;
                                             }
-                                            $o++;
+                                            
+                                            // Getting monthly
+                                            if (date('m', strtotime($order['datetime'])) == date('m')) {
+                                                if ($order['status'] == 'delivered') {
+                                                    $monthly_success++;
+                                                }
+                                                $monthly++;
+                                            }
+
+                                            // Getting annual
+                                            if (date('y', strtotime($order['datetime'])) == date('y')) {
+                                                if ($order['status'] == 'delivered') {
+                                                    $annual_success++;
+                                                }
+                                                $annual++;
+                                            }
+
+                                            // Getting annual
+                                            if ($order['status'] == 'delivered') {
+                                                $overall_success++;
+                                            }
+                                            $overall++;
+
                                         }
-                                        echo $i;
-                                        ?> yetkazildi
+                                        
+                                        ?> 
+                                        <span data-filter="range" class="daily"><?= $daily_success?>&nbsp;</span>
+                                        <span data-filter="range" class="monthly"><?= $monthly_success?>&nbsp;</span>
+                                        <span data-filter="range" class="annual"><?= $annual_success?>&nbsp;</span>
+                                        <span data-filter="range" class="overall"><?= $overall_success?>&nbsp;</span>
+                                        yetkazildi
                                     </div>
                                     <div class="mr-4 flex items-center">
                                         <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div>
-                                        <?= $o?> buyurtma
+                                        <span data-filter="range" class="daily"><?= $daily?>&nbsp;</span>
+                                        <span data-filter="range" class="monthly"><?= $monthly?>&nbsp;</span>
+                                        <span data-filter="range" class="annual"><?= $annual?>&nbsp;</span>
+                                        <span data-filter="range" class="overall"><?= $overall?>&nbsp;</span>
+                                        buyurtma
                                     </div>
                                 </div>
                             </div>

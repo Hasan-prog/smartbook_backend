@@ -9,6 +9,8 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Managers;
+use yii\web\UploadedFile;
 
 class SiteController extends AppController
 {
@@ -32,7 +34,7 @@ class SiteController extends AppController
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['post', 'get'],
                 ],
             ],
         ];
@@ -75,12 +77,12 @@ class SiteController extends AppController
         $this->layout = 'smartbook_login';
         Yii::$app->language = 'uz';
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            return $this->redirect('login');
         }
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->redirect('/web/cities/');
         }
 
         $model->password = '';
@@ -98,15 +100,33 @@ class SiteController extends AppController
     {
         Yii::$app->user->logout();
 
-        return $this->goHome();
+        return $this->redirect(['login']);
     }
 
     public function actionProfile() {
-        return $this->render('profile');
+        $model = Managers::findOne(Yii::$app->user->identity['id']);
+        $current_photo = $model->photo;
+        if ($model->load(Yii::$app->request->post())) {
+            
+            $user = Yii::$app->request->post('Managers');
+            // Photo upload 
+            $model->photo = UploadedFile::getInstance($model, 'photo');
+            if ($model->photo != null) {
+                if ($model->upload()) {
+                    $photo_name = $model->photo->name;
+                    $model->photo = '/web/images/' . $photo_name;
+                }
+            } else {
+                $model->photo = $current_photo;
+            }
+
+            $model->name = $user['name'];
+            $model->phone_number = $user['phone_number'];
+            $model->email = $user['email'];
+            $model->save();
+        }
+        return $this->render('profile', compact('model'));
     }
 
-    public function actionResetPassword() {
-        return $this->render('reset-password');
-    }
 
 }

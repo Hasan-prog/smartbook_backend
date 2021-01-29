@@ -53,40 +53,9 @@ License: You must have a valid license purchased only from themeforest(the above
         </div>
         <ul class="border-t border-theme-24 py-5 hidden">
             <li>
-                <a href="<?= URL::to(['cities/'])?>" class="menu menu--active">
-                    <div class="menu__icon"> <i data-feather="map"></i> </div>
-                    <div class="menu__title"> Shaharlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= URL::to(['couriers/'])?>" class="menu">
+                <a href="<?= URL::to(['admin/admin/managers'])?>" class="menu menu--active">
                     <div class="menu__icon"> <i data-feather="users"></i> </div>
-                    <div class="menu__title"> Kuryerlar
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= URL::to(['products/'])?>" class="menu">
-                    <div class="menu__icon"> <i data-feather="list"></i> </div>
-                    <div class="menu__title"> Mahsulotlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= URL::to(['orders/clients'])?>" class="menu">
-                    <div class="menu__icon"> <i data-feather="user-check"></i> </div>
-                    <div class="menu__title"> Mijozlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= URL::to(['products/history'])?>" class="menu">
-                    <div class="menu__icon"> <i data-feather="package"></i> </div>
-                    <div class="menu__title"> Berilgan mahsulotlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= URL::to(['orders/add-order'])?>" class="menu">
-                    <div class="menu__icon"> <i data-feather="plus"></i> </div>
-                    <div class="menu__title"> Yangi buyurtma </div>
+                    <div class="menu__title"> Menejerlar </div>
                 </a>
             </li>
         </ul>
@@ -108,7 +77,7 @@ License: You must have a valid license purchased only from themeforest(the above
                         'itemTemplate' => "{link}<i data-feather='chevron-right' class='breadcrumb__icon'></i>",
                         'homeLink' => [
                             'label' => 'Smartbook ',
-                            'url' => URL::to(['cities/']),
+                            'url' => URL::to(['admin/admin/managers']),
                             'title' => 'Первая страница сайта мастеров по ремонту квартир',
                         ],
                         'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
@@ -126,15 +95,12 @@ License: You must have a valid license purchased only from themeforest(the above
                     <div class="dropdown-box__content box bg-theme-38 dark:bg-dark-6 text-white">
                         <div class="p-4 border-b border-theme-40 dark:border-dark-3">
                             <div class="font-medium"><?= Yii::$app->user->identity['name']?></div>
-                            <div class="text-xs text-theme-41 dark:text-gray-600">Meneger</div>
+                            <div class="text-xs text-theme-41 dark:text-gray-600">Admin</div>
                         </div>
                         <div class="p-2">
                             <a href="<?= URL::to(['site/profile'])?>"
                                 class="flex items-center block p-2 transition duration-300 ease-in-out hover:bg-theme-1 dark:hover:bg-dark-3 rounded-md">
                                 <i data-feather="user" class="w-4 h-4 mr-2"></i> Profil </a>
-                            <a href="<?= URL::to(['cities/'])?>"
-                                class="flex items-center block p-2 transition duration-300 ease-in-out hover:bg-theme-1 dark:hover:bg-dark-3 rounded-md">
-                                <i data-feather="help-circle" class="w-4 h-4 mr-2"></i> Maslahatlar </a>
                         </div>
                         <div class="p-2 border-t border-theme-40 dark:border-dark-3">
                             <a href="<?= URL::to(['site/logout'])?>"
@@ -150,88 +116,11 @@ License: You must have a valid license purchased only from themeforest(the above
     <!-- END: Top Bar -->
     <!-- BEGIN: Top Menu -->
     <nav class="top-nav">
-    <?php
-    
-        // Getting active controller and action to set the active tab
-        $current_controller = Yii::$app->controller->id;
-        $current_action = Yii::$app->controller->action->id;
-        $cities_active = '';
-        $couriers_active = '';
-        $products_active = '';
-        $clients_active = '';
-        $hisotry_active = '';
-        $add_product = '';
-
-        if ($current_controller == 'cities') {
-            $cities_active = 'top-menu--active';
-        };
-        if ($current_controller == 'couriers') {
-            $couriers_active = 'top-menu--active';
-        };
-        if ($current_controller == 'products' && $current_action != 'history' && $current_action != 'add-history' && $current_action != 'edit-history') {
-            $products_active = 'top-menu--active';
-        };
-        if ($current_controller == 'products' && $current_action == 'history') {
-            $hisotry_active = 'top-menu--active';
-        };
-        if ($current_controller == 'products' && $current_action == 'add-history') {
-            $hisotry_active = 'top-menu--active';
-        };
-        if ($current_controller == 'products' && $current_action == 'add-order') {
-            $add_product = 'top-menu--active';
-        };
-        if ($current_controller == 'products' && $current_action == 'edit-history') {
-            $hisotry_active = 'top-menu--active';
-        };
-        if ($current_controller == 'orders' && $current_action == 'clients') {
-            $clients_active = 'top-menu--active';
-        };
-        if ($current_controller == 'orders' && $current_action == 'daily-list') {
-            $clients_active = 'top-menu--active';
-        };
-        if ($current_controller == 'orders' && $current_action == 'edit-order') {
-            $clients_active = 'top-menu--active';
-        };
-        if ($current_controller == 'orders' && $current_action == 'add-order') {
-            $add_product = 'top-menu--active';
-        };
-
-    ?>
         <ul>
             <li>
-                <a href="<?= Url::to(['cities/']); ?>" class="top-menu <?= $cities_active?>">
-                    <div class="top-menu__icon"> <i data-feather="map"></i> </div>
-                    <div class="top-menu__title"> Shaharlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= Url::to(['couriers/']); ?>" class="top-menu <?= $couriers_active?>">
+                <a href="<?= Url::to(['admin/admin/managers']); ?>" class="top-menu top-menu--active">
                     <div class="top-menu__icon"> <i data-feather="users"></i> </div>
-                    <div class="top-menu__title"> Kuryerlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= Url::to(['products/']); ?>" class="top-menu <?= $products_active?>">
-                    <div class="top-menu__icon"> <i data-feather="list"></i> </div>
-                    <div class="top-menu__title"> Mahsulotlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= Url::to(['orders/clients']); ?>" class="top-menu <?= $clients_active?>">
-                    <div class="top-menu__icon"> <i data-feather="user-check"></i> </div>
-                    <div class="top-menu__title"> Mijozlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= Url::to(['products/history']); ?>" class="top-menu <?= $hisotry_active?>">
-                    <div class="top-menu__icon"> <i data-feather="package"></i> </div>
-                    <div class="top-menu__title"> Berilgan mahsulotlar </div>
-                </a>
-            </li>
-            <li>
-                <a href="<?= Url::to(['orders/add-order']); ?>" class="top-menu <?= $add_product?>">
-                    <div class="top-menu__icon"> <i data-feather="plus"></i> </div>
-                    <div class="top-menu__title"> Yangi buyurtma </div>
+                    <div class="top-menu__title"> Menejerlar </div>
                 </a>
             </li>
         </ul>

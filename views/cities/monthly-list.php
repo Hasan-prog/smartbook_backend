@@ -2,6 +2,11 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+foreach ($couriers as $courier) {
+    if ($courier['id'] == $couriers[0]['id']) {
+        $courier_name = $courier['name'];
+    }
+}
 //$articleName и $articleAlias передаем из экшена
 $this->params['breadcrumbs'][] = array(
     'label'=> 'Shaharlar', 
@@ -9,10 +14,10 @@ $this->params['breadcrumbs'][] = array(
 );
 $this->params['breadcrumbs'][] = array(
     'label'=> 'Toshekent', 
-    'url'=>URL::to(['cities/monthly-list-courier']),
+    'url'=> '#',
 );
 $this->params['breadcrumbs'][] = array(
-    'label'=> 'Ulugbek Sobirov', 
+    'label'=> $courier_name, 
     'url'=>'#',
     'template' => "{link}",
 );
@@ -98,7 +103,7 @@ foreach ($orders as $order) {
                 </div>
                 <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                    <input type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border"
+                    <input data-element="day-row" type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
                         id="tabulator-html-filter-value" placeholder="Kunli info">
                 </div>
             </form>
@@ -108,7 +113,6 @@ foreach ($orders as $order) {
                 <table class="table">
                     <thead>
                         <tr>
-
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Sana</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Sotish</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Naqd</th>
@@ -123,7 +127,7 @@ foreach ($orders as $order) {
                         // debug($months_with_orders);
                         if ($day == date('d')) {
                             ?>
-                        <tr>
+                        <tr class="day-row">
                             <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
                             </td>
                             <td class="border-b dark:border-dark-5"><span class="text-gray-500">Bugun...</span>
@@ -167,7 +171,7 @@ foreach ($orders as $order) {
                                     }
                                 }
                                 ?>
-                        <tr>
+                        <tr class="day-row">
                             <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
                             </td>
                             <td class="border-b dark:border-dark-5">
@@ -187,14 +191,18 @@ foreach ($orders as $order) {
                             <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex items-center justify-center">
-                                    <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day])?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                <?php 
+                                    $courier_id = $couriers[0]['id'];
+                                    $courier_name = $couriers[0]['name']; 
+                                ?>
+                                <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id .'&courier_name=' . $courier_name?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
                                 </div>
                             </td>
                         </tr>
                         <?php
                             } else {
                             ?>
-                        <tr>
+                        <tr class="day-row">
                             <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
                             </td>
                             <td class="border-b dark:border-dark-5">
@@ -212,7 +220,11 @@ foreach ($orders as $order) {
                             <td class="border-b dark:border-dark-5">0 so'm</td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex items-center justify-center">
-                                <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day])?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                <?php 
+                                    $courier_id = $couriers[0]['id'];
+                                    $courier_name = $couriers[0]['name']; 
+                                ?>
+                                <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id .'&courier_name=' . $courier_name?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
                                 </div>
                             </td>
                         </tr>
@@ -344,7 +356,7 @@ foreach ($months_with_orders as $month) {
                                         $payment_label = 'Click';
                                     }
                                         ?>
-                                    <tr>
+                                    <tr class="day-row">
                                         <td class="border-b dark:border-dark-5 font-medium"><?= cutDay($order['datetime'])?> <?= date('M', strtotime($order['datetime']))?></td>
                                         <td class="border-b dark:border-dark-5">
                                             <div class="flex text-gray-700">
@@ -370,7 +382,7 @@ foreach ($months_with_orders as $month) {
                             }
                             if ($days_qty != cutDay($order['datetime'])) {
                                 ?>
-                                <tr>
+                                <tr class="day-row">
                                     <td class="border-b dark:border-dark-5 font-medium"><?= $days_qty?> <?= date('M', strtotime($order['datetime']))?></td>
                                     <td class="border-b dark:border-dark-5">
                                         <div class="flex text-gray-700">

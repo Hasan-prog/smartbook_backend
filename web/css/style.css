@@ -172,6 +172,9 @@
 .back-button {
     border-radius: 24px;
 }
+[data-filter="range"] {
+    display: none;    
+}
 
 @-webkit-keyframes blink { 
 	0% { color: #D32929; }

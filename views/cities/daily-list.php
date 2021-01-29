@@ -4,10 +4,19 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 //$articleName и $articleAlias передаем из экшена
 $this->params['breadcrumbs'][] = array(
+    'label'=> $city, 
+    'url'=>URL::to(['cities/monthly-list' . $courier_routing . '?city=' . $city_id . '&courier=' . $courier_id]),
+);
+$this->params['breadcrumbs'][] = array(
+    'label'=> $courier_name, 
+    'url'=>URL::to(['cities/monthly-list' . $courier_routing . '?city=' . $city_id . '&courier=' . $courier_id]),
+);
+$this->params['breadcrumbs'][] = array(
     'label'=> date('d M, Y', strtotime($date)) . ' yil', 
     'url'=>'#',
     'template' => "{link}",
 );
+
 
 $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
 
@@ -39,17 +48,17 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                 <span class="text-gray-500 mr-2">Umumiy:</span> <?= $overall?> so'm
             </div>
         </div>
-        <button class="button px-2 mr-1 text-gray-700 bg-gray-200 dark:text-gray-300">
+        <!-- <button class="button px-2 mr-1 text-gray-700 bg-gray-200 dark:text-gray-300">
             <span class="w-5 h-5 flex items-center justify-center"> <i data-feather="printer" class="w-5 h-5"></i>
             </span>
-        </button>
+        </button> -->
     </div>
     <div class="p-5" id="striped-rows-table">
         <div class="filters mb-6">
             <form class="xl:flex sm:mr-auto" id="tabulator-html-filter-form">
                 <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                    <input type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border"
+                    <input data-element="order-row" type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
                         id="tabulator-html-filter-value" placeholder="Kunli info">
                 </div>
             </form>
@@ -76,7 +85,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                         <?php
                         foreach ($orders as $order) {
                         ?>
-                        <tr>
+                        <tr class="order-row">
                             <td class="border-b dark:border-dark-5"><?= $order['id']?></td>
                             <td class="border-b dark:border-dark-5"><?= $order['name']?></td>
                             <td class="border-b dark:border-dark-5"><?= $order['product']?></td>

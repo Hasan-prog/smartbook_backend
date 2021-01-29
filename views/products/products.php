@@ -29,7 +29,7 @@ $this->title = "Smartbook DMS – Mahsulotlar";
             <form class="xl:flex sm:mr-auto" id="tabulator-html-filter-form">
                 <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                    <input type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border"
+                    <input data-element="product-row" type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
                         id="tabulator-html-filter-value" placeholder="Mahsulot...">
                 </div>
             </form>
@@ -53,7 +53,7 @@ $this->title = "Smartbook DMS – Mahsulotlar";
                         foreach ($products as $product) {
                             $formated_price = number_format ($product['price'], 0, ',', ' ');
                         ?>
-                        <tr class="bg-gray-100 dark:bg-dark-1">
+                        <tr class="bg-gray-100 dark:bg-dark-1 product-row">
                             <td class="border-b dark:border-dark-5">1</td>
                             <td class="border-b dark:border-dark-5" width="100">
                                 <div class="w-20 h-20 image-fit">

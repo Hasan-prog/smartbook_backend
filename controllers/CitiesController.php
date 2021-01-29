@@ -26,6 +26,15 @@ class CitiesController extends AppController
         $request = Yii::$app->request;
         $date = $request->get('d');
         $date_formated = date('d M, Y – h:m', strtotime($date));
+        $city = $request->get('city');
+        $city_id = $request->get('city_id');
+        if ($request->get('courier_routing')) {
+            $courier_routing = $request->get('courier_routing');
+        } else {
+            $courier_routing = '';
+        }
+        $courier_id = $request->get('courier_id');
+        $courier_name = $request->get('courier_name');
         $orders = Orders::find()->asArray()->with('manager')->where(['like', 'datetime', $date])->all();
         // Count overall day stats
         $delivered_qty = 0;
@@ -52,7 +61,7 @@ class CitiesController extends AppController
         $cash = price_format($cash);
         $click = price_format($click);
         $overall = price_format($overall);
-        return $this->render('daily-list', compact('orders', 'date', 'date_formated', 'delivered_qty', 'not_delivered_qty', 'canceled_qty', 'cash', 'click', 'overall'));
+        return $this->render('daily-list', compact('orders', 'date', 'date_formated', 'delivered_qty', 'not_delivered_qty', 'canceled_qty', 'cash', 'click', 'overall', 'city', 'city_id', 'courier_routing', 'courier_id', 'courier_name'));
     }
 
     public function actionMonthlyList() {
@@ -94,6 +103,7 @@ class CitiesController extends AppController
 
         // Current month
         $current_month = date('m');
+        $current_year = date('Y');
         $current_month_word = date('M');
         $today = date('d');
         $current_month_days = [];
@@ -110,7 +120,7 @@ class CitiesController extends AppController
         unset($months_with_orders[$current_month]);
 
         // debug($couriers); die;
-        return $this->render('monthly-list-courier', compact('couriers', 'orders', 'courier_id', 'current_month', 'current_month_word', 'current_month_days', 'months_with_orders', 'city'));
+        return $this->render('monthly-list-courier', compact('couriers', 'orders', 'courier_id', 'current_month', 'current_month_word', 'current_month_days', 'months_with_orders', 'city', 'current_year'));
     }
 
 }

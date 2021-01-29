@@ -56,7 +56,7 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlar";
                                         <select class="tail-select w-full flex-8">
                                             <?php foreach ($products_db as $product) {
                                             ?>
-                                            <option value="<?= $product['id']?>:1" data-id="<?= $product['id']?>"
+                                            <option value="<?= $product['id']?>,<?= $product['name']?>,<?= $product['format']?>:1" data-id="<?= $product['id']?>"
                                                 data-name="<?= $product['name']?>" data-format="<?= $product['format']?>"
                                                 data-price="<?= $product['price']?>"><?= $product['name']?>,
                                                 <?= $product['format']?></option>
@@ -73,7 +73,7 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlar";
                                         <select class="tail-select w-full flex-8">
                                             <?php foreach ($products_db as $product) {
                                             ?>
-                                            <option value="<?= $product['id']?>:1" data-id="<?= $product['id']?>"
+                                            <option value="<?= $product['name']?>:1" data-id="<?= $product['id']?>"
                                                 data-name="<?= $product['name']?>" data-format="<?= $product['format']?>"
                                                 data-price="<?= $product['price']?>"><?= $product['name']?>,
                                                 <?= $product['format']?></option>
@@ -136,51 +136,33 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlar";
             <form class="xl:flex sm:mr-auto" id="tabulator-html-filter-form">
                 <div class="sm:flex items-center sm:mr-4">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Shahar</label>
-                    <select class="input w-full border col-span-4" name="worker_id" id="tabulator-html-filter-field">
+                    <select data-element="history-row" class="input w-full border col-span-4 filter-dropdown-db" name="worker_id" id="tabulator-html-filter-field">
                         <option value="all" selected="">Hamma</option>
-                        <option value="Toshkent">Toshkent</option>
-                        <option value="Namangan">Namangan</option>
-                        <option value="Samarqand">Samarqand</option>
-                        <option value="Andijon">Andijon</option>
-                        <option value="Nukus">Nukus</option>
-                        <option value="Fargʻona">Fargʻona</option>
-                        <option value="Buxoro">Buxoro</option>
-                        <option value="Qarshi">Qarshi</option>
-                        <option value="Qoʻqon">Qoʻqon</option>
-                        <option value="Margʻilon">Margʻilon</option>
-                        <option value="Angren">Angren</option>
-                        <option value="Termiz">Termiz</option>
-                        <option value="overall">Jizzax</option>
-                        <option value="overall">Chirchiq</option>
-                        <option value="overall">Navoiy</option>
-                        <option value="overall">Urganch</option>
-                        <option value="overall">Shahrisabz</option>
-                        <option value="overall">Guliston</option>
-                        <option value="overall">Xiva</option>
-                        <option value="overall">Kattaqoʻrgʻon</option>
+                        <?php
+                        foreach ($cities as $city) {
+                            ?>
+                                <option value="<?= $city['name']?>"><?= $city['name']?></option>
+                            <?php
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="sm:flex items-center sm:mr-4">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Kuryer</label>
-                    <select class="input w-full border col-span-4" name="worker_id" id="tabulator-html-filter-field">
-                        <option value="all" selected="">Hamma</option>
-                        <option value="Toshkent">Ulugbek Sobirov</option>
-                        <option value="Namangan">Davlatbek Shadiyar</option>
-                        <option value="Namangan">Farxod Nigmatov</option>
-                        <option value="Toshkent">Ulugbek Sobirov</option>
-                        <option value="Namangan">Davlatbek Shadiyar</option>
-                        <option value="Namangan">Farxod Nigmatov</option>
-                        <option value="Toshkent">Ulugbek Sobirov</option>
-                        <option value="Namangan">Davlatbek Shadiyar</option>
-                        <option value="Namangan">Farxod Nigmatov</option>
-                        <option value="Toshkent">Ulugbek Sobirov</option>
-                        <option value="Namangan">Davlatbek Shadiyar</option>
-                        <option value="Namangan">Farxod Nigmatov</option>
+                    <select data-element="history-row" class="input w-full border col-span-4 filter-dropdown-db" name="worker_id" id="tabulator-html-filter-field">
+                    <option value="all" selected="">Hamma</option>
+                        <?php
+                        foreach ($couriers as $courier) {
+                            ?>
+                                <option value="<?= $courier['name']?>"><?= $courier['name']?></option>
+                            <?php
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                    <input type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border"
+                    <input data-element="history-row" type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
                         id="tabulator-html-filter-value" placeholder="Mahsolotlar...">
                 </div>
             </form>
@@ -203,24 +185,26 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlar";
                     foreach ($history as $transfer) {
                         // debug($transfer); die;
                         // Get products and their quantity
-                        $products = explode(',', $transfer['products_id']);
+                        $products = explode('/', $transfer['products_id']);
                         $timestamp = strtotime($transfer['datetime']);
+
                         ?>
-                        <tr class="bg-gray-100 dark:bg-dark-1">
-                            <td class="border-b dark:border-dark-5">1</td>
+                        <tr class="bg-gray-100 dark:bg-dark-1 history-row">
+                            <td class="border-b dark:border-dark-5"><?= $transfer['id']?></td>
                             <td class="border-b dark:border-dark-5">
                                 <?php
                             foreach ($products as $product) {
-                                $product_with_qty = explode(':', $product);
-                                foreach ($products_db as $product_db) {
-                                    if ($product_db['id'] == $product_with_qty[0]) {
-                                        ?>
+                                $product_explode = explode(':', $product);
+                                $product_explode['info'] = explode(',', $product_explode[0]);
+                                unset($product_explode[0]);
+                                $product_explode['qty'] = $product_explode[1];
+                                unset($product_explode[1]);
+                                // debug($product_explode); die;
+                                ?>
                                 <div class="select-handle-single my-3" data-key="3" data-group="#">
-                                    <?= $product_db['name']?> ·
-                                    <?= $product_with_qty[1]?> <?= $product_db['format']?></div>
+                                    <?= $product_explode['info'][1]?> ·
+                                    <?= $product_explode['qty']?> <?= $product_explode['info'][2]?></div>
                                 <?php
-                                    }
-                                }
                             }
                             ?>
                             </td>

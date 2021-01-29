@@ -1,20 +1,16 @@
 <?php
 
-namespace app\controllers;
+namespace app\controllers\courier;
 
 use yii\web\Controller;
 use Yii;
 use yii\filters\AccessControl;
 
-class AppController extends Controller {
+class AppCourierController extends Controller {
 
     public function debug($arr) {
         echo '<pre>' . print_r($arr, true) . '</pre>';
     }
-
-    // public function beforeAction($action) {
-    //     return Yii::$app->user->identityClass = "app\models\Admin";
-    // }
 
     public function behaviors()
     {

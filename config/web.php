@@ -8,6 +8,8 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'layout' => 'smartbook',
+    'language' => 'uz-UZ',
+    'defaultRoute' => 'cities/',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
@@ -23,6 +25,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+            'loginUrl' => '/web/site/login'
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',

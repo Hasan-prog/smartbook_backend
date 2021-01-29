@@ -16,7 +16,8 @@ class OrdersController extends AppController
     public function actionClients() {
         $clients = Clients::find()->asArray()->all();
         $orders = Orders::find()->asArray()->all();
-        return $this->render('clients', compact('clients', 'orders'));
+        $cities = Cities::find()->asArray()->all();
+        return $this->render('clients', compact('clients', 'orders', 'cities'));
     }
 
     public function actionClientList() {
