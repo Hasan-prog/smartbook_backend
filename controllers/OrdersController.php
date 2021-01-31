@@ -14,7 +14,13 @@ class OrdersController extends AppController
 {
 
     public function actionClients() {
-        $clients = Clients::find()->asArray()->all();
+        if (Yii::$app->request->isAjax) {
+            $id = Yii::$app->request->post('id');
+            $model = Clients::findOne($id);
+            $model->view = 0;
+            $model->save();
+        }
+        $clients = Clients::find()->where(['view' => 1])->asArray()->all();
         $orders = Orders::find()->asArray()->all();
         $cities = Cities::find()->asArray()->all();
         return $this->render('clients', compact('clients', 'orders', 'cities'));
@@ -59,9 +65,12 @@ class OrdersController extends AppController
         $products = Products::find()->asArray()->all();
         $cities = Cities::find()->asArray()->all();
         $couriers = Couriers::find()->asArray()->all();
+        $client_model = new Clients();
 
         if ($model->load(Yii::$app->request->post())) {
+            
             $order = Yii::$app->request->post('Orders');
+
             $model->name = $order['name'];
             $model->phone_number = $order['phone_number'];
             $model->product = $order['product'];
@@ -70,9 +79,32 @@ class OrdersController extends AppController
             $model->payment_method = $order['payment_method'];
             $model->courier_id = $order['courier_id'];
             $model->price = $order['price'];
+            $model->last_changed_time = date('Y-m-d h:m:s');
+            $model->last_changed_user = Yii::$app->user->identity['name'];
             $model->manager_id = 1; // For now 1, but we have to cahnge it when log in system will be created
             $model->save();
-            $this->refresh(); 
+            
+            // Building a new client
+            $client_search = Clients::find()->where(['name' => $order['name']])->where(['phone_number' => $order['phone_number']])->limit(1)->one();
+            if (empty($client_search)) {
+                $client_model->client_id = $order['client_id'];
+                $client_model->name = $order['name'];
+                $client_model->phone_number = $order['phone_number'];
+                $client_model->address = $order['address'];
+                $client_model->orders_id = $model->id; // if new just paste a current generated id, if existing add by ','
+                $client_model->save();
+                $c_id = $client_model->id;
+            } else {
+                $client_search->client_id = $order['client_id'];
+                $client_search->name = $order['name'];
+                $client_search->phone_number = $order['phone_number'];
+                $client_search->address = $order['address'];
+                $client_search->orders_id = $client_search->orders_id . ',' . $model->id; // if new just paste a current generated id, if existing add by ','
+                $client_search->save();
+                $c_id = $client_search->id;
+            }
+            
+            return $this->redirect('/orders/client-list?client=' . $c_id);
         }
 
         return $this->render('add-order', compact('model', 'products', 'cities', 'couriers'));

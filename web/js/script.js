@@ -99,7 +99,7 @@ $(document).ready(function () {
         // Send Ajax to change it
         $.ajax({
             method: "POST",
-            url: "/web/cities/daily-list",
+            url: "/cities/daily-list",
             data: { order_id: order_id, status: $(dropdown_toggle).data('status') }
         })
             .done(function (msg) {
@@ -114,7 +114,7 @@ $(document).ready(function () {
             var id = $(this).data('id');
             $.ajax({
                 method: "POST",
-                url: "/web/courier/orders/index",
+                url: "/courier/orders/index",
                 data: { id: id, status: 'delivered' }
             })
                 .done(function (msg) {
@@ -126,15 +126,19 @@ $(document).ready(function () {
 
     $('.canceled').click(function () {
         var this_el = $(this);
-        if (confirm('Shu malumot qaytargarmi?')) {
+        var comment = window.prompt('Shu malumot qaytargarmi? Sharhni yozing, nimaga qaytargan');
+        if (comment) {
             var id = $(this).data('id');
             $.ajax({
                 method: "POST",
-                url: "/web/courier/orders/index",
-                data: { id: id, status: 'canceled' }
+                url: "/courier/orders/",
+                data: { id: id, status: 'canceled', comment: comment },
+                success: function () {
+                    $(this_el).parents('.order-card').remove();
+                }
             })
                 .done(function (msg) {
-                    $(this_el).parents('.order-card').remove();
+                    
                     //   alert( "Data Saved: " + msg );
                 });
         }
@@ -175,21 +179,157 @@ $(document).ready(function () {
     // Delete subject from database with view column
     $('.delete-subject').click(function (e) {
         e.preventDefault();
-        if (confirm('Ushbu kurerni o\'chirmoqchimisiz?')) {
+        if (confirm($(this).data('msg'))) {
             var url = $(this).data('url');
             var id = $(this).data('id');
-            var this_el = $(this).parents('.manager-row');
+            var this_el = $(this).parents('.' + $(this).data('parent'));
             $.ajax({
                 method: "POST",
                 url: url,
                 data: { id: id },
-                success: function(res) {
+                success: function (res) {
                     $(this_el).remove();
                 }
             });
         }
     });
 
+    // Show managers or admins login form
+    $('.managers-form-toggle').click(function () {
+        $('.login-form').hide();
+        $('.managers-form').show();
+        $('.form-toggle').addClass('bg-gray-200');
+        $('.form-toggle').removeClass('bg-theme-1 text-white');
+        $(this).removeClass('bg-gray-200');
+        $(this).addClass('bg-theme-1 text-white');
+    });
+    $('.admins-form-toggle').click(function () {
+        $('.login-form').hide();
+        $('.admins-form').show();
+        $('.form-toggle').addClass('bg-gray-200');
+        $('.form-toggle').removeClass('bg-theme-1 text-white');
+        $(this).removeClass('bg-gray-200');
+        $(this).addClass('bg-theme-1 text-white');
+    });
+    $('.courier-form-toggle').click(function () {
+        $('.login-form').hide();
+        $('.courier-form').show();
+        $('.form-toggle').addClass('bg-gray-200');
+        $('.form-toggle').removeClass('bg-theme-1 text-white');
+        $(this).removeClass('bg-gray-200');
+        $(this).addClass('bg-theme-1 text-white');
+    });
+
+    // Change accounting on click
+    $('.accounting-toggle').click(function () {
+        var order_id = $(this).data('id');
+        var accounting = $(this).data('accounting');
+        if (accounting == 0) {
+            // Do it transfered
+            $(this).removeClass('bg-theme-6');
+            $(this).addClass('bg-theme-9');
+            $(this).data('accounting', 1);
+            $(this).text('Berilgan');
+        } else {
+            // Do it not transfered
+            $(this).addClass('bg-theme-6');
+            $(this).removeClass('bg-theme-9');
+            $(this).data('accounting', 0);
+            $(this).text('Berilmagan');
+        }
+        var accounting = $(this).data('accounting');
+        $.ajax({
+            method: "POST",
+            url: '/cities/daily-list',
+            data: { id: order_id, accounting: accounting },
+            success: function (res) {
+                console.log(res);
+            }
+        });
+        return;
+    });
+
+    // When the user scrolls the page, execute headersTrigger 
+    window.onscroll = function () { headersTrigger() };
+
+    // Get the day
+    var day = document.getElementById('1');
+    next_header_offset = 0;
+
+    // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
+    function headersTrigger() {
+        // Get the day's props
+        var orders = day.getElementsByClassName('order-card'),
+            last_order = orders[orders.length - 1],
+            first_order = orders[0],
+            last_order_offset = last_order.offsetTop + last_order.clientHeight,
+            first_order_offset = first_order.offsetTop;
+
+        // Get the header
+        var header = day.querySelector('.orders-list-header');
+
+        // Get the offset position of the navbar
+        var sticky = header.offsetTop;
+
+        var scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop
+        if (window.innerWidth <= 480) {
+            if (window.pageYOffset < 72) {
+                header.classList.remove("sticky");
+                document.querySelector('.all-orders .order-card').classList.remove("m-48px");
+                return;
+            }
+            if (window.pageYOffset > sticky && scrollTop < last_order_offset + 16) {
+                header.classList.add("sticky");
+                document.querySelector('.all-orders .order-card').classList.add("m-48px");
+                if (scrollTop + 48 < next_header_offset && parseInt(day.id) > 1) {
+                    var prev_day_id = parseInt(day.id) - 1;
+                    var prev_day = document.getElementById('' + prev_day_id + '');
+                    header.classList.remove("sticky");
+                    // document.querySelector('.all-orders .order-card').classList.remove("m-48px");
+                    day = prev_day;
+                }
+            } else {
+                if (scrollTop > last_order_offset + 48) {
+                    var next_day_id = parseInt(day.id) + 1;
+                    var next_day = document.getElementById('' + next_day_id + '');
+                    header.classList.remove("sticky");
+                    document.querySelector('.all-orders .order-card').classList.remove("m-48px");
+                    next_header_offset = next_day.querySelector('.orders-list-header').offsetTop;
+                    day = next_day;
+                }
+                header.classList.remove("sticky");
+                document.querySelector('.all-orders .order-card').classList.remove("m-48px");
+            }
+        } else {
+            if (window.pageYOffset < 111) {
+                header.classList.remove("sticky");
+                document.querySelector('.all-orders .order-card').classList.remove("m-69px");
+                return;
+            }
+            if (window.pageYOffset > sticky && scrollTop < last_order_offset + 16) {
+                header.classList.add("sticky");
+                document.querySelector('.all-orders .order-card').classList.add("m-69px");
+                if (scrollTop + 69 < next_header_offset && parseInt(day.id) > 1) {
+                    var prev_day_id = parseInt(day.id) - 1;
+                    var prev_day = document.getElementById('' + prev_day_id + '');
+                    header.classList.remove("sticky");
+                    // document.querySelector('.all-orders .order-card').classList.remove("m-69px");
+                    day = prev_day;
+                }
+            } else {
+                if (scrollTop > last_order_offset + 69) {
+                    var next_day_id = parseInt(day.id) + 1;
+                    var next_day = document.getElementById('' + next_day_id + '');
+                    header.classList.remove("sticky");
+                    document.querySelector('.all-orders .order-card').classList.remove("m-48px");
+                    next_header_offset = next_day.querySelector('.orders-list-header').offsetTop;
+                    day = next_day;
+                }
+                header.classList.remove("sticky");
+                document.querySelector('.all-orders .order-card').classList.remove("m-69px");
+            }
+        }
+    }
 
 });
 
@@ -216,9 +356,8 @@ function load_js() {
 }
 
 $.extend($.expr[':'], {
-    'containsi': function(elem, i, match, array)
-    {
-      return (elem.textContent || elem.innerText || '').toLowerCase()
-      .indexOf((match[3] || "").toLowerCase()) >= 0;
+    'containsi': function (elem, i, match, array) {
+        return (elem.textContent || elem.innerText || '').toLowerCase()
+            .indexOf((match[3] || "").toLowerCase()) >= 0;
     }
 });

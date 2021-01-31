@@ -74,7 +74,7 @@ $this->title = "Smartbook DMS – Kuryerlar";
                                 <div class="flex items-center justify-center">
                                     <a class="flex items-center mr-5" href="<?= Url::to(['admin/admin/edit-manager?id=' . $manager['id']])?>"> <i class="w-4 h-4 mr-2"
                                             data-feather="edit"></i> Ozgartirish </a>
-                                    <a class="flex items-center text-theme-6 delete-subject" data-url="<?= Url::to(['admin/admin/delete-manager'])?>" data-id="<?= $manager['id']?>" href=""> <i class="w-4 h-4 mr-2"
+                                    <a class="flex items-center text-theme-6 delete-subject" data-parent="manager-row" data-msg="Ushbu menejerni o'chirmoqchimisiz?" data-url="<?= Url::to(['admin/admin/delete-manager'])?>" data-id="<?= $manager['id']?>" href=""> <i class="w-4 h-4 mr-2"
                                             data-feather="trash-2"></i> O'chirish </a>
                                 </div>
                             </td>

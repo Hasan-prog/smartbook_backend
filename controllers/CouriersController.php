@@ -12,7 +12,13 @@ class CouriersController extends AppController
 {
     
     public function actionIndex() {
-        $couriers = Couriers::find()->asArray()->with('cities')->with('orders')->all();
+        if (Yii::$app->request->isAjax) {
+            $id = Yii::$app->request->post('id');
+            $model = Couriers::findOne($id);
+            $model->view = 0;
+            $model->save();
+        }
+        $couriers = Couriers::find()->asArray()->where(['view' => 1])->with('cities')->with('orders')->all();
         return $this->render('couriers', compact('couriers'));
     }
 
@@ -70,14 +76,15 @@ class CouriersController extends AppController
                 $model->equipment = $equip_str;
             }
             $model->name = $courier['name'];
-            $model->password = base64_encode($courier['password']);
+            $model->login = $courier['login'];
+            $model->password = Yii::$app->getSecurity()->generatePasswordHash($courier['password']);
             $model->phone_number = $courier['phone_number'];
             $model->address = $courier['address'];
             $model->city_id = $courier['city_id'];
             $model->salary = $courier['salary'];
             // debug($model); die;
             $model->save();
-            $this->refresh();     
+            return $this->redirect('/couriers');
         }
 
         return $this->render('edit-courier', compact('model', 'cities', 'courier_page', 'equip_arr'));
@@ -118,7 +125,8 @@ class CouriersController extends AppController
             // Fill up the model
             $model->equipment = $equip_str;
             $model->name = $courier['name'];
-            $model->password = base64_encode($courier['password']);
+            $model->login = $courier['login'];
+            $model->password = Yii::$app->getSecurity()->generatePasswordHash($courier['password']);
             $model->phone_number = $courier['phone_number'];
             $model->address = $courier['address'];
             $model->city_id = $courier['city_id'];
@@ -126,7 +134,7 @@ class CouriersController extends AppController
             // debug($model->photo->name); die;
             // $model->photo = $model->photo->name;
             $model->save();
-            $this->refresh(); 
+            return $this->redirect('/couriers');
         }
         return $this->render('add-courier', compact('model', 'cities'));
     }

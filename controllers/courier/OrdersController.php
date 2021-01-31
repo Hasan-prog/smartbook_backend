@@ -17,12 +17,19 @@ class OrdersController extends AppCourierController
             $status = Yii::$app->request->post('status');
             $model = Orders::findOne($id);
             $model->status = $status;
+            $model->comment = Yii::$app->request->post('comment');
+            $model->last_changed_time = date('Y-m-d h:m:s');
+            $model->last_changed_user = Yii::$app->user->identity['name'];
             $model->save();
             return;
         }
         $this->layout = 'smartbook_courier';
         Yii::$app->language = 'uz';
-        $courier_id = Yii::$app->request->get('courier_id'); // Later it will be writen in session when login
+        if (isset($_COOKIE['courier_id'])) {
+            $courier_id = $_COOKIE['courier_id'];
+        } else {
+            return $this->redirect('/courier/orders/logout');
+        }
 
         $orders = Orders::find()->asArray()->where(['courier_id' => $courier_id])->where(['status' => 'not-delivered'])->all();
         $d_arr = [];
@@ -70,6 +77,14 @@ class OrdersController extends AppCourierController
 
 
         return $this->render('current-orders', compact('orders', 'd_arr'));
+    }
+
+    public function actionLogout() {
+        Yii::$app->user->logout();
+        setcookie("role", "", time() - 3600);
+        setcookie("courier_id", "", time() - 3600);
+
+        return $this->redirect(['/site/login']);
     }
 
 }

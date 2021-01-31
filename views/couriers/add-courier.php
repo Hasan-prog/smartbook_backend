@@ -62,6 +62,9 @@ $this->title = "Smartbook DMS – Yangi Kuryer";
                 <?= $form->field($model, 'name', ['labelOptions' => ['class' => 'mb-2 block']])-> textInput(['class' => 'input w-full border flex-1'])->label("To'liq ism")?>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
+                <?= $form->field($model, 'login', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Login")?>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'password', ['labelOptions' => ['class' => 'mb-2 block']])-> textInput(['class' => 'input w-full border flex-1'])->label("Parol")?>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
@@ -94,7 +97,7 @@ $this->title = "Smartbook DMS – Yangi Kuryer";
                     </select>
                 </div>
             </div>
-            <div class="intro-y col-span-12 sm:col-span-12">
+            <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'salary', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Oylik")?>
             </div>
             <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">

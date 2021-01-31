@@ -22,8 +22,12 @@
     function payment_method_format($payment_method) {
         if ($payment_method == 'cash') {
             return 'Naqd';
-        } else {
+        } 
+        if ($payment_method == 'click') {
             return 'Click';
+        }
+        if ($payment_method == 'click-paid') {
+            return 'Click to\'langan';
         }
     }
 

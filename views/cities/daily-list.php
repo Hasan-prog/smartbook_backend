@@ -3,14 +3,18 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 //$articleName и $articleAlias передаем из экшена
-$this->params['breadcrumbs'][] = array(
-    'label'=> $city, 
-    'url'=>URL::to(['cities/monthly-list' . $courier_routing . '?city=' . $city_id . '&courier=' . $courier_id]),
-);
-$this->params['breadcrumbs'][] = array(
-    'label'=> $courier_name, 
-    'url'=>URL::to(['cities/monthly-list' . $courier_routing . '?city=' . $city_id . '&courier=' . $courier_id]),
-);
+if ($city != '') {
+    $this->params['breadcrumbs'][] = array(
+        'label'=> $city, 
+        'url'=>URL::to(['cities/monthly-list' . $courier_routing . '?city=' . $city_id . '&courier=' . $courier_id]),
+    );
+}
+if ($courier_name != '') {
+    $this->params['breadcrumbs'][] = array(
+        'label'=> $courier_name, 
+        'url'=>URL::to(['cities/monthly-list' . $courier_routing . '?city=' . $city_id . '&courier=' . $courier_id]),
+    );
+}
 $this->params['breadcrumbs'][] = array(
     'label'=> date('d M, Y', strtotime($date)) . ' yil', 
     'url'=>'#',
@@ -76,9 +80,9 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Narx</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">To'lov turi</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Sharh</th>
-                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Operator</th>
+                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Menejer</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Berilgan vaqt</th>
-                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap text-right"></th>
+                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap text-right">Status va Bugalteriya</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -96,7 +100,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                             <td class="border-b dark:border-dark-5"></td>
                             <td class="border-b dark:border-dark-5"><?= $order['manager']['name']?></td>
                             <td class="border-b dark:border-dark-5"><?= $date_formated?></td>
-                            <td class="border-b dark:border-dark-5">
+                            <td class="border-b dark:border-dark-5 flex justify-end">
                                 <div class="dropdown flex justify-end status-dropdown"> 
                                 <?php
                                         if ($order['status'] == 'delivered') {
@@ -134,6 +138,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                         }
                                 ?>
                                 </div>
+                                <button data-id="<?= $order['id']?>" data-accounting="<?= $order['accounting']?>" class="button button--sm inline-block <?= $order['accounting'] == 0 ? 'bg-theme-6' : 'bg-theme-9'?> text-white flex items-center w-24 justify-center ml-2 accounting-toggle"><?= $order['accounting'] == 0 ? 'Berilmagan' : 'Berilgan'?></button>
                             </td>
                         </tr>
                         <?php

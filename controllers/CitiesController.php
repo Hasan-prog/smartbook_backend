@@ -18,9 +18,20 @@ class CitiesController extends AppController
 
     public function actionDailyList() {
         if (Yii::$app->request->isAjax) {
-            $model = Orders::findOne(Yii::$app->request->post('order_id'));
-            $model->status = Yii::$app->request->post('status');
-            $model->save();
+            if (Yii::$app->request->post('status') != null) {
+                $model = Orders::findOne(Yii::$app->request->post('order_id'));
+                $model->status = Yii::$app->request->post('status');
+                $model->last_changed_time = date('Y-m-d h:m:s');
+                $model->last_changed_user = Yii::$app->user->identity['name'];
+                $model->save();
+            }
+            if (Yii::$app->request->post('accounting') != null) {
+                $model = Orders::findOne(Yii::$app->request->post('id'));
+                $model->accounting = Yii::$app->request->post('accounting');
+                $model->last_changed_time = date('Y-m-d h:m:s');
+                $model->last_changed_user = Yii::$app->user->identity['name'];
+                $model->save();
+            }
             return;
         }
         $request = Yii::$app->request;
@@ -70,6 +81,10 @@ class CitiesController extends AppController
         $couriers = Couriers::find()->asArray()->with('cities')->where(['city_id' => $city_id])->all();
         $orders = Orders::find()->asArray()->with('manager')->where(['city_id' => $city_id])->all();
         $city = Cities::findOne($city_id);
+
+        if (empty($couriers)) {
+            return $this->redirect('/cities');
+        }
 
         // Current month
         $current_month = date('m');

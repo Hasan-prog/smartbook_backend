@@ -18,14 +18,19 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'asdsasa',
+            'baseUrl'=> '',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'admin' => [
+            'identityClass' => 'app\models\Admin',
+            'class' => 'app\models\Admin',
+            'enableAutoLogin' => true,
+        ],
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
-            'loginUrl' => '/web/site/login'
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -54,6 +59,7 @@ $config = [
             ],
         ],
     ],
+    
     'params' => $params,
 ];
 

@@ -31,7 +31,7 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlarni Ozgartirish";
                 <div class="mb-2">Mahsulotlar</div>
                 <?php
                 $i = 0;
-                foreach ($products as $product) {
+                foreach ($products_arr as $product) {
                     if ($i == 0) {
                         ?>
                         <div class="flex first-product-select">
@@ -39,12 +39,12 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlarni Ozgartirish";
                                 <?php
                                 foreach ($products_db as $prod) {
                                     ?>
-                                    <option <?= $prod['name'] == $product['name'] ? 'selected="selected"' : ''?> value="<?= $prod['id'] . ':' . $product['qty']?>" data-id="<?= $prod['id']?>" data-name="<?= $prod['name']?>" data-format="<?= $prod['format']?>" data-price="<?= $prod['price']?>"><?= $prod['name']?>,<?= $prod['format']?></option>
+                                    <option <?= $prod['name'] == $product[1] ? 'selected="selected"' : ''?> value="<?= $prod['id'] . ':' . $product[2][1]?>" data-id="<?= $prod['id']?>" data-name="<?= $prod['name']?>" data-format="<?= $prod['format']?>" data-price="<?= $prod['price']?>"><?= $prod['name']?>,<?= $prod['format']?></option>
                                     <?php
                                 }
                                 ?>
                             </select>
-                            <input type="number" class="input w-full border qty" value="<?= $product['qty']?>" placeholder="Miqdori...">
+                            <input type="number" class="input w-full border qty" value="<?= $product[2][1]?>" placeholder="Miqdori...">
                             <div class="remove-product-select"><i data-feather="trash-2" class="w-5 h-5"></i> </div>
                         </div>
                         <?php
@@ -55,12 +55,12 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlarni Ozgartirish";
                             <?php
                                 foreach ($products_db as $prod) {
                                     ?>
-                                    <option <?= $prod['name'] == $product['name'] ? 'selected="selected"' : ''?> value="<?= $prod['id'] . ':' . $product['qty']?>" data-id="<?= $prod['id']?>" data-name="<?= $prod['name']?>" data-format="<?= $prod['format']?>" data-price="<?= $prod['price']?>"><?= $prod['name']?>,<?= $prod['format']?></option>
+                                    <option <?= $prod['name'] == $product[1] ? 'selected="selected"' : ''?> value="<?= $prod['id'] . ':' . $product[2][1]?>" data-id="<?= $prod['id']?>" data-name="<?= $prod['name']?>" data-format="<?= $prod['format']?>" data-price="<?= $prod['price']?>"><?= $prod['name']?>,<?= $prod['format']?></option>
                                     <?php
                                 }
                                 ?>
                             </select>
-                            <input type="number" class="input w-full border qty" value="<?= $product['qty']?>" placeholder="Miqdori...">
+                            <input type="number" class="input w-full border qty" value="<?= $product[2][1]?>" placeholder="Miqdori...">
                             <div class="remove-product-select"><i data-feather="trash-2" class="w-5 h-5"></i> </div>
                         </div>
                         <?php

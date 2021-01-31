@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = array(
     'url'=> '#',
 );
 $this->params['breadcrumbs'][] = array(
-    'label'=> $courier_name, 
+    'label'=> isset($courier_name) ? $courier_name : '', 
     'url'=>'#',
     'template' => "{link}",
 );
@@ -118,7 +118,7 @@ foreach ($orders as $order) {
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Naqd</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Click</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Umumiy</th>
-                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap text-right"></th>
+                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap text-center">Xadirlar va Bugalteriya</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,8 +138,14 @@ foreach ($orders as $order) {
                             </td>
                             <td class="border-b dark:border-dark-5"><span class="text-gray-500">Bugun...</span>
                             </td>
-                            <td class="border-b dark:border-dark-5 text-center">
-                                <span class="text-gray-500">Bugun...</span>
+                            <td class="border-b dark:border-dark-5">
+                                <div class="flex items-center justify-center">
+                                <?php 
+                                    $courier_id = $couriers[0]['id'];
+                                    $courier_name = $couriers[0]['name']; 
+                                ?>
+                                <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id .'&courier_name=' . $courier_name?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                </div>
                             </td>
                         </tr>
                         <?php

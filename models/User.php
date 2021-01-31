@@ -2,12 +2,18 @@
 
 namespace app\models;
 use yii\db\ActiveRecord;
+use Yii;
 
 class User extends ActiveRecord implements \yii\web\IdentityInterface
 {
 
     public static function tableName() {
-        return 'managers';
+        $session = Yii::$app->session;
+        $session->open();
+        if (!isset($session['table'])) {
+            $session['table'] = 'managers';
+        }
+        return $session['table'];
     }
 
     /**

@@ -103,8 +103,7 @@ $this->title = "Smartbook DMS – Mijozlar";
                                 <div class="flex items-center justify-center">
                                     <a class="flex items-center mr-5" href="<?= Url::to(['orders/client-list?client=' . $client['id']])?>"> <i
                                             class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
-                                    <a class="flex items-center text-theme-6" href=""> <i class="w-4 h-4 mr-2"
-                                            data-feather="trash-2"></i> O'chirish </a>
+                                    <a class="flex items-center text-theme-6 delete-subject" href="" data-url="<?= Url::to(['orders/clients'])?>" data-id="<?= $client['id']?>" data-parent="client-row" data-msg="Ushbu klientni o'chirmoqchimisiz?"><i class="w-4 h-4 mr-2" data-feather="trash-2"></i> O'chirish </a>
                                 </div>
                             </td>
                         </tr>

@@ -29,7 +29,43 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
         ])?>
         <div class="grid grid-cols-12 gap-4 row-gap-5 mt-5">
             <div class="intro-y col-span-12 sm:col-span-6">
+                <div class="mb-2">Shahar</div>
+                <select class="tail-select w-full" name="Orders[city_id]">
+                    <?php
+                foreach ($cities as $city) {
+                    ?>
+                    <option value="<?= $city['id']?>"><?= $city['name']?></option>
+                    <?php
+                }
+                ?>
+                </select>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <?= $form->field($model, 'client_id', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("ID")?>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <div class="mb-2">Kuryer</div>
+                <select class="tail-select w-full" name="Orders[courier_id]">
+                <?php
+                foreach ($couriers as $courier) {
+                    ?>
+                    <option value="<?= $courier['id']?>"><?= $courier['name']?></option>
+                    <?php
+                }
+                ?>
+                    <!-- When Shahar is selected only couriers from this city will be shows -->
+                </select>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'name', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Ism")?>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <div class="mb-2">To'lov uslubi</div>
+                <select class="tail-select w-full" name="Orders[payment_method]">
+                    <option value="cash">Naqd</option>
+                    <option value="click">Click</option>
+                    <option value="click-paid">Click To'langan</option>
+                </select>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'phone_number', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Telefon")?>
@@ -52,47 +88,23 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                     <!-- Take val of selected option and add qty to it via js  product_id:price -->
                 </div>
             </div>
-            <div class="intro-y col-span-12 sm:col-span-6">
-                <div class="mb-2">Shahar</div>
-                <select class="tail-select w-full" name="Orders[city_id]">
-                <?php
-                foreach ($cities as $city) {
-                    ?>
-                    <option value="<?= $city['id']?>"><?= $city['name']?></option>
-                    <?php
-                }
-                ?>
-                </select>
-            </div>
+
+
+
+
             <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'address', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Manzil")?>
             </div>
-            <div class="intro-y col-span-12 sm:col-span-6">
-                <div class="mb-2">To'lov uslubi</div>
-                <select class="tail-select w-full" name="Orders[payment_method]">
-                    <option value="cash">Naqd</option>
-                    <option value="click">Click</option>
-                </select>
-            </div>
-            <div class="intro-y col-span-12 sm:col-span-6">
-                <div class="mb-2">Kuryer</div>
-                <select class="tail-select w-full" name="Orders[courier_id]">
-                <?php
-                foreach ($couriers as $courier) {
-                    ?>
-                    <option value="<?= $courier['id']?>"><?= $courier['name']?></option>
-                    <?php
-                }
-                ?>
-                    <!-- When Shahar is selected only couriers from this city will be shows -->
-                </select>
-            </div>
+
+
             <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'numeric', 'class' => 'input w-full border flex-1 overall', 'readonly' => true, 'value' => 123])->label("Umumiy narh (Ozi hisoblangan)")?>
             </div>
             <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">
-                <button class="button justify-center block bg-gray-200 text-gray-600 dark:bg-dark-1 dark:text-gray-300 clear-fields">Ochirish</button>
-                <button type="submit" class="button justify-center block bg-theme-1 text-white ml-2 add-order">Buyurtma berish</button>
+                <button
+                    class="button justify-center block bg-gray-200 text-gray-600 dark:bg-dark-1 dark:text-gray-300 clear-fields">Ochirish</button>
+                <button type="submit" class="button justify-center block bg-theme-1 text-white ml-2 add-order">Buyurtma
+                    berish</button>
             </div>
             <!-- Manager ID auto do -->
             <!-- Datetime auto -->

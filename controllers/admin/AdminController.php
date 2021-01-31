@@ -63,6 +63,7 @@ class AdminController extends AppAdminController {
     }
 
     public function actionEditManager() {
+        $this->layout = 'smartbook_admin';
         $id = Yii::$app->request->get('id');
         $model = Managers::findOne($id);
         $current_photo = $model->photo;
@@ -96,7 +97,6 @@ class AdminController extends AppAdminController {
     }
 
     public function actionLogin() {
-        die;
         $this->layout = 'smartbook_login';
         Yii::$app->language = 'uz';
         $session = Yii::$app->session;
@@ -121,7 +121,36 @@ class AdminController extends AppAdminController {
     public function actionLogout() {
         Yii::$app->user->logout();
 
-        return $this->redirect(['/web/admin/admin/login']);
+        return $this->redirect(['site/login']);
+    }
+
+    public function actionProfile() {
+        $this->layout = 'smartbook_admin';
+        $model = Admin::findOne(Yii::$app->user->identity['id']);
+        $current_photo = $model->photo;
+        if ($model->load(Yii::$app->request->post())) {
+            
+            $user = Yii::$app->request->post('Admin');
+            // Photo upload 
+            $model->photo = UploadedFile::getInstance($model, 'photo');
+            if ($model->photo != null) {
+                if ($model->upload()) {
+                    $photo_name = $model->photo->name;
+                    $model->photo = '/web/images/' . $photo_name;
+                }
+            } else {
+                $model->photo = $current_photo;
+            }
+
+            $model->name = $user['name'];
+            $model->login = $user['login'];
+            $model->password = Yii::$app->getSecurity()->generatePasswordHash($user['password']);
+            $model->phone_number = $user['phone_number'];
+            $model->email = $user['email'];
+            $model->save();
+        }
+
+        return $this->render('profile', compact('model'));
     }
 
 }

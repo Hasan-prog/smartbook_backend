@@ -2,11 +2,12 @@
     <?php
     $today = date('d M');
     $used_days = [];
+    $i = 1;
 foreach ($d_arr as $d) {
     
      if (!in_array($d['day'], $used_days)) {
     ?>
-    <div id="1" class="day-list">
+    <div id="<?= $i?>" class="day-list">
         <div class="flex pt-4 pb-2 md:pb-4 pd:pt-5 orders-list-header">
             <h2 class="font-medium md:text-2xl mr-auto"><?= $d['day'] . ' ' . getuzmonth($d['month'])?></h2>
             <?php
@@ -38,7 +39,7 @@ foreach ($d_arr as $d) {
                 </div>
                 <div class="flex border-b card-section px-3 md:px-5 pb-2 md:pb-3">
                     <p class="order-card__price"><?= $order['price']?> so'm</p>
-                    <p class="order-card__payment-method ml-3 text-gray-500"><?= $order['payment_method'] == 'cash' ? 'Naqd' : 'Click'?></p>
+                    <p class="order-card__payment-method ml-3 text-gray-500"><?= payment_method_format($order['payment_method'])?></p>
                 </div>
                 <div class="border-b card-section user-info px-3 md:px-5 py-3 md:py-3">
                     <div class="name-address">
@@ -84,7 +85,9 @@ foreach ($d_arr as $d) {
     </div>
     <?php
     $used_days[$d['day']] = $d['day'];
+    $i++;
      }
+     
 }
 ?>
 </div>

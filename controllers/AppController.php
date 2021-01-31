@@ -8,13 +8,21 @@ use yii\filters\AccessControl;
 
 class AppController extends Controller {
 
-    public function debug($arr) {
-        echo '<pre>' . print_r($arr, true) . '</pre>';
+    public function beforeAction($action) {
+        if (isset($_COOKIE['role']) && Yii::$app->user->isGuest == false) {
+            if ($_COOKIE['role'] == 'manager') {
+                return true;
+            }
+            if ($_COOKIE['role'] == 'admin') {
+                return $this->redirect('admin/admin/managers');
+            }
+            if ($_COOKIE['role'] == 'courier') {
+                return $this->redirect('courier/orders');
+            }
+        } else {
+            return true;
+        }
     }
-
-    // public function beforeAction($action) {
-    //     return Yii::$app->user->identityClass = "app\models\Admin";
-    // }
 
     public function behaviors()
     {
@@ -25,7 +33,7 @@ class AppController extends Controller {
                     [
                         'allow' => true,
                         'roles' => ['@']
-                    ]
+                    ],
                 ],
             ],
         ];

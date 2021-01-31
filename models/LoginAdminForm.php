@@ -11,7 +11,7 @@ use yii\base\Model;
  * @property-read Admin|null $user This property is read-only.
  *
  */
-class LoginFormAdmin extends Model
+class LoginAdminForm extends Model
 {
     public $username;
     public $password;
@@ -75,6 +75,10 @@ class LoginFormAdmin extends Model
                 $u->generateAuthKey();
                 $u->save();
             }
+            // $model_admin = new Admin();
+            $session = \Yii::$app->session;
+            $session->open();
+            $session['table'] = 'admins';
             return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
         }
         return false;

@@ -8,6 +8,8 @@ use app\controllers\AppController;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
+use app\models\LoginAdminForm;
+use app\models\LoginCourierForm;
 use app\models\ContactForm;
 use app\models\Managers;
 use yii\web\UploadedFile;
@@ -77,17 +79,32 @@ class SiteController extends AppController
         $this->layout = 'smartbook_login';
         Yii::$app->language = 'uz';
         if (!Yii::$app->user->isGuest) {
-            return $this->redirect('login');
+            return $this->redirect('/cities');
         }
 
         $model = new LoginForm();
+        $model_admin = new LoginAdminForm();
+        $model_courier = new LoginCourierForm();
+        $cookies = Yii::$app->request->cookies;
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->redirect('/web/cities/');
+            setcookie('role', 'manager', time() + (86400 * 30), "/");
+            return $this->redirect('/cities/');
+        }
+        if ($model_admin->load(Yii::$app->request->post()) && $model_admin->login()) {
+            setcookie('role', 'admin', time() + (86400 * 30), "/");
+            return $this->redirect('/admin/admin/managers');
+        }
+        if ($model_courier->load(Yii::$app->request->post()) && $model_courier->login()) {
+            setcookie('role', 'courier', time() + (86400 * 30), "/");
+            setcookie('courier_id', Yii::$app->user->identity['id'], time() + (86400 * 30), "/");
+            return $this->redirect('/courier/orders');
         }
 
         $model->password = '';
         return $this->render('login', [
             'model' => $model,
+            'model_admin' => $model_admin,
+            'model_courier' => $model_courier,
         ]);
     }
 
@@ -99,6 +116,7 @@ class SiteController extends AppController
     public function actionLogout()
     {
         Yii::$app->user->logout();
+        setcookie("role", "", time() - 3600);
 
         return $this->redirect(['login']);
     }

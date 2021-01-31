@@ -175,6 +175,21 @@
 [data-filter="range"] {
     display: none;    
 }
+.forms-tabs {
+    display: flex;
+}
+.forms-tabs button {
+    border-radius: 0;
+}
+.admins-form {
+    display: none;
+}
+.courier-form {
+    display: none;
+}
+.bg-theme-20 {
+    background: #A73ED8;
+}
 
 @-webkit-keyframes blink { 
 	0% { color: #D32929; }

@@ -8,8 +8,20 @@ use yii\filters\AccessControl;
 
 class AppCourierController extends Controller {
 
-    public function debug($arr) {
-        echo '<pre>' . print_r($arr, true) . '</pre>';
+    public function beforeAction($action) {
+        if (isset($_COOKIE['role']) && Yii::$app->user->isGuest == false) {
+            if ($_COOKIE['role'] == 'courier') {
+                return true;
+            }
+            if ($_COOKIE['role'] == 'manager') {
+                return $this->redirect('/web/cities');
+            }
+            if ($_COOKIE['role'] == 'admin') {
+                return $this->redirect('admin/admin/managers');
+            }
+        } else {
+            return true;
+        }
     }
 
     public function behaviors()

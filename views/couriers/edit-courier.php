@@ -58,6 +58,9 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
                 <?= $form->field($model, 'name', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("To'liq ism")?>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
+                <?= $form->field($model, 'login', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Login")?>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'password', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['value' => '', 'class' => 'input w-full border flex-1'])->label("Yangi parol")?>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">

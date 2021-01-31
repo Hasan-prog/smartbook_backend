@@ -8,15 +8,21 @@ use yii\filters\AccessControl;
 
 class AppAdminController extends Controller {
 
-    // public function beforeAction($action) {
-
-    //     $session = Yii::$app->session;
-    //     if ($session['role'] != "admin" && Yii::$app->user->isGuest == false) {
-    //         return $this->redirect('/web/cities/');
-    //     }
-    //     return parent::beforeAction($action);
-
-    // }
+    public function beforeAction($action) {
+        if (isset($_COOKIE['role']) && Yii::$app->user->isGuest == false) {
+            if ($_COOKIE['role'] == 'admin') {
+                return true;
+            }
+            if ($_COOKIE['role'] == 'manager') {
+                return $this->redirect('/web/cities');
+            }
+            if ($_COOKIE['role'] == 'courier') {
+                return $this->redirect('courier/orders');
+            }
+        } else {
+            return true;
+        }
+    }
 
     public function behaviors()
     {
