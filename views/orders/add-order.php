@@ -98,7 +98,7 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
 
 
             <div class="intro-y col-span-12 sm:col-span-6">
-                <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'numeric', 'class' => 'input w-full border flex-1 overall', 'readonly' => true, 'value' => 123])->label("Umumiy narh (Ozi hisoblangan)")?>
+                <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'numeric', 'class' => 'input w-full border flex-1 overall', 'value' => 123])->label("Umumiy narh (Ozi hisoblangan)")?>
             </div>
             <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">
                 <button

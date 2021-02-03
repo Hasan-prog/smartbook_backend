@@ -19,6 +19,12 @@ class CouriersController extends AppController
             $model->save();
         }
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->with('cities')->with('orders')->all();
+        if (!empty($couriers)) {
+
+        }
+        if (empty($couriers)) {
+            return $this->redirect('/couriers/add-courier');
+        }
         return $this->render('couriers', compact('couriers'));
     }
 
@@ -34,6 +40,7 @@ class CouriersController extends AppController
         $cities = Cities::find()->asArray()->all();
 
         $current_photo = $model->photo;
+        $current_password = $model->password;
 
         // Update
         if ($model->load(Yii::$app->request->post())) {
@@ -77,7 +84,11 @@ class CouriersController extends AppController
             }
             $model->name = $courier['name'];
             $model->login = $courier['login'];
-            $model->password = Yii::$app->getSecurity()->generatePasswordHash($courier['password']);
+            if ($model->password != '') {
+                $model->password = Yii::$app->getSecurity()->generatePasswordHash($courier['password']);
+            } else {
+                $model->password = $current_password;
+            }
             $model->phone_number = $courier['phone_number'];
             $model->address = $courier['address'];
             $model->city_id = $courier['city_id'];

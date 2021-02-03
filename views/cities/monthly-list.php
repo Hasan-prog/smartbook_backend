@@ -31,6 +31,7 @@ $this->title = "Smartbook DMS – " . $city['name'];
 $delivered_qty = 0;
 $not_delivered_qty = 0;
 $canceled_qty = 0;
+$overall_qty = 0;
 $cash = 0;
 $click = 0;
 
@@ -53,6 +54,7 @@ foreach ($orders as $order) {
         } else if ($order['status'] == 'canceled') {
             $canceled_qty++;
         }
+        $overall_qty++;
         if ($order['payment_method'] == 'cash') {
             $cash += $order['price'];
             $payment_label = 'Naqd';
@@ -65,16 +67,49 @@ foreach ($orders as $order) {
 // debug($orders_by_days);
 ?>
 
+<div class="flex mt-5">
+    <a href="">
+        <div class="courier-card mr-4 courier-card-active <?= $couriers[0]['id']?>">
+            <div class="intro-y overflow-auto lg:overflow-visible mt-8 sm:mt-0">
+                <table class="table table-report sm:mt-2 lg:col-span-6">
+                    <tbody>
+                        <tr class="intro-x">
+                            <td class="w-40">
+                                <div class="image-fit profile-image-row">
+                                    <img alt="" class="rounded-full" src="<?= $couriers[0]['photo']?>"
+                                        style="box-shadow: none">
+                                </div>
+                            </td>
+                            <td>
+                                <span href=""
+                                    class="text-gray-500 whitespace-no-wrap"><?= $couriers[0]['cities']['name']?></span>
+                                <br>
+                                <span href="" class="font-medium whitespace-no-wrap"><?= $couriers[0]['name']?></span>
+                                <div class="text-gray-600 text-xs whitespace-no-wrap"><?= $couriers[0]['phone_number']?>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </a>
+</div>
+
 <!-- BEGIN: Striped Rows -->
 <div class="intro-y box mt-5">
-    <div class="flex flex-col sm:flex-row items-center p-5 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row items-center p-5 border-b border-gray-200 rows-header">
         <h2 class="font-medium text-base mr-auto"><?= date('M, Y')?> yil</h2>
         <div class="flex text-gray-700">
             <div class="mr-6 flex items-center">
-                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $delivered_qty + $not_delivered_qty?> Umumiy
+                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazilgan
             </div>
             <div class="mr-6 flex items-center">
                 <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
+            </div>
+            <div class="mr-6 flex items-center">
+                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
+                Umumiy
             </div>
             <div class="mr-6 flex items-center border-l pl-6">
                 <span class="text-gray-500 mr-2">Naqd:</span> <?= price_format($cash)?> so'm
@@ -86,24 +121,25 @@ foreach ($orders as $order) {
                 <span class="text-gray-500 mr-2">Umumiy:</span> <?= price_format($cash + $click)?> so'm
             </div>
         </div>
-        <button class="button px-2 mr-1 text-gray-700 bg-gray-200 dark:text-gray-300">
+        <button class="button px-2 mr-1 text-gray-700 bg-gray-200 dark:text-gray-300 collapse-table">
             <span class="w-5 h-5 flex items-center justify-center"> <i data-feather="minimize-2" class="w-5 h-5"></i>
             </span>
         </button>
     </div>
-    <div class="p-5" id="striped-rows-table">
+    <div class="p-5" id="striped-rows-table" data-collapse="0">
         <div class="filters mb-6">
             <form class="xl:flex sm:mr-auto" id="tabulator-html-filter-form">
                 <div class="sm:flex items-center sm:mr-4">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Saralash</label>
-                    <select class="input w-full border col-span-4" name="worker_id" id="tabulator-html-filter-field">
-                        <option value="monthly">1 - 31</option>
+                    <select class="input w-full border col-span-4 month-sort-filter" name="worker_id" id="tabulator-html-filter-field">
                         <option value="yearly" selected="">31 - 1</option>
+                        <option value="monthly">1 - 31</option>                        
                     </select>
                 </div>
                 <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                    <input data-element="day-row" type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
+                    <input data-element="day-row" type="text"
+                        class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
                         id="tabulator-html-filter-value" placeholder="Kunli info">
                 </div>
             </form>
@@ -118,77 +154,60 @@ foreach ($orders as $order) {
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Naqd</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Click</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Umumiy</th>
-                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap text-center">Xadirlar va Bugalteriya</th>
+                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap text-center">Xadirlar va
+                                Bugalteriya</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php // Current month
                     foreach ($current_month_days as $day) {
                         // debug($months_with_orders);
-                        if ($day == date('d')) {
+                        if (array_key_exists($day, $orders_by_days)) {
+                            // Count stats
+                            $delivered_qty = 0;
+                            $not_delivered_qty = 0;
+                            $canceled_qty = 0;
+                            $overall_qty = 0;
+                            $cash = 0;
+                            $click = 0;
+                            foreach ($orders as $order) {
+                                // debug(cutDay($order['datetime']) . ' / ' . $day);
+                                if (cutDay($order['datetime']) == $day) {
+                                    if ($order['status'] == 'delivered') {
+                                        $delivered_qty++;
+                                    } else if ($order['status'] == 'not-delivered') {
+                                        $not_delivered_qty++;
+                                    } else if ($order['status'] == 'canceled') {
+                                        $canceled_qty++;
+                                    }
+                                    $overall_qty++;
+                                    if ($order['payment_method'] == 'cash') {
+                                        $cash += $order['price'];
+                                        $payment_label = 'Naqd';
+                                    } else {
+                                        $click += $order['price'];
+                                        $payment_label = 'Click';
+                                    }
+                                }
+                            }
                             ?>
                         <tr class="day-row">
                             <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
-                            </td>
-                            <td class="border-b dark:border-dark-5"><span class="text-gray-500">Bugun...</span>
-                            </td>
-                            <td class="border-b dark:border-dark-5"><span class="text-gray-500">Bugun...</span>
-                            </td>
-                            <td class="border-b dark:border-dark-5"><span class="text-gray-500">Bugun...</span>
-                            </td>
-                            <td class="border-b dark:border-dark-5"><span class="text-gray-500">Bugun...</span>
-                            </td>
-                            <td class="border-b dark:border-dark-5">
-                                <div class="flex items-center justify-center">
-                                <?php 
-                                    $courier_id = $couriers[0]['id'];
-                                    $courier_name = $couriers[0]['name']; 
-                                ?>
-                                <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id .'&courier_name=' . $courier_name?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php
-                        } else {
-                            if (array_key_exists($day, $orders_by_days)) {
-                                // Count stats
-                                $delivered_qty = 0;
-                                $not_delivered_qty = 0;
-                                $canceled_qty = 0;
-                                $cash = 0;
-                                $click = 0;
-                                foreach ($orders as $order) {
-                                    // debug(cutDay($order['datetime']) . ' / ' . $day);
-                                    if (cutDay($order['datetime']) == $day) {
-                                        if ($order['status'] == 'delivered') {
-                                            $delivered_qty++;
-                                        } else if ($order['status'] == 'not-delivered') {
-                                            $not_delivered_qty++;
-                                        } else if ($order['status'] == 'canceled') {
-                                            $canceled_qty++;
-                                        }
-                                        if ($order['payment_method'] == 'cash') {
-                                            $cash += $order['price'];
-                                            $payment_label = 'Naqd';
-                                        } else {
-                                            $click += $order['price'];
-                                            $payment_label = 'Click';
-                                        }
-                                    }
-                                }
-                                ?>
-                        <tr class="day-row">
-                            <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
+                                <?= $day == date('d') ? ' <span class="text-gray-500">(BUGUN)</span>' : ''?>
                             </td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex text-gray-700">
                                     <div class="mr-6 flex items-center">
                                         <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?>
-                                        Yetkazildi
+                                        Yetkazilgan
                                     </div>
                                     <div class="mr-6 flex items-center">
                                         <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?>
                                         Qaytargan
+                                    </div>
+                                    <div class="mr-6 flex items-center">
+                                        <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
+                                        Umumiy
                                     </div>
                                 </div>
                             </td>
@@ -197,47 +216,55 @@ foreach ($orders as $order) {
                             <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex items-center justify-center">
-                                <?php 
-                                    $courier_id = $couriers[0]['id'];
-                                    $courier_name = $couriers[0]['name']; 
-                                ?>
-                                <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id .'&courier_name=' . $courier_name?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                    <?php 
+                                $courier_id = $couriers[0]['id'];
+                            ?>
+                                    <a class="flex items-center mr-5"
+                                        href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id?>">
+                                        <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
                                 </div>
                             </td>
                         </tr>
                         <?php
-                            } else {
-                            ?>
+                        } else {
+                        ?>
                         <tr class="day-row">
                             <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
                             </td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex text-gray-700">
                                     <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 0 Yetkazildi
+                                        <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $canceled_qty?>
+                                        Yetkazilgan
                                     </div>
                                     <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
+                                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $delivered_qty?>
+                                        Qaytargan
+                                    </div>
+                                    <div class="mr-6 flex items-center">
+                                        <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
+                                        Umumiy
                                     </div>
                                 </div>
                             </td>
-                            <td class="border-b dark:border-dark-5">0 so'm</td>
-                            <td class="border-b dark:border-dark-5">0 so'm</td>
-                            <td class="border-b dark:border-dark-5">0 so'm</td>
+                            <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
+                            <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
+                            <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex items-center justify-center">
-                                <?php 
-                                    $courier_id = $couriers[0]['id'];
-                                    $courier_name = $couriers[0]['name']; 
-                                ?>
-                                <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id .'&courier_name=' . $courier_name?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                    <?php 
+                                $courier_id = $couriers[0]['id'];
+                            ?>
+                                    <a class="flex items-center mr-5"
+                                        href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id?>">
+                                        <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
                                 </div>
                             </td>
                         </tr>
                         <?php
-                            }
                         }
                     }
+
                     ?>
                     </tbody>
                 </table>
@@ -253,6 +280,7 @@ foreach ($months_with_orders as $month) {
     $delivered_qty = 0;
     $not_delivered_qty = 0;
     $canceled_qty = 0;
+    $overall_qty = 0;
     $cash = 0;
     $click = 0;
 
@@ -264,6 +292,7 @@ foreach ($months_with_orders as $month) {
         } else if ($order['status'] == 'canceled') {
             $canceled_qty++;
         }
+        $overall_qty++;
         if ($order['payment_method'] == 'cash') {
             $cash += $order['price'];
             $payment_label = 'Naqd';
@@ -280,16 +309,20 @@ foreach ($months_with_orders as $month) {
     ?>
 <!-- BEGIN: Striped Rows -->
 <div class="intro-y box mt-5">
-    <div class="flex flex-col sm:flex-row items-center p-5 border-b border-gray-200">
+    <div class="flex flex-col sm:flex-row items-center p-5 border-b border-gray-200 rows-header">
         <h2 class="font-medium text-base mr-auto">
             <?= date('M, Y', strtotime($month[$random_order]['datetime']))?> yil
         </h2>
         <div class="flex text-gray-700">
             <div class="mr-6 flex items-center">
-                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $delivered_qty + $not_delivered_qty?> Umumiy
+                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazilgan
             </div>
             <div class="mr-6 flex items-center">
                 <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
+            </div>
+            <div class="mr-6 flex items-center">
+                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
+                Umumiy
             </div>
             <div class="mr-6 flex items-center border-l pl-6">
                 <span class="text-gray-500 mr-2">Naqd:</span> <?= price_format($cash)?> so'm
@@ -301,24 +334,24 @@ foreach ($months_with_orders as $month) {
                 <span class="text-gray-500 mr-2">Umumiy:</span> <?= price_format($cash + $click)?> so'm
             </div>
         </div>
-        <button class="button px-2 mr-1 mb-2 text-gray-700 bg-gray-200 dark:text-gray-300">
-            <span class="w-5 h-5 flex items-center justify-center"> <i data-feather="maximize-2" class="w-5 h-5"></i>
+        <button class="button px-2 mr-1 mb-2 text-gray-700 bg-gray-200 dark:text-gray-300 collapse-table">
+            <span class="w-5 h-5 flex items-center justify-center"> <i data-feather="minimize-2" class="w-5 h-5"></i>
             </span>
         </button>
     </div>
-    <div class="p-5" id="striped-rows-table">
+    <div class="p-5" id="striped-rows-table" data-collapse="0">
         <div class="filters mb-6">
             <form class="xl:flex sm:mr-auto" id="tabulator-html-filter-form">
                 <div class="sm:flex items-center sm:mr-4">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Saralash</label>
-                    <select class="input w-full border col-span-4" name="worker_id" id="tabulator-html-filter-field">
-                        <option value="monthly">1 - 31</option>
-                        <option value="yearly" selected="">31 - 1</option>
+                    <select class="input w-full border col-span-4 month-sort-filter" name="worker_id" id="tabulator-html-filter-field">
+                        <option value="dec" selected="">31 - 1</option>
+                        <option value="inc">1 - 31</option>
                     </select>
                 </div>
                 <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                    <input type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border"
+                    <input type="text" data-element="day-row" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
                         id="tabulator-html-filter-value" placeholder="Kunli info">
                 </div>
             </form>
@@ -339,14 +372,18 @@ foreach ($months_with_orders as $month) {
                     <tbody>
                         <?php
                         while ($days_qty > 0) {
+                            // Count daily stats
+                            $delivered_qty = 0;
+                            $not_delivered_qty = 0;
+                            $canceled_qty = 0;
+                            $overall_qty = 0;
+                            $cash = 0;
+                            $click = 0;
+                            $loop_day = '';
                             foreach ($month as $order) {
                                 if ($days_qty == cutDay($order['datetime'])) {
-                                    // Count stats
-                                    $delivered_qty = 0;
-                                    $not_delivered_qty = 0;
-                                    $canceled_qty = 0;
-                                    $cash = 0;
-                                    $click = 0;
+                                    $loop_day = cutDay($order['datetime']);
+                                    $overall_qty++;
                                     if ($order['status'] == 'delivered') {
                                         $delivered_qty++;
                                     } else if ($order['status'] == 'not-delivered') {
@@ -361,42 +398,58 @@ foreach ($months_with_orders as $month) {
                                         $click += $order['price'];
                                         $payment_label = 'Click';
                                     }
-                                        ?>
-                                    <tr class="day-row">
-                                        <td class="border-b dark:border-dark-5 font-medium"><?= cutDay($order['datetime'])?> <?= date('M', strtotime($order['datetime']))?></td>
-                                        <td class="border-b dark:border-dark-5">
-                                            <div class="flex text-gray-700">
-                                                <div class="mr-6 flex items-center">
-                                                    <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazildi
-                                                </div>
-                                                <div class="mr-6 flex items-center">
-                                                    <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="border-b dark:border-dark-5"><?= price_format($cash)?> so'm</td>
-                                        <td class="border-b dark:border-dark-5"><?= price_format($click)?> so'm</td>
-                                        <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
-                                        <td class="border-b dark:border-dark-5">
-                                            <div class="flex items-center justify-center">
-                                                <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $year_cut . '-' . $month_cut . '-' . cutDay($order['datetime'])])?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <?php
                                 }
                             }
-                            if ($days_qty != cutDay($order['datetime'])) {
-                                ?>
+                            if ($days_qty == $loop_day) {
+                            ?>
+                            <!-- DAY WITH ORDERS -->
+                            <tr class="day-row">
+                                <td class="border-b dark:border-dark-5 font-medium"><?= $loop_day?>
+                                    <?= date('M', strtotime($order['datetime']))?></td>
+                                <td class="border-b dark:border-dark-5">
+                                    <div class="flex text-gray-700">
+                                        <div class="mr-6 flex items-center">
+                                            <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?>
+                                            Yetkazilgan
+                                        </div>
+                                        <div class="mr-6 flex items-center">
+                                            <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?>
+                                            Qaytargan
+                                        </div>
+                                        <div class="mr-6 flex items-center">
+                                            <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
+                                            Umumiy
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="border-b dark:border-dark-5"><?= price_format($cash)?> so'm</td>
+                                <td class="border-b dark:border-dark-5"><?= price_format($click)?> so'm</td>
+                                <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
+                                <td class="border-b dark:border-dark-5">
+                                    <div class="flex items-center justify-center">
+                                        <a class="flex items-center mr-5"
+                                            href="<?= url::to(['cities/daily-list?d=' . $year_cut . '-' . $month_cut . '-' . $days_qty . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id])?>">
+                                            <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php
+                            } else {
+                               ?>
+                               <!-- DAY WITHOUT ORDERS -->
                                 <tr class="day-row">
-                                    <td class="border-b dark:border-dark-5 font-medium"><?= $days_qty?> <?= date('M', strtotime($order['datetime']))?></td>
+                                    <td class="border-b dark:border-dark-5 font-medium"><?= $days_qty?>
+                                        <?= date('M', strtotime($order['datetime']))?></td>
                                     <td class="border-b dark:border-dark-5">
                                         <div class="flex text-gray-700">
-                                            <div class="mr-6 flex items-center">
-                                                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 0 Yetkazildi
+                                            <div class="mr-6 flex items-center opacity-50">
+                                                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 0 Yetkazilgan
                                             </div>
-                                            <div class="mr-6 flex items-center">
+                                            <div class="mr-6 flex items-center opacity-50">
                                                 <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
+                                            </div>
+                                            <div class="mr-6 flex items-center opacity-50">
+                                                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> 0 Umumiy
                                             </div>
                                         </div>
                                     </td>
@@ -405,15 +458,16 @@ foreach ($months_with_orders as $month) {
                                     <td class="border-b dark:border-dark-5">0 so'm</td>
                                     <td class="border-b dark:border-dark-5">
                                         <div class="flex items-center justify-center">
-                                        <a class="flex items-center mr-5" href="<?= url::to(['cities/daily-list?d=' . $year_cut . '-' . $month_cut . '-' . $days_qty])?>"> <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                            <a class="flex items-center mr-5"
+                                                href="<?= url::to(['cities/daily-list?d=' . $year_cut . '-' . $month_cut . '-' . $days_qty . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id])?>">
+                                                <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
                                         </div>
                                     </td>
                                 </tr>
-                                <?php
+                               <?php
                             }
-                            ?>
-                        <?php
                             $days_qty--;
+                            continue;
                         }
                         ?>
                     </tbody>

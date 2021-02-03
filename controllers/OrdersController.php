@@ -30,6 +30,12 @@ class OrdersController extends AppController
         $request = Yii::$app->request;
         $client_id = $request->get('client');
         $client = Clients::find()->asArray()->where(['id' => $client_id])->limit(1)->one();
+        if (empty($client)) {
+            return $this->redirect('/orders/clients');
+        }
+        if ($client['view'] != 1) {
+            return $this->redirect('/orders/clients');
+        }
         $orders = Orders::find()->with('manager')->asArray()->where(['name' => $client['name']])->all();
 
         // Count stats
@@ -62,9 +68,9 @@ class OrdersController extends AppController
 
     public function actionAddOrder() {
         $model = new Orders();
-        $products = Products::find()->asArray()->all();
-        $cities = Cities::find()->asArray()->all();
-        $couriers = Couriers::find()->asArray()->all();
+        $products = Products::find()->asArray()->where(['view' => 1])->all();
+        $cities = Cities::find()->asArray()->where(['view' => 1])->all();
+        $couriers = Couriers::find()->asArray()->where(['view' => 1])->all();
         $client_model = new Clients();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -81,11 +87,12 @@ class OrdersController extends AppController
             $model->price = $order['price'];
             $model->last_changed_time = date('Y-m-d h:m:s');
             $model->last_changed_user = Yii::$app->user->identity['name'];
-            $model->manager_id = 1; // For now 1, but we have to cahnge it when log in system will be created
+            $model->manager_id = Yii::$app->user->identity['id']; // For now 1, but we have to cahnge it when log in system will be created
             $model->save();
             
             // Building a new client
-            $client_search = Clients::find()->where(['name' => $order['name']])->where(['phone_number' => $order['phone_number']])->limit(1)->one();
+            $client_search = Clients::find()->where(['name' => $order['name'], 'phone_number' => $order['phone_number']])->limit(1)->one();
+            $current_client_id = $client_search->client_id;
             if (empty($client_search)) {
                 $client_model->client_id = $order['client_id'];
                 $client_model->name = $order['name'];
@@ -95,16 +102,17 @@ class OrdersController extends AppController
                 $client_model->save();
                 $c_id = $client_model->id;
             } else {
-                $client_search->client_id = $order['client_id'];
+                $client_search->client_id = $current_client_id;
                 $client_search->name = $order['name'];
                 $client_search->phone_number = $order['phone_number'];
                 $client_search->address = $order['address'];
                 $client_search->orders_id = $client_search->orders_id . ',' . $model->id; // if new just paste a current generated id, if existing add by ','
+                $client_search->view = 1;
                 $client_search->save();
                 $c_id = $client_search->id;
             }
             
-            return $this->redirect('/orders/client-list?client=' . $c_id);
+            // return $this->redirect('/orders/client-list?client=' . $c_id);
         }
 
         return $this->render('add-order', compact('model', 'products', 'cities', 'couriers'));

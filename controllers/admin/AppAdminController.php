@@ -20,7 +20,11 @@ class AppAdminController extends Controller {
                 return $this->redirect('courier/orders');
             }
         } else {
-            return true;
+            if (Yii::$app->controller->action->id != 'login') {
+                return $this->redirect('/site/login');
+            } else {
+                return true;
+            }
         }
     }
 

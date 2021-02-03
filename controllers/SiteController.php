@@ -11,7 +11,9 @@ use app\models\LoginForm;
 use app\models\LoginAdminForm;
 use app\models\LoginCourierForm;
 use app\models\ContactForm;
+use app\models\Couriers;
 use app\models\Managers;
+use app\models\Admin;
 use yii\web\UploadedFile;
 
 class SiteController extends AppController
@@ -87,6 +89,12 @@ class SiteController extends AppController
         $model_courier = new LoginCourierForm();
         $cookies = Yii::$app->request->cookies;
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $manager = Managers::find()->asArray()->where(['login' => $model['username']])->limit(1)->one();
+            if ($manager['view'] != 1) {
+                Yii::$app->user->logout();
+                return $this->redirect(['login']);
+                // Add falsh message that this account was deleted
+            }
             setcookie('role', 'manager', time() + (86400 * 30), "/");
             return $this->redirect('/cities/');
         }
@@ -95,6 +103,12 @@ class SiteController extends AppController
             return $this->redirect('/admin/admin/managers');
         }
         if ($model_courier->load(Yii::$app->request->post()) && $model_courier->login()) {
+            $courier = Couriers::find()->asArray()->where(['login' => $model_courier['username']])->limit(1)->one();
+            if ($courier['view'] != 1) {
+                Yii::$app->user->logout();
+                return $this->redirect(['login']);
+                // Add falsh message that this account was deleted
+            }
             setcookie('role', 'courier', time() + (86400 * 30), "/");
             setcookie('courier_id', Yii::$app->user->identity['id'], time() + (86400 * 30), "/");
             return $this->redirect('/courier/orders');

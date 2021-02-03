@@ -14,6 +14,7 @@ class Orders extends ActiveRecord {
         return $this->hasOne(Managers::className(), ['id' => 'manager_id']);
     }
 
+
 }
 
 ?>

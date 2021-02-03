@@ -162,7 +162,7 @@ class ProductsController extends AppController
             //         $sorted_products_str[$key] = $left_and_selected;
             //     }
             // }
-
+                
             // debug($sorted_products_str);
             // die;
 

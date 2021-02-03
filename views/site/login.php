@@ -10,6 +10,7 @@ use yii\bootstrap\ActiveForm;
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;
 
+// echo Yii::$app->getSecurity()->generatePasswordHash('123');
 ?>
 
 <!-- BEGIN: Login Form -->

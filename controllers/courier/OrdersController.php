@@ -31,7 +31,7 @@ class OrdersController extends AppCourierController
             return $this->redirect('/courier/orders/logout');
         }
 
-        $orders = Orders::find()->asArray()->where(['courier_id' => $courier_id])->where(['status' => 'not-delivered'])->all();
+        $orders = Orders::find()->asArray()->where(['courier_id' => $courier_id, 'status' => 'not-delivered'])->all();
         $d_arr = [];
         function move_to_top(&$array, $key) {
             $temp = array($key => $array[$key]);
@@ -77,6 +77,36 @@ class OrdersController extends AppCourierController
 
 
         return $this->render('current-orders', compact('orders', 'd_arr'));
+    }
+
+    public function actionMonthlyList() {
+        $this->layout = 'smartbook_courier';
+        if (isset($_COOKIE['courier_id'])) {
+            $courier_id = $_COOKIE['courier_id'];
+        } else {
+            return $this->redirect('/courier/orders/logout');
+        }
+
+        $months = [];
+        $months_list = [];
+        $orders = Orders::find()->asArray()->where(['courier_id' => $courier_id])->all();
+        foreach ($orders as $key => $order) {
+            $months[cutMonth($order['datetime'])][$key] = $order;
+            $months_list[$key] = date('M', strtotime($order['datetime'])) . ', ' . date('Y', strtotime($order['datetime']));
+        }
+        $months_list = array_unique($months_list);
+        asort($months_list);
+        // debug($months_list);
+        
+        
+
+
+        return $this->render('monthly-list', compact('months', 'months_list'));
+    }
+    
+    public function actionDailyList() {
+        $this->layout = 'smartbook_courier';
+        return $this->render('daily-list');
     }
 
     public function actionLogout() {

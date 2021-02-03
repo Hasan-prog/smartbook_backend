@@ -249,12 +249,14 @@ $(document).ready(function () {
         return;
     });
 
-    // When the user scrolls the page, execute headersTrigger 
-    window.onscroll = function () { headersTrigger() };
-
     // Get the day
     var day = document.getElementById('1');
     next_header_offset = 0;
+
+    // When the user scrolls the page, execute headersTrigger 
+    if ($(day).find('.order-card').length > 0) {
+        window.onscroll = function () { headersTrigger() };
+    }
 
     // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
     function headersTrigger() {
@@ -330,6 +332,29 @@ $(document).ready(function () {
             }
         }
     }
+
+    $('.rows-header .collapse-table').click(function () {
+        var table = $(this).parent().next('#striped-rows-table');
+        
+        if ($(table).data('collapse') == 0) {
+            $(table).slideUp('fast');
+            $(table).data('collapse', 1);
+            $(this).find('svg').remove();
+            $(this).find('span').html('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize-2 w-5 h-5"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>');
+        } else {
+            $(table).slideDown('fast');
+            $(table).data('collapse', 0);
+            $(this).find('svg').remove();
+            $(this).find('span').html('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minimize-2 w-5 h-5"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>');
+        }
+    });
+
+    $('.month-sort-filter').change(function () {
+        var table = $(this).parents('#striped-rows-table');
+        $(table).find('.day-row').each(function (i) {
+            $(table).find('tbody').prepend($(this));
+        });
+    });
 
 });
 

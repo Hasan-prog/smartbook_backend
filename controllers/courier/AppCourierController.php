@@ -20,7 +20,11 @@ class AppCourierController extends Controller {
                 return $this->redirect('admin/admin/managers');
             }
         } else {
-            return true;
+            if (Yii::$app->controller->action->id != 'login') {
+                return $this->redirect('/site/login');
+            } else {
+                return true;
+            }
         }
     }
 

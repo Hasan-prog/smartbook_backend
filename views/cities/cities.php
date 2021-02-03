@@ -9,9 +9,6 @@ $this->params['breadcrumbs'][] = array(
     'template' => "{link}",
 );
 $this->title = "Smartbook DMS – Shaharlar";
-
-// debug($cities);
-
 ?>
 
 <div class="grid grid-cols-12 gap-6">
@@ -47,17 +44,21 @@ $this->title = "Smartbook DMS – Shaharlar";
                         $couriers_routing = '-courier';
                         $courier_id = '&courier=' . $couriers[0]['id'];
                     } else {
-                        $couriers_routing = '';
-                        $courier_id = '';
+                        if (!empty($couriers)) {
+                            $courier_id = $couriers[0]['id'];
+                        } else {
+                            $courier_id = '';
+                            $couriers_routing = '';
+                        }
                     } ?>
-                <a href="<?= Url::to(['cities/monthly-list' . $couriers_routing . '?city=' . $city['id']]) . $courier_id?>" class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y city-card">
+                <a href="<?= Url::to(['cities/monthly-list' . $couriers_routing . '?city=' . $city['id'] . '&courier=' . $courier_id ])?>" class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y city-card">
                     <div class="report-box zoom-in">
                         <div class="box p-5">
                             <div class="flex">
                                 <i data-feather="home" class="report-box__icon text-theme-10"></i>
                                 <div class="ml-auto">
                                     <div
-                                        class="py-1 pl-1 pr-2 rounded-full text-xs text-gray-600 bg-gray-100 font-medium flex items-center">
+                                        class="py-1 pl-4 pr-2 rounded-full text-xs text-gray-600 bg-gray-100 font-medium flex items-center">
                                         <?php
                                         foreach ($city['couriers'] as $courier) {
                                         ?>
@@ -69,7 +70,7 @@ $this->title = "Smartbook DMS – Shaharlar";
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-3xl font-bold leading-8 mt-6"><?= $city['name']?></div>
+                            <div class="text-3xl font-bold leading-8 mt-6 <?= $city['name'] == "Qoraqalpog'iston (Starex)" ? 'long-title' : ''?>"><?= $city['name']?></div>
                             <div class="text-md text-gray-600 mt-2 flex items-center">
                                 <div class="flex text-gray-700">
                                     <div class="mr-4 flex items-center">

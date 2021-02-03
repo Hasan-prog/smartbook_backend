@@ -66,7 +66,14 @@ class AdminController extends AppAdminController {
         $this->layout = 'smartbook_admin';
         $id = Yii::$app->request->get('id');
         $model = Managers::findOne($id);
+        if (empty($model)) {
+            return $this->goBack();
+        }
+        if ($model->view != 1) {
+            return $this->goBack();
+        }
         $current_photo = $model->photo;
+        $current_password = $model->password;
 
         if ($model->load(Yii::$app->request->post())) {
             $manager = Yii::$app->request->post('Managers');
@@ -85,7 +92,11 @@ class AdminController extends AppAdminController {
             $model->name = $manager['name'];
             $model->phone_number = $manager['phone_number'];
             $model->login = $manager['login'];
-            $model->password = Yii::$app->getSecurity()->generatePasswordHash($manager['password']);
+            if ($model->password != '') {
+                $model->password = Yii::$app->getSecurity()->generatePasswordHash($manager['password']);
+            } else {
+                $model->password = $current_password;
+            }
             $model->address = $manager['address'];
             $model->email = $manager['email'];
             $model->auth_key = Yii::$app->security->generateRandomString();
@@ -128,6 +139,7 @@ class AdminController extends AppAdminController {
         $this->layout = 'smartbook_admin';
         $model = Admin::findOne(Yii::$app->user->identity['id']);
         $current_photo = $model->photo;
+        $current_password = $model->password;
         if ($model->load(Yii::$app->request->post())) {
             
             $user = Yii::$app->request->post('Admin');
@@ -144,7 +156,11 @@ class AdminController extends AppAdminController {
 
             $model->name = $user['name'];
             $model->login = $user['login'];
-            $model->password = Yii::$app->getSecurity()->generatePasswordHash($user['password']);
+            if ($model->password != '') {
+                $model->password = Yii::$app->getSecurity()->generatePasswordHash($user['password']);
+            } else {
+                $model->password = $current_password;
+            }
             $model->phone_number = $user['phone_number'];
             $model->email = $user['email'];
             $model->save();

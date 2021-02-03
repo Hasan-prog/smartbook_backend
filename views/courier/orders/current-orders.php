@@ -13,7 +13,7 @@ foreach ($d_arr as $d) {
             <?php
                 if ($today == $d['day'] . ' ' . $d['month']) {
                     ?>
-                        <h2 class="font-medium text-gray-500 md:text-2xl ml-auto">Bugunli Buyurtmalar</h2>
+                        <!-- <h2 class="font-medium text-gray-500 md:text-2xl ml-auto">Bugunli Buyurtmalar</h2> -->
                     <?php
                 }
             ?>
@@ -22,7 +22,7 @@ foreach ($d_arr as $d) {
             <?php
                 foreach ($orders as $order) {
                     $order_date = date('d M', strtotime($order['datetime']));
-                    $time_left = round(((strtotime($order['datetime']) + 172800) - time()) / 60 / 60);
+                    $time_left = round(((strtotime($order['datetime']) + 154800) - time()) / 60 / 60);
                     $label_style = 'not-late';
                     if ($time_left < 12) {
                         $label_style = 'late';

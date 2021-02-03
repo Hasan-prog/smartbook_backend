@@ -73,7 +73,7 @@ $this->title = "Smartbook DMS – Yangi Kuryer";
             <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'address', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Manzil")?>
             </div>
-            <div class="intro-y col-span-12 sm:col-span-6">
+            <div class="intro-y col-span-12 sm:col-span-6" style="z-index: 50">
                 <div class="mb-2">Ishlidigan shahar</div>
                 <select class="tail-select w-full" name="Couriers[city_id]">
                     <?php
