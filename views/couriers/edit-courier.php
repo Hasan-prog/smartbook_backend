@@ -100,6 +100,7 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
                             <option <?= in_array('Planshet', $equip_arr) ? 'selected' : ''?> value="Planshet">Planshet</option>
                             <option <?= in_array('JPS', $equip_arr) ? 'selected' : ''?> value="JPS">JPS</option>
                             <option <?= in_array('Moshina', $equip_arr) ? 'selected' : ''?> value="Moshina">Moshina</option>
+                            <option <?= in_array('SIM', $equip_arr) ? 'selected' : ''?> value="Moshina">SIM</option>
                         <?php
                         ?>
                     </select>

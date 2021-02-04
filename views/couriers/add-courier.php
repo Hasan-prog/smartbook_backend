@@ -94,6 +94,7 @@ $this->title = "Smartbook DMS – Yangi Kuryer";
                         <option value="Planshet">Planshet</option>
                         <option value="JPS">JPS</option>
                         <option value="Moshina">Moshina</option>
+                        <option value="SIM">SIM</option>
                     </select>
                 </div>
             </div>
