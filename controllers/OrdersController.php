@@ -9,6 +9,8 @@ use app\models\Orders;
 use app\models\Products;
 use app\models\Cities;
 use app\models\Couriers;
+use app\models\Operators;
+use app\models\Districts;
 
 class OrdersController extends AppController
 {
@@ -71,6 +73,8 @@ class OrdersController extends AppController
         $products = Products::find()->asArray()->where(['view' => 1])->all();
         $cities = Cities::find()->asArray()->where(['view' => 1])->all();
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->all();
+        $operators = Operators::find()->asArray()->where(['view' => 1])->all();
+        $districts = Districts::find()->asArray()->where(['view' => 1])->all();
         $client_model = new Clients();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -81,6 +85,7 @@ class OrdersController extends AppController
             $model->phone_number = $order['phone_number'];
             $model->product = $order['product'];
             $model->city_id = $order['city_id'];
+            $model->operator_id = $order['operator_id'];
             $model->address = $order['address'];
             $model->payment_method = $order['payment_method'];
             $model->courier_id = $order['courier_id'];
@@ -92,7 +97,6 @@ class OrdersController extends AppController
             
             // Building a new client
             $client_search = Clients::find()->where(['name' => $order['name'], 'phone_number' => $order['phone_number']])->limit(1)->one();
-            $current_client_id = $client_search->client_id;
             if (empty($client_search)) {
                 $client_model->client_id = $order['client_id'];
                 $client_model->name = $order['name'];
@@ -102,20 +106,23 @@ class OrdersController extends AppController
                 $client_model->save();
                 $c_id = $client_model->id;
             } else {
+                $current_client_id = $client_search->client_id;
                 $client_search->client_id = $current_client_id;
                 $client_search->name = $order['name'];
                 $client_search->phone_number = $order['phone_number'];
                 $client_search->address = $order['address'];
                 $client_search->orders_id = $client_search->orders_id . ',' . $model->id; // if new just paste a current generated id, if existing add by ','
                 $client_search->view = 1;
-                $client_search->save();
+                if ($client_search->save()) {
+                    Yii::$app->session->setFlash('success', "Yangi buyurtma qoshilgan!");
+                }
                 $c_id = $client_search->id;
             }
             
             // return $this->redirect('/orders/client-list?client=' . $c_id);
         }
 
-        return $this->render('add-order', compact('model', 'products', 'cities', 'couriers'));
+        return $this->render('add-order', compact('model', 'products', 'cities', 'couriers', 'operators', 'districts'));
     }
 
     public function actionEditOrder() {

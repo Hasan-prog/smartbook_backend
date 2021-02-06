@@ -34,9 +34,10 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
         <div class="col-span-12 xl:col-span-4">
             <div class="border border-gray-200 dark:border-dark-5 rounded-md p-5 image-upload">
                 <div class="w-40 h-40 relative image-fit mx-auto">
-                    <img class="rounded-md" alt="Midone Tailwind HTML Admin Template" src="<?= $courier_page['photo']?>">
-                    <div
-                        class="w-5 h-5 flex items-center justify-center absolute rounded-full text-white cursor-pointer zoom-in bg-theme-6 right-0 top-0 -mr-2 -mt-2 remove-photo" style="display: none">
+                    <img class="rounded-md" alt="Midone Tailwind HTML Admin Template"
+                        src="<?= $courier_page['photo']?>">
+                    <div class="w-5 h-5 flex items-center justify-center absolute rounded-full text-white cursor-pointer zoom-in bg-theme-6 right-0 top-0 -mr-2 -mt-2 remove-photo"
+                        style="display: none">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                             class="feather feather-x w-4 h-4">
@@ -70,37 +71,51 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
                 <?= $form->field($model, 'address', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Manzil")?>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
-                <div class="mb-2">Ishlidigan shahar</div>
-                <select class="tail-select w-full" name="Couriers[city_id]">
-                    <?php
-                foreach ($cities as $city) {
-                    if ($courier_page['cities']['id'] == $city['id']) {
-                        ?>
-                        <option selected value="<?= $city['id']?>"><?= $city['name']?></option>
+                <div class="mb-2">Ishlaydigan shahri va manzillar</div>
+                <div class="city-district-select">
+                    <select class="tail-select w-full city-select" name="Couriers[city_id]">
                         <?php
-                    } else {
+                        foreach ($cities as $city) {
+                            if ($courier_page['cities']['id'] == $city['id']) {
+                                ?>
+                                <option selected value="<?= $city['id']?>"><?= $city['name']?></option>
+                                <?php
+                            } else {
+                                ?>
+                                <option value="<?= $city['id']?>"><?= $city['name']?></option>
+                                <?php
+                            }
+
+                        }
                         ?>
-                        <option value="<?= $city['id']?>"><?= $city['name']?></option>
+                    </select>
+                    <select data-placeholder="Hamma tumanlar..." id="equipments"
+                        class="tail-select w-full district-select" id="couriers-equipment"
+                        name="Couriers[districts_id][]" multiple>
                         <?php
-                    }
-
-                }
-                ?>
-                </select>
-
+                        foreach ($districts as $district) {
+                        ?>
+                            <option value="<?= $district['id']?>" <?= $courier_page['districts_id'] == $district['id'] ? 'selected' : ''?> data-city="<?= $district['city_id']?>">
+                                <?= $district['name']?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
                 <div class="intro-y col-span-12 sm:col-span-6" style="z-index: 50">
                     <div class="mb-2">Uskunalar</div>
-                    <select data-placeholder="Shu kuryerni uskunalarni tanlang" id="equipments"
-                        class="tail-select w-full" id="couriers-equipment" name="Couriers[equipment][]" multiple>
+                    <select data-placeholder="Kuryerga nima berilgan" id="equipments" class="tail-select w-full"
+                        id="couriers-equipment" name="Couriers[equipment][]" multiple>
                         <?php
                         $all_equip = ['Planshet', 'JPS', 'Moshina'];
                         ?>
-                            <option <?= in_array('Planshet', $equip_arr) ? 'selected' : ''?> value="Planshet">Planshet</option>
-                            <option <?= in_array('JPS', $equip_arr) ? 'selected' : ''?> value="JPS">JPS</option>
-                            <option <?= in_array('Moshina', $equip_arr) ? 'selected' : ''?> value="Moshina">Moshina</option>
-                            <option <?= in_array('SIM', $equip_arr) ? 'selected' : ''?> value="Moshina">SIM</option>
+                        <option <?= in_array('Planshet', $equip_arr) ? 'selected' : ''?> value="Planshet">Planshet
+                        </option>
+                        <option <?= in_array('JPS', $equip_arr) ? 'selected' : ''?> value="JPS">JPS</option>
+                        <option <?= in_array('Moshina', $equip_arr) ? 'selected' : ''?> value="Moshina">Moshina</option>
+                        <option <?= in_array('SIM', $equip_arr) ? 'selected' : ''?> value="Moshina">SIM</option>
                         <?php
                         ?>
                     </select>
@@ -110,7 +125,8 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
                 <?= $form->field($model, 'salary', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Oylik")?>
             </div>
             <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">
-                <button class="button justify-center block bg-gray-200 text-gray-600 dark:bg-dark-1 dark:text-gray-300 clear-fields">O'chirish</button>
+                <button
+                    class="button justify-center block bg-gray-200 text-gray-600 dark:bg-dark-1 dark:text-gray-300 clear-fields">O'chirish</button>
                 <button type="submit"
                     class="button justify-center block bg-theme-1 text-white ml-2 add-courier">Qo'shish</button>
             </div>

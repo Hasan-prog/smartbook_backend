@@ -66,9 +66,8 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                     <div class="mb-4">
                         <label>Format</label>
                         <select class="tail-select w-full" name="Products[format]">
-                            <option value="kitob">Kitob</option>
-                            <option value="disk">Disk</option>
-                            <option value="to'liq to'plam">To'liq to'plam</option>
+                            <option value="kiril">Kiril</option>
+                            <option value="lotin">Lotin</option>
                         </select>
                     </div>
                     <div class="mb-4">

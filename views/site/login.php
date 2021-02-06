@@ -18,16 +18,15 @@ $this->params['breadcrumbs'][] = $this->title;
     <div
         class="mb-auto mx-auto xl:ml-20 lg:my-auto md:my-4 bg-white xl:bg-transparent px-5 sm:px-8 py-8 xl:p-0 rounded-md shadow-md xl:shadow-none w-full sm:w-3/4 lg:w-2/4 xl:w-auto">
         <div class="forms-tabs border-b mt-4 mb-5 pb-5">
-            <button class="button xl:w-32 bg-theme-1 text-white managers-form-toggle form-toggle">Menejer Kirish</button>
-            <button class="button xl:w-32 bg-gray-200 admins-form-toggle form-toggle">Admin Kirish</button>
-            <button class="button xl:w-32 bg-gray-200 courier-form-toggle form-toggle">Kuryer Kirish</button>
+            <button class="button xl:w-32 bg-theme-1 text-white managers-form-toggle form-toggle">Menejer</button>
+            <button class="button xl:w-32 bg-gray-200 admins-form-toggle form-toggle">Admin</button>
+            <button class="button xl:w-32 bg-gray-200 courier-form-toggle form-toggle">Kuryer</button>
         </div>
         <div class="managers-form login-form">
             <h2 class="intro-x font-bold text-2xl xl:text-3xl text-center xl:text-left">
             Menejer Kirish
             </h2>
-            <div class="intro-x mt-2 text-gray-500 xl:text-left text-center">Yangi menejer hisobini ro'yxatdan o'tkazish
-                uchun <br> administrator sizga yordam berishkerak</div>
+            <div class="intro-x mt-2 text-gray-500 xl:text-left text-center">Yangi menejerni ro'yxatdan o'tkazish uchun <br> administrator sizga yordam berishi kerak</div>
 
             <?php $form = ActiveForm::begin()?>
             <div class="intro-x mt-8">
@@ -75,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <h2 class="intro-x font-bold text-2xl xl:text-3xl text-center xl:text-left">
             Kuryer Kirish
             </h2>
-            <div class="intro-x mt-2 text-gray-500 xl:text-left text-center">Agar siz o'z hisobingizga kira olmasangiz, <br><a class="text-gray-700" href="tel:+998 (97) 444-67-17">+998 (97) 444-67-17</a> raqamiga qo'ng'iroq qiling</div>
+            <div class="intro-x mt-2 text-gray-500 xl:text-left text-center">Agar siz akkauntingizga kira olmasangiz, <br> <a class="text-gray-700" href="tel:+998 (97) 444-67-17">+998 (97) 444-67-17</a> raqamiga qo'ng'iroq qiling</div>
 
             <?php $form = ActiveForm::begin()?>
             <div class="intro-x mt-8">

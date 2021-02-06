@@ -27,6 +27,47 @@
 .opacity-50 {
     opacity: 0.5;
 }
+/* .city-district-select {
+    display: flex;
+} */
+.city-district-select .city-select .select-label {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.select-district .seperator {
+    width: 100%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.15);
+    margin-bottom: 8px;
+}
+.districts-list {
+    padding-bottom: 4px;
+    display: none;
+}
+.districts-list .qty {
+    float: right;
+    font-weight: 500;
+}
+.districts-list .qty:last-child {
+    padding-bottom: 8px;
+}
+.districts-list .list-option {
+    text-align: left;
+    display: block;
+    padding: 8px 0; 
+}
+.select-district .back-button {
+    padding: 0px 12px 0px 12px;
+    text-align: center;
+}
+.select-district .collapse-districts {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.city-district-select .district-select .select-label {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
 .select-handle-single {
     display: inline-block;
     margin-right: 5px;
@@ -266,6 +307,12 @@
     .month-info * {
         white-space: nowrap;
         font-size: 0.875rem!important;
+    }
+    .order-card__phone > a:first-child {
+        margin-left: 0!important;
+    }
+    .order-card__phone svg {
+        display: none;
     }
 }
 

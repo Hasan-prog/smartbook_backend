@@ -74,22 +74,32 @@ $this->title = "Smartbook DMS – Yangi Kuryer";
                 <?= $form->field($model, 'address', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Manzil")?>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6" style="z-index: 50">
-                <div class="mb-2">Ishlidigan shahar</div>
-                <select class="tail-select w-full" name="Couriers[city_id]">
+                <div class="mb-2">Ishlaydigan shahri va manzillar</div>
+                <div class="city-district-select">
+                    <select class="tail-select w-full city-select" name="Couriers[city_id]">
                     <?php
-                foreach ($cities as $city) {
+                    foreach ($cities as $city) {
                     ?>
-                    <option value="<?= $city['id']?>"><?= $city['name']?></option>
+                        <option value="<?= $city['id']?>"><?= $city['name']?></option>
                     <?php
-                }
-                ?>
-                </select>
-
+                    }
+                    ?>
+                    </select>
+                    <select data-placeholder="Hamma tumanlar..." id="equipments" class="tail-select w-full district-select" id="couriers-equipment" name="Couriers[districts_id][]" multiple>
+                        <?php
+                    foreach ($districts as $district) {
+                    ?>
+                        <option value="<?= $district['id']?>" data-city="<?= $district['city_id']?>"><?= $district['name']?></option>
+                    <?php
+                    }
+                    ?>
+                    </select>
+                </div>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
                 <div class="intro-y col-span-12 sm:col-span-6" style="z-index: 50">
                     <div class="mb-2">Uskunalar</div>
-                    <select data-placeholder="Shu kuryerni uskunalarni tanlang" id="equipments"
+                    <select data-placeholder="Kuryerga nima berilgan" id="equipments"
                         class="tail-select w-full" id="couriers-equipment" name="Couriers[equipment][]" multiple>
                         <option value="Planshet">Planshet</option>
                         <option value="JPS">JPS</option>

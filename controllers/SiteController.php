@@ -52,6 +52,7 @@ class SiteController extends AppController
         return [
             'error' => [
                 'class' => 'yii\web\ErrorAction',
+                'layout' => 'smartbook_error',
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',

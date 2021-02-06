@@ -21,8 +21,8 @@ $this->title = "Smartbook DMS – Shaharlar";
                         <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Natija</label>
                         <select class="input w-full border col-span-4 filter-range" name="worker_id"
                             id="tabulator-html-filter-field">
-                            <option value="monthly" selected="">Oyli</option>
-                            <option value="daily">Kunli</option>
+                            <option value="monthly" selected="">Oylik</option>
+                            <option value="daily">Kunlik</option>
                             <option value="annual">Yillik</option>
                             <option value="overall">Jami</option>
                         </select>
@@ -40,6 +40,7 @@ $this->title = "Smartbook DMS – Shaharlar";
                 // die;
                 foreach ($cities as $city) {
                     $couriers = $city['couriers'];
+                    $couriers_routing = '';
                     if (count($couriers) > 1) {
                         $couriers_routing = '-courier';
                         $courier_id = '&courier=' . $couriers[0]['id'];
@@ -76,49 +77,51 @@ $this->title = "Smartbook DMS – Shaharlar";
                                     <div class="mr-4 flex items-center">
                                         <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div>
                                         <?php 
-                                        $i = 0;
-                                        $o = 0;
-                                        $daily_success = 0;
-                                        $daily = 0;
-                                        $monthly_success = 0;
-                                        $monthly = 0;
-                                        $annual_success = 0;
-                                        $annual = 0;
-                                        $overall_success = 0;
-                                        $overall = 0;
-                                        foreach ($city['orders'] as $order) {
-                                            
-                                            // Getting daily
-                                            if (date('d', strtotime($order['datetime'])) == date('d', time() + 19200)) {
-                                                if ($order['status'] == 'delivered') {
-                                                    $daily_success++;
-                                                }
-                                                $daily++;
-                                            }
-                                            
-                                            // Getting monthly
-                                            if (date('m', strtotime($order['datetime'])) == date('m')) {
-                                                if ($order['status'] == 'delivered') {
-                                                    $monthly_success++;
-                                                }
-                                                $monthly++;
-                                            }
+                                            $i = 0;
+                                            $o = 0;
+                                            $daily_success = 0;
+                                            $daily = 0;
+                                            $monthly_success = 0;
+                                            $monthly = 0;
+                                            $annual_success = 0;
+                                            $annual = 0;
+                                            $overall_success = 0;
+                                            $overall = 0;
+                                            if (!empty($city['couriers'])) {
+                                                foreach ($city['orders'] as $order) {
+                                                    
+                                                    // Getting daily
+                                                    if (date('d', strtotime($order['datetime'])) == date('d', time() + 19200)) {
+                                                        if ($order['status'] == 'delivered') {
+                                                            $daily_success++;
+                                                        }
+                                                        $daily++;
+                                                    }
+                                                    
+                                                    // Getting monthly
+                                                    if (date('m', strtotime($order['datetime'])) == date('m')) {
+                                                        if ($order['status'] == 'delivered') {
+                                                            $monthly_success++;
+                                                        }
+                                                        $monthly++;
+                                                    }
 
-                                            // Getting annual
-                                            if (date('y', strtotime($order['datetime'])) == date('y')) {
-                                                if ($order['status'] == 'delivered') {
-                                                    $annual_success++;
+                                                    // Getting annual
+                                                    if (date('y', strtotime($order['datetime'])) == date('y')) {
+                                                        if ($order['status'] == 'delivered') {
+                                                            $annual_success++;
+                                                        }
+                                                        $annual++;
+                                                    }
+
+                                                    // Getting annual
+                                                    if ($order['status'] == 'delivered') {
+                                                        $overall_success++;
+                                                    }
+                                                    $overall++;
+
                                                 }
-                                                $annual++;
                                             }
-
-                                            // Getting annual
-                                            if ($order['status'] == 'delivered') {
-                                                $overall_success++;
-                                            }
-                                            $overall++;
-
-                                        }
                                         
                                         ?> 
                                         <span data-filter="range" class="daily"><?= $daily_success?>&nbsp;</span>

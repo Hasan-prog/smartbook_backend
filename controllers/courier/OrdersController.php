@@ -15,13 +15,60 @@ class OrdersController extends AppCourierController
         if (Yii::$app->request->isAjax) {
             $id = Yii::$app->request->post('id');
             $status = Yii::$app->request->post('status');
+            $courier_id = Yii::$app->request->post('courier_id');
+            $order_str = Yii::$app->request->post('order_str');
             $model = Orders::findOne($id);
             $model->status = $status;
+
+            // Edit how much the selected courier left
+            if ($status == 'delivered') {
+                $courier = Couriers::findOne($courier_id);
+                if ($courier['qty_left'] == 0) {
+                    $courier->qty_left = $order_str;
+                    $courier->save();
+                } else {
+                    $courier_items = explode('/', $courier['qty_left']);
+                    foreach ($courier_items as $key => $item) {
+                        $courier_items[$key] = explode(':', $item);
+                    }
+                    // Explode sent items from the form
+                    $model_items = explode('/', $order_str);
+                    foreach ($model_items as $key => $item) {
+                        $model_items[$key] = explode(':', $item);
+        
+                        // Search same item in the courier's stock
+                        foreach ($courier_items as $item) {
+                            if (in_array($model_items[$key][0], $item)) {
+                                $model_items[$key][1] = $item[1] - $model_items[$key][1]; // Sum their quantities
+                            } else {
+                                array_push($model_items, $item);
+                            }
+                        }
+                    }
+
+                    // Combine $model_items in string
+                    $model_items_str = '';
+                    foreach ($model_items as $item) {
+                        if ($model_items_str == '') {
+                            $model_items_str = $item[0] . ':' . $item[1];
+                        } else {
+                            $model_items_str .= '/' . $item[0] . ':' . $item[1];
+                        }
+                    }
+                    // debug($model_items_str); die;
+        
+                    $courier->qty_left = $model_items_str;
+                    $courier->save();
+                }
+            }
+
             $model->comment = Yii::$app->request->post('comment');
             $model->last_changed_time = date('Y-m-d h:m:s');
             $model->last_changed_user = Yii::$app->user->identity['name'];
             $model->save();
-            return;
+
+            // Decrease courier's qty_left on qty of the order
+            
         }
         $this->layout = 'smartbook_courier';
         Yii::$app->language = 'uz';
@@ -31,37 +78,35 @@ class OrdersController extends AppCourierController
             return $this->redirect('/courier/orders/logout');
         }
 
-        $orders = Orders::find()->asArray()->where(['courier_id' => $courier_id, 'status' => 'not-delivered'])->all();
+        $orders = Orders::find()->asArray()->with('district')->where(['courier_id' => $courier_id, 'status' => 'not-delivered'])->all();
+        $dstr_arr = [];
         $d_arr = [];
+        $no_dstr_orders = 0;
         function move_to_top(&$array, $key) {
             $temp = array($key => $array[$key]);
             unset($array[$key]);
             $array = $temp + $array;
         }
-        foreach ($orders as $order) {
-            if ($order['status'] == 'not-delivered') {
-                $d['day'] = date('d', strtotime($order['datetime']));
-                $d['month'] = date('M', strtotime($order['datetime']));
-                $d['month_i'] = date('m', strtotime($order['datetime']));
-                $d['year_i'] = date('Y', strtotime($order['datetime']));
-                $d['datetime'] = $order['datetime'];
-                array_push($d_arr, $d);
+        foreach ($orders as $key => $order) {
+            $d['day'] = date('d', strtotime($order['datetime']));
+            $d['month'] = date('M', strtotime($order['datetime']));
+            $d['month_i'] = date('m', strtotime($order['datetime']));
+            $d['year_i'] = date('Y', strtotime($order['datetime']));
+            $d['datetime'] = $order['datetime'];
+            array_push($d_arr, $d);
+
+            if ($order['district_id'] != null) {
+                if (!isset($dstr_arr[$order['district']['id']])) {
+                    $dstr_arr[$order['district']['id']] = $order['district'];
+                    $dstr_arr[$order['district']['id']]['qty'] = 1;
+                } else {
+                    $dstr_arr[$order['district']['id']]['qty'] += 1;
+                }
+            } else {
+                // the orde doesn't have district   
             }
+            $no_dstr_orders++;
         }
-
-        // Clear repeated days
-        // if (!empty($d_arr)) {
-        //     foreach ($d_arr as $key => $data) {
-        //         $day = $data['day'];
-        //         $taken_key = $key;
-        //         foreach ($d_arr as $key_2 => $data_2) {
-        //             if ($data_2['day'] == $day && $taken_key != $key_2) {
-        //                 unset($d_arr[$key_2]);
-        //             }
-        //         }
-        //     }
-        // }
-
 
         usort($d_arr, function($a, $b) {
         $ad = $a['datetime'];
@@ -76,7 +121,7 @@ class OrdersController extends AppCourierController
         // debug($d_arr); die;
 
 
-        return $this->render('current-orders', compact('orders', 'd_arr'));
+        return $this->render('current-orders', compact('orders', 'd_arr', 'dstr_arr', 'no_dstr_orders'));
     }
 
     public function actionMonthlyList() {

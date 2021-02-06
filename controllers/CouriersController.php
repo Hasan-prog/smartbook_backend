@@ -6,6 +6,7 @@ use app\controllers\AppController;
 use Yii;
 use app\models\Couriers;
 use app\models\Cities;
+use app\models\Districts;
 use yii\web\UploadedFile;
 
 class CouriersController extends AppController
@@ -32,6 +33,7 @@ class CouriersController extends AppController
         // Get courier info
         $id = Yii::$app->request->get('id');
         $courier_page = Couriers::find()->asArray()->with('cities')->where(['id' => $id])->limit(1)->one();
+        $districts = Districts::find()->asArray()->all();
 
         // Parse equipment into array
         $equip_arr = explode(',', $courier_page['equipment']);
@@ -67,6 +69,17 @@ class CouriersController extends AppController
                 }
             }
 
+            // Parse districts array into string
+            $dstr_arr = $courier['districts_id'];
+            $dstr_str = '';
+            foreach ($dstr_arr as $dstr) {
+                if ($dstr_str != '') {
+                    $dstr_str .= ',' . $dstr;
+                } else {
+                    $dstr_str = $dstr;
+                }
+            }
+
             // Photo upload 
             $model->photo = UploadedFile::getInstance($model, 'photo');
             if ($model->photo != null) {
@@ -81,6 +94,9 @@ class CouriersController extends AppController
             // Fill up the model
             if (!empty($courier['equipment'])) {
                 $model->equipment = $equip_str;
+            }
+            if (!empty($courier['districts_id'])) {
+                $model->districts_id = $dstr_str;
             }
             $model->name = $courier['name'];
             $model->login = $courier['login'];
@@ -98,12 +114,13 @@ class CouriersController extends AppController
             return $this->redirect('/couriers');
         }
 
-        return $this->render('edit-courier', compact('model', 'cities', 'courier_page', 'equip_arr'));
+        return $this->render('edit-courier', compact('model', 'cities', 'courier_page', 'equip_arr', 'districts'));
     }
 
     public function actionAddCourier() {
         $model = new Couriers();
         $cities = Cities::find()->asArray()->all();
+        $districts = Districts::find()->asArray()->all();
 
         if ($model->load(Yii::$app->request->post())) {
             
@@ -126,6 +143,17 @@ class CouriersController extends AppController
                 $model->equipment = "";
             }
 
+            // Parse districts array into string
+            $dstr_arr = $courier['districts_id'];
+            $dstr_str = '';
+            foreach ($dstr_arr as $dstr) {
+                if ($dstr_str != '') {
+                    $dstr_str .= ',' . $dstr;
+                } else {
+                    $dstr_str = $dstr;
+                }
+            }
+
             // Photo upload 
             $model->photo = UploadedFile::getInstance($model, 'photo');
             $photo_name = $model->photo->name;
@@ -134,7 +162,12 @@ class CouriersController extends AppController
             
          
             // Fill up the model
-            $model->equipment = $equip_str;
+            if (!empty($courier['equipment'])) {
+                $model->equipment = $equip_str;
+            }
+            if (!empty($courier['districts_id'])) {
+                $model->districts_id = $dstr_str;
+            }
             $model->name = $courier['name'];
             $model->login = $courier['login'];
             $model->password = Yii::$app->getSecurity()->generatePasswordHash($courier['password']);
@@ -142,12 +175,11 @@ class CouriersController extends AppController
             $model->address = $courier['address'];
             $model->city_id = $courier['city_id'];
             $model->salary = $courier['salary'];
-            // debug($model->photo->name); die;
-            // $model->photo = $model->photo->name;
+            debug($model); die;
             $model->save();
             return $this->redirect('/couriers');
         }
-        return $this->render('add-courier', compact('model', 'cities'));
+        return $this->render('add-courier', compact('model', 'cities', 'districts'));
     }
 
 }

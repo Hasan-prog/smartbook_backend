@@ -21,7 +21,7 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlarni Ozgartirish";
 <div class="intro-y box pb-10 pt-3 sm:pb-20 sm:pt-3 mt-5">
     <div class="px-5 mt-10">
         <div class="font-medium text-center text-lg">Berilgan Mahsulotlarni Ozgartirish</div>
-        <div class="text-gray-600 text-center mt-2">ID: <?= $model->id?> | Berilgan: <?= date('d M, Y – h:m', strtotime($model->datetime))?></div>
+        <div class="text-gray-600 text-center mt-2">ID: <?= $model->id?> | Berilgan: <?= date('d M, Y – h:i', strtotime($model->datetime))?></div>
     </div>
     <div class="px-5 sm:px-20 mt-10 pt-10 border-t border-gray-200 dark:border-dark-5">
         <?php $form = ActiveForm::begin()?>

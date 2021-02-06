@@ -17,7 +17,99 @@ class CitiesController extends AppController
     }
 
     public function actionDailyList() {
+
         if (Yii::$app->request->isAjax) {
+            $courier_id = Yii::$app->request->post('courier_id');
+            $courier = Couriers::findOne($courier_id);
+            
+            // Edit how much the selected courier left – DECREASE
+            if (Yii::$app->request->post('status') == 'delivered') {
+                $order_str = Yii::$app->request->post('order_str');
+
+                if ($courier['qty_left'] == 0) {
+                    $courier->qty_left = $order_str;
+                    $courier->save();
+                } else {
+                    $courier_items = explode('/', $courier['qty_left']);
+                    foreach ($courier_items as $key => $item) {
+                        $courier_items[$key] = explode(':', $item);
+                    }
+                    // Explode sent items from the form
+                    $model_items = explode('/', $order_str);
+                    foreach ($model_items as $key => $item) {
+                        $model_items[$key] = explode(':', $item);
+        
+                        // Search same item in the courier's stock
+                        foreach ($courier_items as $item) {
+                            if (in_array($model_items[$key][0], $item)) {
+                                $model_items[$key][1] = $item[1] - $model_items[$key][1]; // Sum their quantities
+                            } else {
+                                array_push($model_items, $item);
+                            }
+                        }
+                    }
+
+                    // Combine $model_items in string
+                    $model_items_str = '';
+                    foreach ($model_items as $item) {
+                        if ($model_items_str == '') {
+                            $model_items_str = $item[0] . ':' . $item[1];
+                        } else {
+                            $model_items_str .= '/' . $item[0] . ':' . $item[1];
+                        }
+                    }
+                    // debug($model_items_str); die;
+        
+                    $courier->qty_left = $model_items_str;
+                    $courier->save();
+                }
+            }
+
+            if (Yii::$app->request->post('status') == 'not-delivered' || Yii::$app->request->post('status') == 'canceled') {
+                $order_str = Yii::$app->request->post('order_str');
+                $add_item = Yii::$app->request->post('add_item');
+
+                if ($add_item == 1) {
+                    if ($courier['qty_left'] == 0) {
+                        $courier->qty_left = $order_str;
+                        $courier->save();
+                    } else {
+                        $courier_items = explode('/', $courier['qty_left']);
+                        foreach ($courier_items as $key => $item) {
+                            $courier_items[$key] = explode(':', $item);
+                        }
+                        // Explode sent items from the form
+                        $model_items = explode('/', $order_str);
+                        foreach ($model_items as $key => $item) {
+                            $model_items[$key] = explode(':', $item);
+            
+                            // Search same item in the courier's stock
+                            foreach ($courier_items as $item) {
+                                if (in_array($model_items[$key][0], $item)) {
+                                    $model_items[$key][1] = $item[1] + $model_items[$key][1]; // Sum their quantities
+                                } else {
+                                    array_push($model_items, $item);
+                                }
+                            }
+                        }
+    
+                        // Combine $model_items in string
+                        $model_items_str = '';
+                        foreach ($model_items as $item) {
+                            if ($model_items_str == '') {
+                                $model_items_str = $item[0] . ':' . $item[1];
+                            } else {
+                                $model_items_str .= '/' . $item[0] . ':' . $item[1];
+                            }
+                        }
+                        // debug($model_items_str); die;
+            
+                        $courier->qty_left = $model_items_str;
+                        $courier->save();
+                    }
+                }
+            }
+
             if (Yii::$app->request->post('status') != null) {
                 $model = Orders::findOne(Yii::$app->request->post('order_id'));
                 $model->status = Yii::$app->request->post('status');
@@ -36,7 +128,7 @@ class CitiesController extends AppController
         }
         $request = Yii::$app->request;
         $date = $request->get('d');
-        $date_formated = date('d M, Y – h:m', strtotime($date));
+        $date_formated = date('d M, Y – h:i', strtotime($date));
         $city = $request->get('city');
         $city_id = $request->get('city_id');
         if ($request->get('courier_routing')) {
@@ -49,7 +141,7 @@ class CitiesController extends AppController
         if ($courier['view'] != 1) {
             return $this->goBack();
         }
-        $orders = Orders::find()->asArray()->with('manager')->where(['like', 'datetime', $date])->all();
+        $orders = Orders::find()->asArray()->with('operator')->where(['like', 'datetime', $date])->all();
         // Count overall day stats
         $delivered_qty = 0;
         $not_delivered_qty = 0;
@@ -96,12 +188,15 @@ class CitiesController extends AppController
         $current_month = date('m');
         $current_year = date('Y');
         $current_month_word = date('M');
-        $today = date('d');
+        $today = date('d', time() + 18000);
         $current_month_days = [];
         $months_with_orders = [];
         array_push($current_month_days, $today);
         while ($today > 1) {
             $today--;
+            if ($today < 10) {
+                $today = 0 . $today;
+            }
             array_push($current_month_days, $today);
         }
 
@@ -110,7 +205,6 @@ class CitiesController extends AppController
         }
         unset($months_with_orders[$current_month]);
 
-        // debug($months_with_orders); die;
         return $this->render('monthly-list',compact('couriers', 'orders', 'current_month', 'current_month_word', 'current_month_days', 'months_with_orders', 'current_year', 'city'));
     }
 
@@ -126,12 +220,15 @@ class CitiesController extends AppController
         $current_month = date('m');
         $current_year = date('Y');
         $current_month_word = date('M');
-        $today = date('d');
+        $today = date('d', time() + 18000);
         $current_month_days = [];
         $months_with_orders = [];
         array_push($current_month_days, $today);
         while ($today > 1) {
             $today--;
+            if ($today < 10) {
+                $today = 0 . $today;
+            }
             array_push($current_month_days, $today);
         }
 

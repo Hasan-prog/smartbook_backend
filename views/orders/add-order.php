@@ -20,6 +20,10 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
         <div class="text-gray-600 text-center mt-2">Yangi buyurtma yaratishda kuryer uni o'z ro'yxatida ko'radi.</div>
     </div>
     <div class="px-5 sm:px-20 mt-10 pt-10 border-t border-gray-200 dark:border-dark-5">
+    
+    <?php if (Yii::$app->session->hasFlash('success')): ?>
+        <div class="rounded-md flex items-center px-5 py-4 mb-2 bg-theme-9 text-white"> <i data-feather="check" class="w-6 h-6 mr-2"></i> <?= Yii::$app->session->getFlash('success') ?></div>
+    <?php endif; ?>
         <?php $form = ActiveForm::begin([
             'method' => 'post',
             'options' => [
@@ -29,27 +33,38 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
         ])?>
         <div class="grid grid-cols-12 gap-4 row-gap-5 mt-5">
             <div class="intro-y col-span-12 sm:col-span-6">
-                <div class="mb-2">Shahar</div>
-                <select class="tail-select w-full" name="Orders[city_id]">
+                <div class="mb-2">Shahar va Tumanlar</div>
+                <div class="city-district-select">
+                    <select class="tail-select w-full city-select" name="Orders[city_id]">
                     <?php
-                foreach ($cities as $city) {
+                    foreach ($cities as $city) {
+                        ?>
+                        <option value="<?= $city['id']?>" data-id="<?= $city['id']?>"><?= $city['name']?></option>
+                        <?php
+                    }
                     ?>
-                    <option value="<?= $city['id']?>"><?= $city['name']?></option>
-                    <?php
-                }
-                ?>
-                </select>
+                    </select>
+                    <select class="tail-select w-full district-select district-select-order" name="Orders[district_id]" >
+                        <?php
+                        foreach ($districts as $district) {
+                            ?>
+                                <option value="<?= $district['id']?>" data-city="<?= $district['city_id']?>"><?= $district['name']?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'client_id', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("ID")?>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
                 <div class="mb-2">Kuryer</div>
-                <select class="tail-select w-full" name="Orders[courier_id]">
+                <select class="tail-select w-full courier-select" name="Orders[courier_id]">
                 <?php
                 foreach ($couriers as $courier) {
                     ?>
-                    <option value="<?= $courier['id']?>"><?= $courier['name']?></option>
+                    <option value="<?= $courier['id']?>" data-city="<?= $courier['city_id']?>"><?= $courier['name']?></option>
                     <?php
                 }
                 ?>
@@ -77,7 +92,7 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                     <select class="tail-select w-full flex-8">
                         <?php foreach ($products as $product) {
                                 ?>
-                        <option value="<?= $product['name']?>, <?= $product['format']?>, 1 dona"
+                        <option value="<?= $product['id']?>,<?= $product['name']?>,<?= $product['format']?>:1"
                             data-id="<?= $product['id']?>" data-name="<?= $product['name']?>"
                             data-format="<?= $product['format']?>" data-price="<?= $product['price']?>">
                             <?= $product['name']?>, <?= $product['format']?></option>
@@ -88,17 +103,24 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                     <!-- Take val of selected option and add qty to it via js  product_id:price -->
                 </div>
             </div>
-
-
-
-
             <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'address', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Manzil")?>
             </div>
-
-
             <div class="intro-y col-span-12 sm:col-span-6">
-                <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'numeric', 'class' => 'input w-full border flex-1 overall', 'value' => 123])->label("Umumiy narh (Ozi hisoblangan)")?>
+                <div class="mb-2">Operator</div>
+                <select class="tail-select w-full" name="Orders[operator_id]">
+                    <?php
+                        foreach ($operators as $operator) {
+                            ?>
+                            <option value="<?= $operator['id']?>"><?= $operator['name']?></option>
+                            <?php
+                        }
+                    ?>
+                </select>
+
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'numeric', 'class' => 'input w-full border flex-1 overall', 'value' => 123])->label("Umumiy narx (Ozi hisoblangan)")?>
             </div>
             <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">
                 <button

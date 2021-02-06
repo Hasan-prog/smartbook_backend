@@ -12,6 +12,8 @@ $(document).ready(function () {
         $(this).hide();
     });
 
+    $('input:not(#orders-price):not(.qty)').val('');
+    $('.select-handle').click();
     // Clear fields button
     $('.clear-fields').click(function (e) {
         e.preventDefault();
@@ -25,7 +27,7 @@ $(document).ready(function () {
         var select_el = $(this).prevAll('select').find('option[selected=selected]'),
             select_el_id = $(select_el).data('id'),
             qty = $(this).val();
-        $(select_el).attr('value', $(select_el).data('name') + ' , ' + $(select_el).data('format') + ', ' + qty + ' dona');
+        $(select_el).attr('value', $(select_el).data('id') + ',' + $(select_el).data('name') + ',' + $(select_el).data('format') + ':' + qty);
         $('.overall').val($(select_el).data('price') * qty);
     });
     $('.add-history .qty').change(function () {
@@ -68,6 +70,17 @@ $(document).ready(function () {
     $('.status-dropdown .dropdown-box button').click(function () {
         var order_id = $(this).data('id');
         var dropdown_toggle = $('#' + order_id);
+        var order_str = $(this).data('order-str');
+        var courier_id = $(this).data('courier-id');
+        var add_item = 0;
+        
+        if ($(this).data('status') == 'not-delivered' || $(this).data('status') == 'canceled') {
+            if (confirm('Shu mahsulatni kuryer qogan mahsulotlarga qoshish keremi?')) {
+                var add_item = 1;
+            } else {
+                var add_item = 0;
+            }
+        }
 
         // Save variables
         var toggle_status = $(dropdown_toggle).data('status'),
@@ -100,7 +113,13 @@ $(document).ready(function () {
         $.ajax({
             method: "POST",
             url: "/cities/daily-list",
-            data: { order_id: order_id, status: $(dropdown_toggle).data('status') }
+            data: { order_id: order_id, status: $(dropdown_toggle).data('status'), order_str: order_str, courier_id: courier_id, add_item: add_item },
+            success: function (res) {
+                console.log(res);
+            },
+            error: function (xml) {
+                console.log(xml);
+            }
         })
             .done(function (msg) {
                 //   alert( "Data Saved: " + msg );
@@ -110,15 +129,27 @@ $(document).ready(function () {
     // Couriers buttons
     $('.delivered').click(function () {
         var this_el = $(this);
-        if (confirm('Shu malumot yetkazildimi?')) {
-            var id = $(this).data('id');
+        var comment = window.prompt('Shu malumot yetkazildimi? Holasez sharhni yozishiz boladi.');
+        if (comment != null) {
+            var id = $(this).data('id'),
+                courier_id = $(this).data('courier'),
+                order_str = $(this).data('order-str');
             $.ajax({
                 method: "POST",
                 url: "/courier/orders/index",
-                data: { id: id, status: 'delivered' }
+                data: { id: id, status: 'delivered', comment: comment, courier_id: courier_id, order_str: order_str },
+                success: function (res) {
+                    console.log(res);
+                    // If this card was last in this day, then remove hedaer
+                    if ($(this_el).closest('.day-list').find('.box').length <= 1) {
+                        $(this_el).closest('.day-list').remove();
+                    }
+
+                    // Remove order card
+                    $(this_el).parents('.order-card').remove();
+                }
             })
                 .done(function (msg) {
-                    $(this_el).parents('.order-card').remove();
                     //   alert( "Data Saved: " + msg );
                 });
         }
@@ -126,19 +157,20 @@ $(document).ready(function () {
 
     $('.canceled').click(function () {
         var this_el = $(this);
-        var comment = window.prompt('Shu malumot qaytargarmi? Sharhni yozing, nimaga qaytargan');
-        if (comment) {
-            var id = $(this).data('id');
+        var comment = window.prompt("Nima uchun kitob qaytarildi? Komment yozing.");
+        if (comment != null) {
+            var id = $(this).data('id'),
+                courier_id = $(this).data('courier'),
+                order_str = $(this).data('order-str');
             $.ajax({
                 method: "POST",
                 url: "/courier/orders/",
-                data: { id: id, status: 'canceled', comment: comment },
+                data: { id: id, status: 'canceled', comment: comment, courier_id: courier_id, order_str: order_str },
                 success: function () {
                     $(this_el).parents('.order-card').remove();
                 }
             })
                 .done(function (msg) {
-                    
                     //   alert( "Data Saved: " + msg );
                 });
         }
@@ -188,6 +220,7 @@ $(document).ready(function () {
                 url: url,
                 data: { id: id },
                 success: function (res) {
+                    console.log(res);
                     $(this_el).remove();
                 }
             });
@@ -356,6 +389,90 @@ $(document).ready(function () {
         });
     });
 
+    // Sort couriers when select a certain city
+    showCouriers($('.city-select'));
+    $('.city-select').change(function () {
+        showCouriers($(this));
+    });
+
+    function showCouriers(city_select) {
+        $('.dropdown-optgroup .dropdown-option').removeClass('selected');
+        var city_id = $(city_select).find('option[selected]').data('id');
+        $('.courier-select option').each(function (i) {
+            if ($(this).data('city') == city_id) {
+                $(this).attr('selected', 'selected');
+                $('.courier-select .label-inner').text($(this).text());
+                $('.dropdown-optgroup .dropdown-option').removeClass('selected');
+                $('.dropdown-optgroup .dropdown-option').each(function () {
+                    if ($(this).text() == $('.courier-select .label-inner').text()) {
+                        $(this).addClass('selected');
+                    }
+                })
+                return false;
+            } else {
+                $(this).removeAttr('selected');
+            }
+        });
+    }
+
+    // Change districts by selecting city
+    $('.city-select').change(function () {
+        showDistricts($(this).val());
+    });
+
+    showDistricts($('.city-select option[selected]').val());
+
+    function showDistricts(city_id) {
+        var dstr_arr = [];
+        var selected_dstr_arr = [];
+        $('.district-select option').each(function (i) {
+            $(this).removeAttr('selected');
+            if ($(this).data('city') != city_id) {
+                $(this).hide();
+            } else {
+                str = $(this).text().replace(/\s+/g,' ').trim();
+                dstr_arr.push(str);
+            }
+        });
+
+        if (dstr_arr != []) {
+            $('.district-select option').closest('select').next().find('.dropdown-option').each(function (i) {
+                if (dstr_arr.includes($(this).text())) {
+                    // leave this option
+                    $(this).show();
+                } else {
+                    // hide this option
+                    $(this).hide();
+                }
+            });
+        }
+    }
+
+    // Show a certain district's orders
+    $('.districts-list .list-option').click(function () {
+        var dstr_id = $(this).data('id');
+        $('.collapse-districts').text($(this).data('name'));
+        $('.order-card').each(function (i) {
+            if ($(this).data('district') != dstr_id) {
+                $(this).hide();
+            } else {
+                $(this).show();
+                $(this).closest('.day-list').show();
+            }
+            if ($(this).closest('.day-list').find('.order-card:visible').length == 0) {
+                $(this).closest('.day-list').hide();
+            }
+        });
+    });
+
+    $('.select-district .others').click(function () {
+        $('.order-card').each(function (i) {
+            $(this).show();
+            $(this).closest('.day-list').show();
+        });
+        $('.collapse-districts').text('Manzilni tanlang');
+    });
+
 });
 
 
@@ -384,5 +501,19 @@ $.extend($.expr[':'], {
     'containsi': function (elem, i, match, array) {
         return (elem.textContent || elem.innerText || '').toLowerCase()
             .indexOf((match[3] || "").toLowerCase()) >= 0;
+    }
+});
+
+$('.district-select-order .label-inner').text('Hamma tumanlar...');
+
+
+// Collapse districts
+$('.collapse-districts').click(function () {
+    if ($(this).data('collapse') == 'opened') {
+        $('.districts-list').slideUp(100);
+        $(this).data('collapse', 'closed');
+    } else {
+        $('.districts-list').slideDown(100);
+        $(this).data('collapse', 'opened');
     }
 });

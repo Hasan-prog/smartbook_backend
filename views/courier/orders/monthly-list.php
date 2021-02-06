@@ -1,3 +1,10 @@
+<?php
+
+use yii\helpers\Html;
+use yii\helpers\Url;
+$this->title = "Oyli Buyurtmalar";
+
+?>
     <!-- BEGIN: Content -->
     <div class="content">
         <div class="filters mb-6 py-4">
@@ -37,7 +44,7 @@
                         <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> 490 Umumiy
                     </div>
                     <div class="flex items-center py-2">
-                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
+                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytarilgan
                     </div>
                     <div class="flex items-center py-2">
                         <span class="text-gray-500 mr-2">Naqd:</span> 274 561 000 so'm
@@ -72,7 +79,7 @@
                                                     <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 20 Yetkazildi
                                                 </div>
                                                 <div class="mr-6 flex items-center">
-                                                    <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
+                                                    <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytarilgan
                                                 </div>
                                             </div>
                                         </td>

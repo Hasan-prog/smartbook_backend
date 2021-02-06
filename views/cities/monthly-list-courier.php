@@ -113,7 +113,7 @@ foreach ($orders as $order) {
                 <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazilgan
             </div>
             <div class="mr-6 flex items-center">
-                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
+                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytarilgan
             </div>
             <div class="mr-6 flex items-center">
                 <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
@@ -169,7 +169,6 @@ foreach ($orders as $order) {
                     <tbody>
                         <?php // Current month
                     foreach ($current_month_days as $day) {
-                        if (array_key_exists($day, $orders_by_days)) {
                             // Count stats
                             $delivered_qty = 0;
                             $not_delivered_qty = 0;
@@ -203,7 +202,7 @@ foreach ($orders as $order) {
                             ?>
                         <tr class="day-row">
                             <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
-                                <?= $day == date('d') ? ' <SPAN CLASS="TEXT-GRAY-500"><span class="text-gray-500">(BUGUN)</span></SPAN>' : ''?>
+                                <?= $day == date('d', time() + 18000) ? ' <SPAN CLASS="TEXT-GRAY-500"><span class="text-gray-500">(BUGUN)</span></SPAN>' : ''?>
                             </td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex text-gray-700">
@@ -213,7 +212,7 @@ foreach ($orders as $order) {
                                     </div>
                                     <div class="mr-6 flex items-center">
                                         <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?>
-                                        Qaytargan
+                                        Qaytarilgan
                                     </div>
                                     <div class="mr-6 flex items-center">
                                         <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
@@ -233,36 +232,7 @@ foreach ($orders as $order) {
                             </td>
                         </tr>
                         <?php
-                        } else {
-                        ?>
-                        <tr class="day-row">
-                            <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
-                                <?= $day == date('d') ? ' <span class="text-gray-500">(BUGUN)</span>' : ''?>
-                            </td>
-                            <td class="border-b dark:border-dark-5">
-                                <div class="flex text-gray-700">
-                                    <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 0 Yetkazilgan
-                                    </div>
-                                    <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="border-b dark:border-dark-5">0 so'm</td>
-                            <td class="border-b dark:border-dark-5">0 so'm</td>
-                            <td class="border-b dark:border-dark-5">0 so'm</td>
-                            <td class="border-b dark:border-dark-5">
-                                <div class="flex items-center justify-center">
-                                    <a class="flex items-center mr-5"
-                                        href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id?>">
-                                        <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php
                         }
-                    }
                     ?>
                     </tbody>
                 </table>
@@ -317,7 +287,7 @@ foreach ($months_with_orders as $month) {
                 <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazilgan
             </div>
             <div class="mr-6 flex items-center">
-                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
+                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytarilgan
             </div>
             <div class="mr-6 flex items-center">
                 <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
@@ -414,7 +384,7 @@ foreach ($months_with_orders as $month) {
                                         </div>
                                         <div class="mr-6 flex items-center">
                                             <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?>
-                                            Qaytargan
+                                            Qaytarilgan
                                         </div>
                                         <div class="mr-6 flex items-center">
                                             <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
@@ -446,7 +416,7 @@ foreach ($months_with_orders as $month) {
                                                 <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 0 Yetkazilgan
                                             </div>
                                             <div class="mr-6 flex items-center opacity-50">
-                                                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
+                                                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytarilgan
                                             </div>
                                             <div class="mr-6 flex items-center opacity-50">
                                                 <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> 0 Umumiy

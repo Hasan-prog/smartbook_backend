@@ -72,7 +72,7 @@
                             </div>
                             <div class="time-left ml-auto">
                                 <div class="order-card__time-left font-medium flex items-0 text-white flex justify-center items-center p-1 px-2 late-not-blink mt-5">
-                                    Qaytargan
+                                    Qaytarilgan
                                 </div>
                             </div>
                         </div>

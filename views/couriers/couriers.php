@@ -44,6 +44,7 @@ $this->title = "Smartbook DMS – Kuryerlar";
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Shahar</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Bugun sotilgan</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Oyli sotilgan</th>
+                            <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Dona qogan</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap text-right"></th>
                         </tr>
                     </thead>
@@ -60,7 +61,7 @@ $this->title = "Smartbook DMS – Kuryerlar";
                             </td>
                             <td class="border-b dark:border-dark-5">
                                 <span href="" class="font-medium whitespace-no-wrap"><?= $courier['name']?></span>
-                                <a href="tel: +998 (97) 444-67-17">
+                                <a href="tel: <?= $courier['phone_number']?>">
                                     <div class="text-gray-600 text-xs whitespace-no-wrap"><?= $courier['phone_number']?></div>
                                 </a>
                             </td>
@@ -74,28 +75,26 @@ $this->title = "Smartbook DMS – Kuryerlar";
                                         $daily_count = 0;
                                         $monthly_count = 0;
                                         $daily_delivered = 0;
-                                        $monthly_canceled = 0;
+                                        $monthly_delivered = 0;
                                         foreach ($courier['orders'] as $order) {
-                                            $currentDatetime = date("Y-m-d h:m:s");
-                                            $current_month = date("m");
-                                            $month = date("m", strtotime($order['datetime']));
-                                            // debug($current_month . "<br>" . $month); die;
-                                            $currentDatetime_seconds = strtotime($currentDatetime);
-                                            $orderDatetime_seconds = strtotime($order['datetime']);
-                                            if ($currentDatetime_seconds + 1700 > $orderDatetime_seconds && $currentDatetime_seconds - 86400 <= $orderDatetime_seconds) {
+                                            // Couting for $daily_count
+                                            if (date('d', strtotime($order['datetime'])) == date('d', time() + 18000)) {
                                                 $daily_count++;
+                                                // Couting for $daily_delivered
                                                 if ($order['status'] == 'delivered') {
                                                     $daily_delivered++;
-                                                }
-                                            } 
-                                            if ($currentDatetime_seconds + 1700 > $orderDatetime_seconds && $currentDatetime_seconds - 2592000 <= $orderDatetime_seconds && $current_month == $month) {
+                                                }   
+                                            }
+                                            // Couting for $monthly_count
+                                            if (date('m', strtotime($order['datetime'])) == date('m', time() + 18000)) {
                                                 $monthly_count++;
-                                                if ($order['status'] == 'canceled') {
-                                                    $monthly_canceled++;
-                                                }
+                                                // Couting for $monthly_delivered
+                                                if ($order['status'] == 'delivered') {
+                                                    $monthly_delivered++;
+                                                }   
                                             }
                                         }
-                                        echo $daily_count;
+                                        echo $daily_delivered;
                                         ?> yetkazildi
                                     </div>
                                     <div class="mr-6 flex items-center">
@@ -107,12 +106,29 @@ $this->title = "Smartbook DMS – Kuryerlar";
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex text-gray-700">
                                     <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $monthly_count?> yetkazildi
+                                        <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $monthly_delivered?> yetkazildi
                                     </div>
                                     <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $monthly_canceled?> qaytargan
+                                        <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $monthly_count?> buyurtma
                                     </div>
                                 </div>
+                            </td>
+                            <td class="border-b dark:border-dark-5">
+                                <?php
+                                $products = explode('/', $courier['qty_left']);
+                                foreach ($products as $product) {
+                                    $product_explode = explode(':', $product);
+                                    $product_explode['info'] = explode(',', $product_explode[0]);
+                                    unset($product_explode[0]);
+                                    $product_explode['qty'] = $product_explode[1];
+                                    unset($product_explode[1]);
+                                ?>
+                                    <div class="select-handle-single my-3" data-key="3" data-group="#">
+                                        <?= $product_explode['info'][1]?> ·
+                                        <?= $product_explode['qty']?> <?= $product_explode['info'][2]?></div>
+                                    <?php
+                                }
+                            ?>
                             </td>
                             <td class="border-b dark:border-dark-5 md:w-80">
                                 <div class="flex items-center justify-center">
@@ -123,8 +139,7 @@ $this->title = "Smartbook DMS – Kuryerlar";
                                 </div>
                             </td>
                         </tr>
-                        <?php }
-                                ?>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>

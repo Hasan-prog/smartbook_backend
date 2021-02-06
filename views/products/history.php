@@ -95,11 +95,11 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlar";
                         <div class="mb-4">
                             <label>Shahar</label>
                             <div class="mt-2">
-                                <select data-search="false" class="tail-select w-full" name="History[city_id]">
+                                <select data-search="false" class="tail-select w-full city-select" name="History[city_id]">
                                 <?php
                                 foreach ($cities as $city) {
                                     ?>
-                                    <option value="<?= $city['id']?>"><?= $city['name']?></option>
+                                    <option value="<?= $city['id']?>" data-id="<?= $city['id']?>"><?= $city['name']?></option>
                                     <?php
                                 }
                                 ?>
@@ -109,11 +109,11 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlar";
                         <div class="mb-4">
                             <label>Kuryer</label>
                             <div class="mt-2">
-                                <select data-search="false" class="tail-select w-full" name="History[courier_id]">
+                                <select data-search="false" class="tail-select w-full courier-select" name="History[courier_id]">
                                 <?php
                                 foreach ($couriers as $courier) {
                                     ?>
-                                    <option value="<?= $courier['id']?>"><?= $courier['name']?></option>
+                                    <option value="<?= $courier['id']?>" data-city="<?= $courier['city_id']?>"><?= $courier['name']?></option>
                                     <?php
                                 }
                                 ?>
@@ -208,7 +208,7 @@ $this->title = "Smartbook DMS – Berilgan Mahsulotlar";
                             }
                             ?>
                             </td>
-                            <td class="border-b dark:border-dark-5"><?= date('d M, Y – h:m', $timestamp)?></td>
+                            <td class="border-b dark:border-dark-5"><?= date('d M, Y – h:i', $timestamp)?></td>
                             <td class="border-b dark:border-dark-5"><a
                                     href="edit-courier.html"><?= $transfer['courier']['name']?></a></td>
                             <td class="border-b dark:border-dark-5"><?= $transfer['city']['name']?></td>

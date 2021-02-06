@@ -26,7 +26,7 @@ $this->title = "Smartbook DMS – " . $client['name'];
                 <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $not_delivered_qty?> Yetkazilmagan
             </div>
             <div class="mr-6 flex items-center">
-                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
+                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytarilgan
             </div>
             <div class="mr-6 flex items-center border-l pl-6">
                 <span class="text-gray-500 mr-2">Naqd:</span> <?= price_format($cash)?> so'm
@@ -85,7 +85,7 @@ $this->title = "Smartbook DMS – " . $client['name'];
                             <td class="border-b dark:border-dark-5"><?= payment_method_format($order['payment_method'])?></td>
                             <td class="border-b dark:border-dark-5"><?= $order['comment']?></td>
                             <td class="border-b dark:border-dark-5"><?= $order['manager']['name']?></td>
-                            <td class="border-b dark:border-dark-5"><?= date('d M, Y – h:m', strtotime($order['datetime']))?></td>
+                            <td class="border-b dark:border-dark-5"><?= date('d M, Y – h:i', strtotime($order['datetime']))?></td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="dropdown flex justify-end"> 
                                     <?= order_actions($order['status']);?>

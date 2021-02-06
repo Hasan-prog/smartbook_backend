@@ -64,9 +64,8 @@ $this->title = "Smartbook DMS – " . $model->name . ', ' . $model->format;
                     <div class="mb-4">
                         <label>Format</label>
                         <select class="tail-select w-full" name="Products[format]">
-                            <option value="kitob" <?= $model->format == 'kitob' ? 'selected="selected"' : ''?>>Kitob</option>
-                            <option value="disk" <?= $model->format == 'disk' ? 'selected="selected"' : ''?>>Disk</option>
-                            <option value="to'liq to'plam" <?= $model->format == 'to\'liq to\'plam' ? 'selected="selected"' : ''?>>To'liq to'plam</option>
+                            <option value="kiril" <?= $model->format == 'kiril' ? 'selected="selected"' : ''?>>Kiril</option>
+                            <option value="lotin" <?= $model->format == 'lotin' ? 'selected="selected"' : ''?>>Lotin</option>
                         </select>
                     </div>
                     <button type="submit" class="button w-20 bg-theme-1 text-white mt-3">Saqlash</button>

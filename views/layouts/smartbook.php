@@ -66,6 +66,13 @@ License: You must have a valid license purchased only from themeforest(the above
                 </a>
             </li>
             <li>
+                <a href="<?= URL::to(['operators/'])?>" class="menu">
+                    <div class="menu__icon"> <i data-feather="smile"></i> </div>
+                    <div class="menu__title"> Operatorlar
+                    </div>
+                </a>
+            </li>
+            <li>
                 <a href="<?= URL::to(['products/'])?>" class="menu">
                     <div class="menu__icon"> <i data-feather="list"></i> </div>
                     <div class="menu__title"> Mahsulotlar </div>
@@ -132,7 +139,7 @@ License: You must have a valid license purchased only from themeforest(the above
                             <a href="<?= URL::to(['site/profile'])?>"
                                 class="flex items-center block p-2 transition duration-300 ease-in-out hover:bg-theme-1 dark:hover:bg-dark-3 rounded-md">
                                 <i data-feather="user" class="w-4 h-4 mr-2"></i> Profil </a>
-                            <a href="<?= URL::to(['cities/'])?>"
+                            <a target="_blank" href="https://t.me/joinchat/H1Q2I3Qfpgx2qbBJ"
                                 class="flex items-center block p-2 transition duration-300 ease-in-out hover:bg-theme-1 dark:hover:bg-dark-3 rounded-md">
                                 <i data-feather="help-circle" class="w-4 h-4 mr-2"></i> Maslahatlar </a>
                         </div>
@@ -160,6 +167,7 @@ License: You must have a valid license purchased only from themeforest(the above
         $products_active = '';
         $clients_active = '';
         $hisotry_active = '';
+        $operators_active = '';
         $add_product = '';
 
         if ($current_controller == 'cities') {
@@ -186,7 +194,19 @@ License: You must have a valid license purchased only from themeforest(the above
         if ($current_controller == 'orders' && $current_action == 'clients') {
             $clients_active = 'top-menu--active';
         };
+        if ($current_controller == 'operators' && $current_action == 'index') {
+            $operators_active = 'top-menu--active';
+        };
+        if ($current_controller == 'operators' && $current_action == 'add-operator') {
+            $operators_active = 'top-menu--active';
+        };
+        if ($current_controller == 'operators' && $current_action == 'edit-operator') {
+            $operators_active = 'top-menu--active';
+        };
         if ($current_controller == 'orders' && $current_action == 'daily-list') {
+            $clients_active = 'top-menu--active';
+        };
+        if ($current_controller == 'orders' && $current_action == 'client-list') {
             $clients_active = 'top-menu--active';
         };
         if ($current_controller == 'orders' && $current_action == 'edit-order') {
@@ -208,6 +228,12 @@ License: You must have a valid license purchased only from themeforest(the above
                 <a href="<?= Url::to(['couriers/']); ?>" class="top-menu <?= $couriers_active?>">
                     <div class="top-menu__icon"> <i data-feather="users"></i> </div>
                     <div class="top-menu__title"> Kuryerlar </div>
+                </a>
+            </li>
+            <li>
+                <a href="<?= Url::to(['operators/']); ?>" class="top-menu <?= $operators_active?>">
+                    <div class="top-menu__icon"> <i data-feather="smile"></i> </div>
+                    <div class="top-menu__title"> Operatorlar </div>
                 </a>
             </li>
             <li>
