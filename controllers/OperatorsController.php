@@ -13,6 +13,7 @@ class OperatorsController extends AppController
 {
     
     public function actionIndex() {
+        
         if (Yii::$app->request->isAjax) {
             $id = Yii::$app->request->post('id');
             $model = Operators::findOne($id);
@@ -26,20 +27,25 @@ class OperatorsController extends AppController
     
     public function actionAddOperator() {
         $model = new Operators();
-        $current_photo = $model->photo;
+        $current_photo = '/web/images/placeholder.jpg';
 
         if ($model->load(Yii::$app->request->post())) {
 
             // Photo upload 
-            $model->photo = UploadedFile::getInstance($model, 'photo');
-            if ($model->photo != null) {
-                if ($model->upload()) {
-                    $photo_name = $model->photo->name;
-                    $model->photo = '/web/images/' . $photo_name;
+            if (UploadedFile::getInstance($model, 'photo') != null) {
+                $model->photo = UploadedFile::getInstance($model, 'photo');
+                if ($model->photo != null) {
+                    if ($model->upload()) {
+                        $photo_name = $model->photo->name;
+                        $model->photo = '/web/images/' . $photo_name;
+                    }
+                } else {
+                    $model->photo = $current_photo;
                 }
             } else {
                 $model->photo = $current_photo;
             }
+
                         
             $operator = Yii::$app->request->post('Operators');
             $model->name = $operator['name'];
@@ -47,7 +53,7 @@ class OperatorsController extends AppController
             $model->address = $operator['address'];
             $model->email = $operator['email'];
             $model->save();
-            return $this->refresh();
+            return $this->redirect('/operators/');
         }
         return $this->render('add-operator', compact('model'));
     }
@@ -76,7 +82,7 @@ class OperatorsController extends AppController
             $model->address = $operator['address'];
             $model->email = $operator['email'];
             $model->save();
-            return $this->refresh();
+            return $this->redirect('/operators/');
         }
         return $this->render('edit-operator', compact('model'));
     }

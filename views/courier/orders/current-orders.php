@@ -130,10 +130,10 @@ foreach ($d_arr as $d) {
                 <div class="card-section card-actions flex">
                     <button data-id="<?= $order['id']?>" data-courier="<?= $order['courier_id']?>"
                         data-order-str="<?= $order['product']?>"
-                        class="button w-1/2 bg-theme-9 text-white delivered">Yetkazilgan</button>
+                        class="button w-1/2 bg-theme-9 text-white delivered">Yetkazildi</button>
                     <button data-id="<?= $order['id']?>" data-courier="<?= $order['courier_id']?>"
                         data-order-str="<?= $order['product']?>"
-                        class="button w-1/2 bg-theme-6 text-white canceled">Qaytarilgan</button>
+                        class="button w-1/2 bg-theme-6 text-white canceled">Qaytarildi</button>
                 </div>
             </div>
             <?php

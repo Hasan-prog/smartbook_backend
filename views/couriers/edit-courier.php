@@ -124,6 +124,37 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
             <div class="intro-y col-span-12 sm:col-span-6">
                 <?= $form->field($model, 'salary', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Oylik")?>
             </div>
+            <?php
+            if ($no_items == false) {
+                ?>
+                <div class="intro-y col-span-12 sm:col-span-12 product-select mb-10 mt-10 p-10 bg-gray-200 border-radius-normal change-qty_left">
+                <label class="mb-2 block" for="couriers-password">Dona qogan</label>
+                    <?php
+                    $i = 0;
+                    $courier_items = explode('/', $model['qty_left']);
+                    foreach ($courier_items as $key => $item) {
+                        $item = explode(':', $item);
+                        $item['info'] = explode(',', $item[0]);
+                        $item['qty'] = $item[1];
+                        unset($item[0]);
+                        unset($item[1]);
+                        ?>
+                        <div data-show="true" class="flex item <?= $i == 0 ? 'first-product-select' : ''?><?= $i == count($courier_items) - 1 ? 'last-product-select' : ''?>">
+                            <input data-str-info="<?= $item['info'][0] . ',' . $item['info'][1] . ',' . $item['info'][2]?>" disabled type="text" class="input w-full border flex-8 select-label info bg-gray-100 disabled" name="" value="<?= $item['info'][1] . ', ' . $item['info'][2]?>">
+                            <input type="number" value="<?= $item['qty']?>" class="input w-full border qty" placeholder="Miqdori...">
+                            <div class="remove-product-select"><i data-feather="trash-2" class="w-5 h-5"></i> </div>
+                        </div>
+                        <?php
+                        $i++;
+                    }
+                    ?>
+                    <div class="flex hidden-select">
+                        <input value="<?= $model['qty_left']?>" type="text" class="input w-full border items-left-str" name="Couriers[qty_left]" placeholder="Miqdori...">
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
             <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">
                 <button
                     class="button justify-center block bg-gray-200 text-gray-600 dark:bg-dark-1 dark:text-gray-300 clear-fields">O'chirish</button>

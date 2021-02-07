@@ -12,7 +12,7 @@ $(document).ready(function () {
         $(this).hide();
     });
 
-    $('input:not(#orders-price):not(.qty)').val('');
+    $('#new_order input:not(#orders-price):not(.qty)').val('');
     $('.select-handle').click();
     // Clear fields button
     $('.clear-fields').click(function (e) {
@@ -472,6 +472,35 @@ $(document).ready(function () {
         });
         $('.collapse-districts').text('Manzilni tanlang');
     });
+
+    $('.change-qty_left .qty').change(function () {
+        var str = '';
+        $('.change-qty_left .item').each(function (i) {
+            if (str == '' && $(this).data('show') == true) {
+                str = $(this).find('.info').data('str-info') + ':' + $(this).find('.qty').val();
+            } else {
+                str = str + '/' + $(this).find('.info').data('str-info') + ':' + $(this).find('.qty').val();
+            }
+        });
+
+        $('.items-left-str').val(str);
+        
+    });
+
+    $('.change-qty_left .remove-product-select').click(function () {
+        $(this).parent('.item').remove();
+
+        var str = '';
+        $('.change-qty_left .item').each(function (i) {
+            if (str == '' && $(this).data('show') == true) {
+                str = $(this).find('.info').data('str-info') + ':' + $(this).find('.qty').val();
+            } else {
+                str = str + '/' + $(this).find('.info').data('str-info') + ':' + $(this).find('.qty').val();
+            }
+        });
+
+        $('.items-left-str').val(str);
+    })
 
 });
 

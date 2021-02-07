@@ -86,6 +86,7 @@ class OrdersController extends AppController
             $model->product = $order['product'];
             $model->city_id = $order['city_id'];
             $model->operator_id = $order['operator_id'];
+            $model->district_id = $order['district_id'];
             $model->address = $order['address'];
             $model->payment_method = $order['payment_method'];
             $model->courier_id = $order['courier_id'];

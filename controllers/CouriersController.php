@@ -34,6 +34,7 @@ class CouriersController extends AppController
         $id = Yii::$app->request->get('id');
         $courier_page = Couriers::find()->asArray()->with('cities')->where(['id' => $id])->limit(1)->one();
         $districts = Districts::find()->asArray()->all();
+        $old_dstr_id = $courier_page['districts_id'];
 
         // Parse equipment into array
         $equip_arr = explode(',', $courier_page['equipment']);
@@ -43,6 +44,18 @@ class CouriersController extends AppController
 
         $current_photo = $model->photo;
         $current_password = $model->password;
+
+        // Edit how much the selected courier left
+        $courier = $model;
+        $no_items = false;
+        if ($courier['qty_left'] == 0) {
+            $no_items = true;
+        } else {
+            $courier_items = explode('/', $courier['qty_left']);
+            foreach ($courier_items as $key => $item) {
+                $courier_items[$key] = explode(':', $item);
+            }
+        }
 
         // Update
         if ($model->load(Yii::$app->request->post())) {
@@ -70,14 +83,18 @@ class CouriersController extends AppController
             }
 
             // Parse districts array into string
-            $dstr_arr = $courier['districts_id'];
-            $dstr_str = '';
-            foreach ($dstr_arr as $dstr) {
-                if ($dstr_str != '') {
-                    $dstr_str .= ',' . $dstr;
-                } else {
-                    $dstr_str = $dstr;
+            if (isset($courier['districts_id'])) {
+                $dstr_arr = $courier['districts_id'];
+                $dstr_str = '';
+                foreach ($dstr_arr as $dstr) {
+                    if ($dstr_str != '') {
+                        $dstr_str .= ',' . $dstr;
+                    } else {
+                        $dstr_str = $dstr;
+                    }
                 }
+            } else {
+                $dstr_str = $old_dstr_id;
             }
 
             // Photo upload 
@@ -108,13 +125,13 @@ class CouriersController extends AppController
             $model->phone_number = $courier['phone_number'];
             $model->address = $courier['address'];
             $model->city_id = $courier['city_id'];
+            $model->qty_left = $courier['qty_left'];
             $model->salary = $courier['salary'];
-            // debug($model); die;
             $model->save();
             return $this->redirect('/couriers');
         }
 
-        return $this->render('edit-courier', compact('model', 'cities', 'courier_page', 'equip_arr', 'districts'));
+        return $this->render('edit-courier', compact('model', 'cities', 'courier_page', 'equip_arr', 'districts', 'courier_items', 'no_items'));
     }
 
     public function actionAddCourier() {
@@ -144,14 +161,18 @@ class CouriersController extends AppController
             }
 
             // Parse districts array into string
-            $dstr_arr = $courier['districts_id'];
-            $dstr_str = '';
-            foreach ($dstr_arr as $dstr) {
-                if ($dstr_str != '') {
-                    $dstr_str .= ',' . $dstr;
-                } else {
-                    $dstr_str = $dstr;
+            if (isset($courier['districts_id'])) {
+                $dstr_arr = $courier['districts_id'];
+                $dstr_str = '';
+                foreach ($dstr_arr as $dstr) {
+                    if ($dstr_str != '') {
+                        $dstr_str .= ',' . $dstr;
+                    } else {
+                        $dstr_str = $dstr;
+                    }
                 }
+            } else {
+                $dstr_str = null;
             }
 
             // Photo upload 
