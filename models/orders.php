@@ -34,6 +34,10 @@ class Orders extends ActiveRecord {
         return $this->hasOne(Managers::className(), ['id' => 'manager_id']);
     }
 
+    public function getCourier() {
+        return $this->hasOne(Couriers::className(), ['id' => 'courier_id']);
+    }
+
     public function getOperator() {
         return $this->hasOne(Operators::className(), ['id' => 'operator_id']);
     }

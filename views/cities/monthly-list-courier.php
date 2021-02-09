@@ -168,72 +168,72 @@ foreach ($orders as $order) {
                     </thead>
                     <tbody>
                         <?php // Current month
-                    foreach ($current_month_days as $day) {
-                            // Count stats
-                            $delivered_qty = 0;
-                            $not_delivered_qty = 0;
-                            $canceled_qty = 0;
-                            $overall_qty = 0;
-                            $cash = 0;
-                            $click = 0;
-                            $datetime = '';
-                            
-                            foreach ($orders as $order) {
-                                // debug(cutDay($order['datetime']) . ' / ' . $day);
-                                if (cutDay($order['datetime']) == $day && $order['courier_id'] == $courier_id) {
-                                    $datetime = $order['datetime'];
-                                    if ($order['status'] == 'delivered') {
-                                        $delivered_qty++;
-                                    } else if ($order['status'] == 'not-delivered') {
-                                        $not_delivered_qty++;
-                                    } else if ($order['status'] == 'canceled') {
-                                        $canceled_qty++;
-                                    }
-                                    $overall_qty++;
-                                    if ($order['payment_method'] == 'cash') {
-                                        $cash += $order['price'];
-                                        $payment_label = 'Naqd';
-                                    } else {
-                                        $click += $order['price'];
-                                        $payment_label = 'Click';
+                        foreach ($current_month_days as $day) {
+                                // Count stats
+                                $delivered_qty = 0;
+                                $not_delivered_qty = 0;
+                                $canceled_qty = 0;
+                                $overall_qty = 0;
+                                $cash = 0;
+                                $click = 0;
+                                $datetime = '';
+                                
+                                foreach ($orders as $order) {
+                                    // debug(cutDay($order['datetime']) . ' / ' . $day);
+                                    if (cutDay($order['datetime']) == $day) {
+                                        $datetime = $order['datetime'];
+                                        if ($order['status'] == 'delivered') {
+                                            $delivered_qty++;
+                                        } else if ($order['status'] == 'not-delivered') {
+                                            $not_delivered_qty++;
+                                        } else if ($order['status'] == 'canceled') {
+                                            $canceled_qty++;
+                                        }
+                                        $overall_qty++;
+                                        if ($order['payment_method'] == 'cash') {
+                                            $cash += $order['price'];
+                                            $payment_label = 'Naqd';
+                                        } else {
+                                            $click += $order['price'];
+                                            $payment_label = 'Click';
+                                        }
                                     }
                                 }
+                                ?>
+                            <tr class="day-row">
+                                <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
+                                    <?= $day == date('d', time() + 18000) ? ' <SPAN CLASS="TEXT-GRAY-500"><span class="text-gray-500">(BUGUN)</span></SPAN>' : ''?>
+                                </td>
+                                <td class="border-b dark:border-dark-5">
+                                    <div class="flex text-gray-700">
+                                        <div class="mr-6 flex items-center">
+                                            <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?>
+                                            Yetkazilgan
+                                        </div>
+                                        <div class="mr-6 flex items-center">
+                                            <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?>
+                                            Qaytarilgan
+                                        </div>
+                                        <div class="mr-6 flex items-center">
+                                            <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
+                                            Umumiy
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="border-b dark:border-dark-5"><?= price_format($cash)?> so'm</td>
+                                <td class="border-b dark:border-dark-5"><?= price_format($click)?> so'm</td>
+                                <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
+                                <td class="border-b dark:border-dark-5">
+                                    <div class="flex items-center justify-center">
+                                        <a class="flex items-center mr-5"
+                                            href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id?>">
+                                            <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php
                             }
-                            ?>
-                        <tr class="day-row">
-                            <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
-                                <?= $day == date('d', time() + 18000) ? ' <SPAN CLASS="TEXT-GRAY-500"><span class="text-gray-500">(BUGUN)</span></SPAN>' : ''?>
-                            </td>
-                            <td class="border-b dark:border-dark-5">
-                                <div class="flex text-gray-700">
-                                    <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?>
-                                        Yetkazilgan
-                                    </div>
-                                    <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?>
-                                        Qaytarilgan
-                                    </div>
-                                    <div class="mr-6 flex items-center">
-                                        <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?>
-                                        Umumiy
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="border-b dark:border-dark-5"><?= price_format($cash)?> so'm</td>
-                            <td class="border-b dark:border-dark-5"><?= price_format($click)?> so'm</td>
-                            <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
-                            <td class="border-b dark:border-dark-5">
-                                <div class="flex items-center justify-center">
-                                    <a class="flex items-center mr-5"
-                                        href="<?= url::to(['cities/daily-list?d=' . $current_year . '-' . $current_month . '-' . $day]) . '&city=' . $city['name'] . '&city_id=' . $city['id'] . '&courier_id=' . $courier_id?>">
-                                        <i class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php
-                        }
-                    ?>
+                        ?>
                     </tbody>
                 </table>
             </div>

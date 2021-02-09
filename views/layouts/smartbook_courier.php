@@ -29,10 +29,16 @@ AppAsset::register($this);
     <body class="app">
     <?php $this->beginBody() ?>
     <!-- BEGIN: Mobile Menu -->
-    <div class="mobile-menu md:hidden flex justify-center">
+    <div class="mobile-menu md:hidden flex align-center">
         <div class="mobile-menu-bar border-b-0">
-            <a href="index.html" class="mr-auto">
+            <a href="<?= Url::to('/courier/orders/monthly-list')?>" class="menu-item" style="">
+                <i data-feather="calendar" class="w-5 h-5"></i>
+            </a>
+            <a href="<?= Url::to('/courier/orders')?>" class="mr-auto logo">
                 <img alt="" width="150" src="/web/images/Logo@1x.png">
+            </a>
+            <a href="#" class="menu-item profile" style="">
+                <img src="<?= Yii::$app->user->identity['photo']?>" alt="">
             </a>
         </div>
     </div>
@@ -51,11 +57,6 @@ AppAsset::register($this);
     <!-- BEGIN: Content -->
     <?= $content?>
     <!-- END: Content -->
-    <!-- BEGIN: JS Assets-->
-    <script
-        src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=[" your-google-map-api"]&libraries=places"></script>
-    <!-- END: JS Assets-->
     <?php $this->endBody() ?>
 </body>
 </html>

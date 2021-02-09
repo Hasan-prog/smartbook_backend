@@ -2,84 +2,152 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\ActiveForm;
 //$articleName и $articleAlias передаем из экшена
 $this->params['breadcrumbs'][] = array(
-    'label'=> 'Buyurtmani O\'zgartirish', 
+    'label'=> 'Yangi Buyurtma', 
     'url'=>'#',
     'template' => "{link}",
 );
 
-$this->title = "Smartbook DMS – Buyurtmani O\'zgartirish";
+$this->title = "Smartbook DMS – Yangi Buyurtma";
+
+// Explode product info from the order
+$info = explode(':', $model->product);
+$info[0] = explode(',', $info[0]);
 
 ?>
-        <!-- BEGIN: Wizard Layout -->
-        <div class="intro-y box pb-10 pt-3 sm:pb-20 sm:pt-3 mt-5">
-            <div class="px-5 mt-10">
-                <div class="font-medium text-center text-lg">Xaridni O'zgartirish</div>
-                <div class="text-gray-600 text-center mt-2">Mijoz: Abdulloh Baxodirov</div>
-            </div>
-            <div class="px-5 sm:px-20 mt-10 pt-10 border-t border-gray-200 dark:border-dark-5">
-                <div class="grid grid-cols-12 gap-4 row-gap-5 mt-5">
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">Ism</div>
-                        <input type="text" class="input w-full border flex-1" placeholder="">
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">Telefon</div>
-                        <input type="text" class="input w-full border flex-1" placeholder="">
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6 product-select">
-                        <div class="mb-2">Mahsulotlar</div>
-                        <div class="flex first-product-select product-select-empty">
-                            <select class="tail-select w-full flex-8">
-                                <option value="1">Arab tili</option>
-                                <option value="2">Rus tili</option>
-                                <option value="3">Xitoy tili</option>
-                            </select>
-                            <input type="number" class="input w-full border qty" value="1" placeholder="Miqdori...">
-                        </div>
-                        <button class="button bg-gray-200 text-gray-600 one-more flex items-center justify-center"><i class="w-5 h-5 mr-2" data-feather="plus"></i> Mahsulot</button>
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">Narx</div>
-                        <input type="text" class="input w-full border flex-1" placeholder="">
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">Manzil</div>
-                        <input type="text" class="input w-full border flex-1" placeholder="">
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">To'lov uslubi</div>
-                        <select class="input w-full border flex-1">
-                            <option>Naqd</option>
-                            <option>Click</option>
-                        </select>
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">Sharh</div>
-                        <input type="text" class="input w-full border flex-1" placeholder="">
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">Operator</div>
-                        <input type="text" class="input w-full border flex-1" placeholder="">
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">Berilgan vaqt</div>
-                        <input type="text" class="input w-full border flex-1" placeholder="">
-                    </div>
-                    <div class="intro-y col-span-12 sm:col-span-6">
-                        <div class="mb-2">To'lov uslubi</div>
-                        <select class="input w-full border flex-1">
-                            <option>Naqd</option>
-                            <option>Click</option>
-                        </select>
-                    </div>
-                    <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">
-                        <button
-                            class="button justify-center block bg-gray-200 text-gray-600 dark:bg-dark-1 dark:text-gray-300">Orqaga</button>
-                        <button class="button justify-center block bg-theme-1 text-white ml-2">Saqlash</button>
-                    </div>
+<!-- BEGIN: Wizard Layout -->
+<div class="intro-y box pb-10 pt-3 sm:pb-20 sm:pt-3 mt-5">
+    <div class="px-5 mt-10">
+        <div class="font-medium text-center text-lg">Buyurtmani O'zgartirish</div>
+        <div class="text-gray-600 text-center mt-2">Buyurtmani faqat kerak bo'lganda o'zgartiring.</div>
+    </div>
+    <div class="px-5 sm:px-20 mt-10 pt-10 border-t border-gray-200 dark:border-dark-5">
+    
+        <?php $form = ActiveForm::begin([
+            'method' => 'post',
+            'options' => [
+                'id' => 'edit_order',
+                'enctype' => 'multipart/form-data',
+            ]
+        ])?>
+        <div class="grid grid-cols-12 gap-4 row-gap-5 mt-5">
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <div class="mb-2">Shahar va Tumanlar</div>
+                <div class="city-district-select">
+                    <select class="tail-select w-full city-select" name="Orders[city_id]">
+                    <?php
+                    foreach ($cities as $city) {
+                        ?>
+                        <option <?= $model->city_id == $city['id'] ? 'selected' : ''?> value="<?= $city['id']?>" data-id="<?= $city['id']?>"><?= $city['name']?></option>
+                        <?php
+                    }
+                    ?>
+                    </select>
+                    <select class="tail-select w-full district-select district-select-order" name="Orders[district_id]" >
+                    <option <?= $model->district_id == null || $model->district_id == 0 ? 'selected' : ''?> value="null" class="all-districts" selected data-city="<?= $city['id']?>">Hamma tumanlar...</option>
+                        <?php
+                        foreach ($districts as $district) {
+                            ?>
+                                <option <?= $model->district_id == $district['id'] ? 'selected' : ''?> value="<?= $district['id']?>" data-city="<?= $district['city_id']?>"><?= $district['name']?></option>
+                            <?php
+                        }
+                        ?>
+                    </select>
                 </div>
             </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <?= $form->field($model, 'client_id', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("ID")?>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <div class="mb-2">Kuryer</div>
+                <select class="tail-select w-full courier-select" name="Orders[courier_id]">
+                <?php
+                foreach ($couriers as $courier) {
+                    ?>
+                    <option <?= $model->courier_id == $courier['id'] ? 'selected' : ''?> value="<?= $courier['id']?>" data-city="<?= $courier['city_id']?>"><?= $courier['name']?></option>
+                    <?php
+                }
+                ?>
+                    <!-- When Shahar is selected only couriers from this city will be shows -->
+                </select>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <?= $form->field($model, 'name', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Ism")?>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <div class="mb-2">To'lov uslubi</div>
+                <select class="tail-select w-full" name="Orders[payment_method]">
+                    <option <?= $model->payment_method == 'cash' ? 'selected' : ''?> value="cash">Naqd</option>
+                    <option <?= $model->payment_method == 'click' ? 'selected' : ''?> value="click">Click</option>
+                    <option <?= $model->payment_method == 'click-paid' ? 'selected' : ''?> value="click-paid">Click To'langan</option>
+                </select>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6 phones-group">
+                <div class="mb-2">Telefon</div>
+                <div class="flex">
+                    <?php
+                        $phones = explode(',', $model['phone_number']);
+                        foreach ($phones as $phone) {
+                            ?>
+                            <input type="phone" class="input w-full border qty" value="<?= $phone?>">
+                            <?php
+                        }
+                    ?>
+                    <span class="add-new-phone bg-gray-200"><i data-feather="plus" class="w-5 h-5"></i></span>
+                </div>
+                <?= $form->field($model, 'phone_number', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1 hidden phone-number'])->label(false)?>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6 product-select add-product-select">
+                <div class="mb-2">Mahsulotlar</div>
+                <?= $form->field($model, 'product', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1 sr-only product-field'])->label('')?>
+                <div class="flex first-product-select product-select-empty">
+                    <select class="tail-select w-full flex-8" name="Orders[product]">
+                        <?php ;
+                        foreach ($products as $product) {
+                            ?>
+                        <option <?= $info[0][0] == $product['id'] ? 'selected' : ''?> value="<?= $product['id']?>,<?= $product['name']?>,<?= $product['format']?>:1"
+                            data-id="<?= $product['id']?>" data-name="<?= $product['name']?>"
+                            data-format="<?= $product['format']?>" data-price="<?= $product['price']?>">
+                            <?= $product['name']?>, <?= $product['format']?></option>
+                        <?php
+                        }?>
+                    </select>
+                    <input type="number" class="input w-full border qty" value="<?= $info[1]?>" placeholder="Miqdori...">
+                    <!-- Take val of selected option and add qty to it via js  product_id:price -->
+                </div>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <?= $form->field($model, 'address', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Manzil")?>
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <div class="mb-2">Operator</div>
+                <select class="tail-select w-full" name="Orders[operator_id]">
+                    <?php
+                        foreach ($operators as $operator) {
+                            ?>
+                            <option <?= $model->operator_id == $operator['id'] ? 'selected' : ''?> value="<?= $operator['id']?>"><?= $operator['name']?></option>
+                            <?php
+                        }
+                    ?>
+                </select>
+
+            </div>
+            <div class="intro-y col-span-12 sm:col-span-6">
+                <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'numeric', 'class' => 'input w-full border flex-1 overall'])->label("Umumiy narx (Ozi hisoblangan)")?>
+            </div>
+            <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">
+                <button
+                    class="button justify-center block bg-gray-200 text-gray-600 dark:bg-dark-1 dark:text-gray-300 clear-fields">Ochirish</button>
+                <button type="submit" class="button justify-center block bg-theme-1 text-white ml-2 edit-order">O'zgartirish</button>
+            </div>
+            <!-- Manager ID auto do -->
+            <!-- Datetime auto -->
+            <!-- Status auto -->
+            <!-- Comment empty -->
         </div>
-        <!-- END: Wizard Layout -->
+        <?php ActiveForm::end()?>
+    </div>
+</div>
+<!-- END: Wizard Layout -->

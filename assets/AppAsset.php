@@ -26,7 +26,7 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/app.js',
-
+        'https://rawgit.com/RobinHerbots/jquery.inputmask/3.x/dist/jquery.inputmask.bundle.js',
         'js/script.js',
     ];
     public $depends = [

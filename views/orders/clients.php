@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\widgets\LinkPager;
 use app\models\Orders;
 //$articleName и $articleAlias передаем из экшена
 $this->params['breadcrumbs'][] = array(
@@ -85,20 +86,18 @@ $this->title = "Smartbook DMS – Mijozlar";
                             <?php 
                             $id_array = explode(',', $client['orders_id']);
                             $order_qty = 0;
-                            foreach ($id_array as $id) {
-                                foreach ($orders as $order) {
-                                    if ($order['id'] == $id) {
-                                        $order_qty++;
-                                        $last_order_datetime = end($orders)['datetime'];
-                                        $date = strtotime($last_order_datetime);
-                                    }
+                            // debug($id_array);
+                            foreach ($orders as $order) {
+                                if (in_array($order['id'], $id_array)) {
+                                    $order_qty++;
+                                    $last_order_datetime = end($orders)['datetime'];
+                                    $date = strtotime($last_order_datetime);
                                 }
-
                             }
                             echo $order_qty;
                             ?>
                             </td>
-                            <td class="border-b dark:border-dark-5"><?= date('d M, Y', $date)?></td>
+                            <td class="border-b dark:border-dark-5"><?= isset($date) ? date('d M, Y', $date) : '-'?></td>
                             <td class="border-b dark:border-dark-5 md:w-80">
                                 <div class="flex items-center justify-center">
                                     <a class="flex items-center mr-5" href="<?= Url::to(['orders/client-list?client=' . $client['id']])?>"> <i
@@ -114,29 +113,37 @@ $this->title = "Smartbook DMS – Mijozlar";
                     </tbody>
                 </table>
                 <!-- BEGIN: Pagination -->
-                <!-- <div class="intro-y flex flex-wrap sm:flex-row sm:flex-no-wrap items-center mt-6">
-                    <ul class="pagination">
-                        <li>
-                            <a class="pagination__link" href=""> <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="feather feather-chevron-left w-4 h-4">
-                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                </svg> </a>
-                        </li>
-                        <li> <a class="pagination__link pagination__link--active" href="">1</a> </li>
-                        <li> <a class="pagination__link" href="">2</a> </li>
-                        <li> <a class="pagination__link" href="">3</a> </li>
-                        <li>
-                            <a class="pagination__link" href=""> <svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                    height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="feather feather-chevron-right w-4 h-4">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg> </a>
-                        </li>
-                    </ul>
-                </div> -->
+
+                <div class="intro-y flex flex-wrap sm:flex-row sm:flex-no-wrap items-center mt-6">
+                    <?php
+                    // display pagination
+                    echo LinkPager::widget([
+                        'pagination' => $provider->getPagination(),
+                        'options' => [
+                            'class' => 'pagination',
+                        ],
+                        'linkOptions' => [
+                            'class' => 'pagination__link',
+                            'active' => 'pagination__link--active',
+                            'prevPageLabel' => 'pagination__link',
+                            'nextPageLabel' => 'pagination__link',
+                        ],
+                        'activePageCssClass' => 'active',
+                        'prevPageLabel'=>'<svg xmlns="http://www.w3.org/2000/svg" width="24"
+                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-chevron-left w-4 h-4">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>',
+                        'nextPageLabel'=>'<svg xmlns="http://www.w3.org/2000/svg" width="24"
+                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-chevron-right w-4 h-4">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>',
+                    ]);
+                    ?>
+                </div>
                 <!-- END: Pagination -->
             </div>
         </div>

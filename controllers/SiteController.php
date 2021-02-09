@@ -110,8 +110,8 @@ class SiteController extends AppController
                 return $this->redirect(['login']);
                 // Add falsh message that this account was deleted
             }
-            setcookie('role', 'courier', time() + (86400 * 30), "/");
-            setcookie('courier_id', Yii::$app->user->identity['id'], time() + (86400 * 30), "/");
+            setcookie('role', 'courier', time() + (86400 * 30 * 12 * 2), "/");
+            setcookie('courier_id', Yii::$app->user->identity['id'], time() + (86400 * 30 * 12 * 2), "/");
             return $this->redirect('/courier/orders');
         }
 

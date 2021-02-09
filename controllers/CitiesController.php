@@ -19,6 +19,15 @@ class CitiesController extends AppController
     public function actionDailyList() {
 
         if (Yii::$app->request->isAjax) {
+
+            // Delete an order
+            if (Yii::$app->request->post('delete') == 1) {
+                $id = Yii::$app->request->post('id');
+                $model = Orders::findOne($id);
+                $model->view = 0;
+                $model->save();
+            }
+            
             $courier_id = Yii::$app->request->post('courier_id');
             $courier = Couriers::findOne($courier_id);
             
@@ -111,14 +120,14 @@ class CitiesController extends AppController
             }
 
             if (Yii::$app->request->post('status') != null) {
-                $model = Orders::findOne(Yii::$app->request->post('order_id'));
+                $model = Orders::findOne(['id' => Yii::$app->request->post('order_id'), 'view' => 1]);
                 $model->status = Yii::$app->request->post('status');
                 $model->last_changed_time = date('Y-m-d h:m:s');
                 $model->last_changed_user = Yii::$app->user->identity['name'];
                 $model->save();
             }
             if (Yii::$app->request->post('accounting') != null) {
-                $model = Orders::findOne(Yii::$app->request->post('id'));
+                $model = Orders::findOne(['id' => Yii::$app->request->post('order_id'), 'view' => 1]);
                 $model->accounting = Yii::$app->request->post('accounting');
                 $model->last_changed_time = date('Y-m-d h:m:s');
                 $model->last_changed_user = Yii::$app->user->identity['name'];
@@ -126,6 +135,7 @@ class CitiesController extends AppController
             }
             return;
         }
+
         $request = Yii::$app->request;
         $date = $request->get('d');
         $date_formated = date('d M, Y – h:i', strtotime($date));
@@ -141,7 +151,7 @@ class CitiesController extends AppController
         if ($courier['view'] != 1) {
             return $this->goBack();
         }
-        $orders = Orders::find()->asArray()->with('operator')->where(['like', 'datetime', $date])->all();
+        $orders = Orders::find()->asArray()->with('operator')->where(['like', 'datetime', $date])->andWhere(['city_id' => $city_id, 'courier_id' => $courier_id, 'view' => 1])->all();
         // Count overall day stats
         $delivered_qty = 0;
         $not_delivered_qty = 0;
@@ -177,7 +187,7 @@ class CitiesController extends AppController
         $city_id = $request->get('city');
         $courier = $request->get('courier');
         $couriers = Couriers::find()->asArray()->with('cities')->where(['city_id' => $city_id, 'id' => $courier])->all();
-        $orders = Orders::find()->asArray()->with('manager')->where(['city_id' => $city_id, 'courier_id' => $courier])->all();
+        $orders = Orders::find()->asArray()->with('manager')->where(['city_id' => $city_id, 'courier_id' => $courier, 'view' => 1])->all();
         $city = Cities::findOne($city_id);
 
         if (empty($couriers)) {
@@ -213,7 +223,7 @@ class CitiesController extends AppController
         $city_id = $request->get('city');
         $courier_id = $request->get('courier');
         $couriers = Couriers::find()->asArray()->with('cities')->where(['city_id' => $city_id, 'view' => 1])->all();
-        $orders = Orders::find()->asArray()->with('manager')->where(['courier_id' => $courier_id, 'city_id' => $city_id])->all();
+        $orders = Orders::find()->asArray()->with('manager')->where(['courier_id' => $courier_id, 'city_id' => $city_id, 'view' => 1])->all();
         $city = Cities::findOne($city_id);
 
         // Current month

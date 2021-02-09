@@ -7,16 +7,19 @@ $this->title = "Hozirgi Buyurtmalar";
 ?>
 
 <div class="select-district">
-    <div class="inline-block back-button w-full items-center justify-center bg-gray-200 mb-4"> <a href="javascript:;"
+    <div class="inline-block back-button districts-button w-full items-center justify-center bg-gray-200 mb-4"> <a href="javascript:;"
             data-collapse="closed" class="accordion__pane__toggle font-medium block collapse-districts">Manzilni
             tanlang</a>
         <div class="districts-list">
-        <div class="seperator"></div>
+        <div class="seperator mb-2"></div>
             <?php
             foreach ($dstr_arr as $district) {
                 ?>
                 <a href="#" data-id="<?= $district['id']?>" data-name="<?= $district['name']?>" class="list-option">
                     <?= $district['name']?>
+                    <svg class="ml-2 w-5 h-5 text-theme-1 inline ml-1 hidden" width="24" height="17" viewBox="0 0 24 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.5 7.5L9 15L23 1" stroke="#09389D" stroke-width="2"/>
+                    </svg>
                     <span class="qty"><?= $district['qty']?></span>
                 </a>
                 <?php
@@ -26,7 +29,7 @@ $this->title = "Hozirgi Buyurtmalar";
             if ($no_dstr_orders > 0) {
                 ?>
                 <a href="#" class="list-option others mt-2">
-                    Hammalar
+                    Barchasi
                     <span class="qty"><?= $no_dstr_orders?></span>
                 </a>
                 <?php
@@ -45,16 +48,11 @@ foreach ($d_arr as $d) {
      if (!in_array($d['day'], $used_days)) {
     ?>
     <div id="<?= $i?>" class="day-list">
-        <div class="flex pt-4 pb-2 md:pb-4 pd:pt-5 orders-list-header">
-            <h2 class="font-medium md:text-2xl mr-auto"><?= $d['day'] . ' ' . getuzmonth($d['month'])?></h2>
-            <?php
-                if ($today == $d['day'] . ' ' . $d['month']) {
-                    ?>
-            <!-- <h2 class="font-medium text-gray-500 md:text-2xl ml-auto">Bugunli Buyurtmalar</h2> -->
-            <?php
-                }
-            ?>
-        </div>
+        <a href="<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($d['datetime'])))?>">
+            <div class="flex pt-4 pb-2 md:pb-4 pd:pt-5 orders-list-header">
+                <h2 class="font-medium md:text-2xl mr-auto"><?= $d['day'] . ' ' . getuzmonth($d['month'])?></h2>
+            </div>
+        </a>
         <div class="all-orders">
             <?php
                 foreach ($orders as $order) {
@@ -78,14 +76,15 @@ foreach ($d_arr as $d) {
             <div class="intro-y box md:text-xl order-card pb-0 px-0 pt-1 mb-4 order-card" data-district="<?= $order['district_id']?>">
                 <div class="flex items-center card-section px-3 md:px-5 pt-2 md:pt-3">
                     <h2 class="order-card__title">
-                        <?= $product_format_qty['info'][1] . ' ' . $product_format_qty['info'][2] . ', ' . $product_format_qty['qty'] . ' dona'?>
+                        <?= $product_format_qty['info'][1] . ' <span style="text-decoration: underline">' . $product_format_qty['info'][2] . '</span>, ' . $product_format_qty['qty'] . ' dona'?>
                     </h2>
                     <!-- <p class="order-card__qty ml-3 text-gray-500">1 ta dona</p> -->
                 </div>
                 <div class="flex border-b card-section px-3 md:px-5 pb-2 md:pb-3">
                     <p class="order-card__price"><?= $order['price']?> so'm</p>
                     <p class="order-card__payment-method ml-3 text-gray-500">
-                        <?= payment_method_format($order['payment_method'])?></p>
+                        <?= payment_method_format($order['payment_method'])?>
+                    </p>
                 </div>
                 <div class="border-b card-section user-info px-3 md:px-5 py-3 md:py-3">
                     <div class="name-address">
@@ -128,10 +127,10 @@ foreach ($d_arr as $d) {
                     </div>
                 </div>
                 <div class="card-section card-actions flex">
-                    <button data-id="<?= $order['id']?>" data-courier="<?= $order['courier_id']?>"
+                    <button data-id="<?= $order['id']?>" data-district="<?= $order['district_id']?>" data-courier="<?= $order['courier_id']?>"
                         data-order-str="<?= $order['product']?>"
                         class="button w-1/2 bg-theme-9 text-white delivered">Yetkazildi</button>
-                    <button data-id="<?= $order['id']?>" data-courier="<?= $order['courier_id']?>"
+                    <button data-id="<?= $order['id']?>" data-district="<?= $order['district_id']?>" data-courier="<?= $order['courier_id']?>"
                         data-order-str="<?= $order['product']?>"
                         class="button w-1/2 bg-theme-6 text-white canceled">Qaytarildi</button>
                 </div>

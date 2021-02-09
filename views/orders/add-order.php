@@ -21,9 +21,8 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
     </div>
     <div class="px-5 sm:px-20 mt-10 pt-10 border-t border-gray-200 dark:border-dark-5">
     
-    <?php if (Yii::$app->session->hasFlash('success')): ?>
-        <div class="rounded-md flex items-center px-5 py-4 mb-2 bg-theme-9 text-white"> <i data-feather="check" class="w-6 h-6 mr-2"></i> <?= Yii::$app->session->getFlash('success') ?></div>
-    <?php endif; ?>
+    <div class="rounded-md flex items-center px-5 py-4 mb-2 bg-theme-9 text-white hidden alert success"> <i data-feather="check" class="w-6 h-6 mr-2"></i>Yangi buyurtma qoshilgan!</div>
+    <div class="rounded-md flex items-center px-5 py-4 mb-2 bg-theme-6 text-white hidden alert error"> <i data-feather="x" class="w-6 h-6 mr-2"></i>Yangi buyurtma qoshilmadi! Hamasini tekshirib korin, bomasa <a target="_blank" class="mx-1" href="https://t.me/joinchat/H1Q2I3Qfpgx2qbBJ" style="text-decoration: underline"> Textni yordamga</a> yozing</div>
         <?php $form = ActiveForm::begin([
             'method' => 'post',
             'options' => [
@@ -45,6 +44,7 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                     ?>
                     </select>
                     <select class="tail-select w-full district-select district-select-order" name="Orders[district_id]" >
+                    <option value="null" class="all-districts" selected data-city="<?= $city['id']?>">Hamma tumanlar...</option>
                         <?php
                         foreach ($districts as $district) {
                             ?>
@@ -82,22 +82,28 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                     <option value="click-paid">Click To'langan</option>
                 </select>
             </div>
-            <div class="intro-y col-span-12 sm:col-span-6">
-                <?= $form->field($model, 'phone_number', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1'])->label("Telefon")?>
+            <div class="intro-y col-span-12 sm:col-span-6 phones-group">
+                <div class="mb-2">Telefon</div>
+                <div class="flex">
+                    <input type="phone" class="input w-full border qty" value="+998">
+                    <span class="add-new-phone bg-gray-200"><i data-feather="plus" class="w-5 h-5"></i></span>
+                </div>
+                <?= $form->field($model, 'phone_number', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1 hidden phone-number'])->label(false)?>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6 product-select add-product-select">
                 <div class="mb-2">Mahsulotlar</div>
                 <?= $form->field($model, 'product', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1 sr-only product-field'])->label('')?>
                 <div class="flex first-product-select product-select-empty">
                     <select class="tail-select w-full flex-8">
-                        <?php foreach ($products as $product) {
+                        <?php 
+                        foreach ($products as $product) {
                                 ?>
                         <option value="<?= $product['id']?>,<?= $product['name']?>,<?= $product['format']?>:1"
                             data-id="<?= $product['id']?>" data-name="<?= $product['name']?>"
                             data-format="<?= $product['format']?>" data-price="<?= $product['price']?>">
                             <?= $product['name']?>, <?= $product['format']?></option>
                         <?php
-                            }?>
+                        }?>
                     </select>
                     <input type="number" class="input w-full border qty" value="1" placeholder="Miqdori...">
                     <!-- Take val of selected option and add qty to it via js  product_id:price -->
@@ -120,7 +126,7 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
 
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
-                <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'numeric', 'class' => 'input w-full border flex-1 overall', 'value' => 123])->label("Umumiy narx (Ozi hisoblangan)")?>
+                <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'numeric', 'class' => 'input w-full border flex-1 overall'])->label("Umumiy narx (Ozi hisoblangan)")?>
             </div>
             <div class="intro-y col-span-12 flex items-center justify-center sm:justify-center mt-5">
                 <button

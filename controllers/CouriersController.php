@@ -196,7 +196,6 @@ class CouriersController extends AppController
             $model->address = $courier['address'];
             $model->city_id = $courier['city_id'];
             $model->salary = $courier['salary'];
-            debug($model); die;
             $model->save();
             return $this->redirect('/couriers');
         }

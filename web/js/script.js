@@ -11,6 +11,11 @@ $(document).ready(function () {
         $('.select-image').parents('.image-upload').find('img').attr('src', '/web/images/placeholder.jpg');
         $(this).hide();
     });
+    
+    $('.dropdown-option').click(function () {
+        $('.dropdown-option').removeClass('selected');
+        $(this).addClass('selected');
+    });
 
     $('#new_order input:not(#orders-price):not(.qty)').val('');
     $('.select-handle').click();
@@ -22,7 +27,11 @@ $(document).ready(function () {
     });
 
     // Products select logic
-    $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
+    if ($('#edit_order').length == 0) {
+        $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
+    }
+
+    // Change product strign product select
     $('.add-product-select .qty').change(function () {
         var select_el = $(this).prevAll('select').find('option[selected=selected]'),
             select_el_id = $(select_el).data('id'),
@@ -50,9 +59,80 @@ $(document).ready(function () {
     });
 
     // Collect selects of products from add-order page and write it in the input
-    $('.add-order').click(function () {
+    $('.add-order').click(function (e) {
+
+        // Collect phones and paste them into phone_number field
+        var phone_number = '';
+        $('.phones-group .flex input').each(function (i) {
+            if (phone_number == '') {
+                phone_number = $(this).val();
+            } else {
+                phone_number = phone_number + ',' + $(this).val();
+            }
+        });
+        $('.phone-number').val(phone_number);
+
+        $('input').blur();
+        $('.error').slideUp('fast');
+        $('.success').slideUp('fast');
         $('.product-select .product-field').val($('.product-select :not(.hidden-select) select option[selected=selected]').val());
+        e.preventDefault();
+        var ajax_arr = {};
+        var form_data = $(this).closest('form').serializeArray(),
+            count_form_data = form_data.length,
+            i = 0
+            form = $(this).closest('form');
+        console.log(form_data);
+        form_data.forEach(field_data => {
+            field_data['name'] = field_data['name'].replace('Orders','');
+            field_data['name'] = field_data['name'].replace('[','');
+            field_data['name'] = field_data['name'].replace(']','');
+
+            if (field_data['value'] != '') {
+                ajax_arr[field_data['name']] = field_data['value'];
+            } else {
+                if (field_data['name'] == '_csrf') {
+                    ajax_arr[field_data['name']] = field_data['value'];
+                } else {
+                    // not all fields are filled
+                    $('.error').slideDown('fast');
+                    i = 0;
+                }
+            }
+
+            i++;
+        });
+        // Send Ajax to add order
+        if (count_form_data == i) {
+            $.ajax({
+                method: "POST",
+                url: "/orders/add-order",
+                data: { orders: ajax_arr},
+                success: function (res) {
+                    $(form)[0].reset();
+                    $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
+                    $('.success').slideDown('fast');
+                },
+                error: function (xml) {
+                    console.log(xml);
+                }
+            });
+        }
     });
+
+        // Collect selects of products from add-order page and write it in the input
+        $('.edit-order').click(function () {
+            // Collect phones and paste them into phone_number field
+            var phone_number = '';
+            $('.phones-group .flex input').each(function (i) {
+                if (phone_number == '') {
+                    phone_number = $(this).val();
+                } else {
+                    phone_number = phone_number + ',' + $(this).val();
+                }
+            });
+            $('.phone-number').val(phone_number);
+        });
 
     $('.add-history').click(function (e) {
         var prods_str = '';
@@ -75,7 +155,7 @@ $(document).ready(function () {
         var add_item = 0;
         
         if ($(this).data('status') == 'not-delivered' || $(this).data('status') == 'canceled') {
-            if (confirm('Shu mahsulatni kuryer qogan mahsulotlarga qoshish keremi?')) {
+            if (confirm('Shu mahsulot yetkazaildimi? Qo\'shimcha ma\'lumot yozishingiz mumkin.')) {
                 var add_item = 1;
             } else {
                 var add_item = 0;
@@ -133,13 +213,13 @@ $(document).ready(function () {
         if (comment != null) {
             var id = $(this).data('id'),
                 courier_id = $(this).data('courier'),
-                order_str = $(this).data('order-str');
+                order_str = $(this).data('order-str'),
+                district_id = $(this).data('district');
             $.ajax({
                 method: "POST",
                 url: "/courier/orders/index",
                 data: { id: id, status: 'delivered', comment: comment, courier_id: courier_id, order_str: order_str },
                 success: function (res) {
-                    console.log(res);
                     // If this card was last in this day, then remove hedaer
                     if ($(this_el).closest('.day-list').find('.box').length <= 1) {
                         $(this_el).closest('.day-list').remove();
@@ -147,6 +227,9 @@ $(document).ready(function () {
 
                     // Remove order card
                     $(this_el).parents('.order-card').remove();
+
+                    // Decrease qty of a district
+                    $('.districts-list .list-option[data-id=' + district_id + '] .qty').text($('.districts-list .list-option[data-id=' + district_id + '] .qty').text() - 1);
                 }
             })
                 .done(function (msg) {
@@ -161,13 +244,17 @@ $(document).ready(function () {
         if (comment != null) {
             var id = $(this).data('id'),
                 courier_id = $(this).data('courier'),
-                order_str = $(this).data('order-str');
+                order_str = $(this).data('order-str'),
+                district_id = $(this).data('district');
             $.ajax({
                 method: "POST",
                 url: "/courier/orders/",
                 data: { id: id, status: 'canceled', comment: comment, courier_id: courier_id, order_str: order_str },
                 success: function () {
                     $(this_el).parents('.order-card').remove();
+
+                    // Decrease qty of a district
+                    $('.districts-list .list-option[data-id=' + district_id + '] .qty').text($('.districts-list .list-option[data-id=' + district_id + '] .qty').text() - 1);
                 }
             })
                 .done(function (msg) {
@@ -218,7 +305,7 @@ $(document).ready(function () {
             $.ajax({
                 method: "POST",
                 url: url,
-                data: { id: id },
+                data: { id: id, delete: 1 },
                 success: function (res) {
                     console.log(res);
                     $(this_el).remove();
@@ -400,20 +487,32 @@ $(document).ready(function () {
         var city_id = $(city_select).find('option[selected]').data('id');
         $('.courier-select option').each(function (i) {
             if ($(this).data('city') == city_id) {
-                $(this).attr('selected', 'selected');
-                $('.courier-select .label-inner').text($(this).text());
-                $('.dropdown-optgroup .dropdown-option').removeClass('selected');
-                $('.dropdown-optgroup .dropdown-option').each(function () {
-                    if ($(this).text() == $('.courier-select .label-inner').text()) {
-                        $(this).addClass('selected');
-                    }
-                })
-                return false;
+                if ($('#edit_order').length != 0) {
+                    $('.courier-select .label-inner').text($(this).text());
+                    $('.dropdown-optgroup .dropdown-option').removeClass('selected');
+                    return false;
+                } else {
+                    $(this).attr('selected', 'selected');
+                    $('.courier-select .label-inner').text($(this).text());
+                    $('.dropdown-optgroup .dropdown-option').removeClass('selected');
+                    $('.dropdown-optgroup .dropdown-option').each(function () {
+                        if ($(this).text() == $('.courier-select .label-inner').text()) {
+                            $(this).addClass('selected');
+                        }
+                    })
+                    return false;
+                }
             } else {
                 $(this).removeAttr('selected');
             }
         });
     }
+
+    // Remove select class (active bg) from tail-select option
+    $('.dropdown-option').click(function () {
+        $(this).find('.dropdown-optgroup .dropdown-option').removeClass('select');
+        $(this).addClass('select');
+    });
 
     // Change districts by selecting city
     $('.city-select').change(function () {
@@ -450,6 +549,8 @@ $(document).ready(function () {
 
     // Show a certain district's orders
     $('.districts-list .list-option').click(function () {
+        $('.districts-list .list-option svg').hide();
+        $(this).find('svg').css({'display': 'inline'}).show();
         var dstr_id = $(this).data('id');
         $('.collapse-districts').text($(this).data('name'));
         $('.order-card').each(function (i) {
@@ -465,6 +566,7 @@ $(document).ready(function () {
         });
     });
 
+    // Show all orders from all districts
     $('.select-district .others').click(function () {
         $('.order-card').each(function (i) {
             $(this).show();
@@ -487,6 +589,7 @@ $(document).ready(function () {
         
     });
 
+    // Remove certain item completely from courier's qty_left
     $('.change-qty_left .remove-product-select').click(function () {
         $(this).parent('.item').remove();
 
@@ -500,7 +603,36 @@ $(document).ready(function () {
         });
 
         $('.items-left-str').val(str);
-    })
+    });
+
+    // Make clicked select inpur z-index top to avoid overlayering by other fields
+    $('.tail-select').click(function () {
+        $('.tail-select').parent().css({
+            'z-index': '1',
+        });
+        $(this).parent().css({
+            'z-index': '50',
+        });
+    });
+
+    // Choose month filter, just move it top
+    $('.move-month').change(function () {
+        var id = $(this).find('option:selected').data('id');
+        var month = $('#' + id);
+        $('#' + id).remove();
+        $('.filters').after(month);
+    });
+
+    // Add masks to all phones fields
+    $(":input").inputmask();
+    $('input[type=phone]').inputmask({"mask": "+999 99 999 99 99"});
+    console.log($('input[type=phone]'))
+    // Add new phone field
+    $('.add-new-phone').click(function () {
+        $(this).before('<input type="phone" class="input w-full border qty" value="+998">');
+        $(":input").inputmask();
+        $('input[type=phone]').inputmask({"mask": "+999 99 999 99 99"});
+    });
 
 });
 
@@ -533,7 +665,7 @@ $.extend($.expr[':'], {
     }
 });
 
-$('.district-select-order .label-inner').text('Hamma tumanlar...');
+$('#new_order .district-select-order .label-inner').text('Hamma tumanlar...');
 
 
 // Collapse districts

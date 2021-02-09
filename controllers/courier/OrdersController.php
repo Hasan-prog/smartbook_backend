@@ -17,7 +17,7 @@ class OrdersController extends AppCourierController
             $status = Yii::$app->request->post('status');
             $courier_id = Yii::$app->request->post('courier_id');
             $order_str = Yii::$app->request->post('order_str');
-            $model = Orders::findOne($id);
+            $model = Orders::findOne(['id' => $id, 'view' => 1]);
             $model->status = $status;
 
             // Edit how much the selected courier left
@@ -78,7 +78,7 @@ class OrdersController extends AppCourierController
             return $this->redirect('/courier/orders/logout');
         }
 
-        $orders = Orders::find()->asArray()->with('district')->where(['courier_id' => $courier_id, 'status' => 'not-delivered'])->all();
+        $orders = Orders::find()->asArray()->with('district')->where(['courier_id' => $courier_id, 'status' => 'not-delivered', 'view' => 1])->all();
         $dstr_arr = [];
         $d_arr = [];
         $no_dstr_orders = 0;
@@ -87,6 +87,7 @@ class OrdersController extends AppCourierController
             unset($array[$key]);
             $array = $temp + $array;
         }
+        // debug($orders); die;
         foreach ($orders as $key => $order) {
             $d['day'] = date('d', strtotime($order['datetime']));
             $d['month'] = date('M', strtotime($order['datetime']));
@@ -94,19 +95,38 @@ class OrdersController extends AppCourierController
             $d['year_i'] = date('Y', strtotime($order['datetime']));
             $d['datetime'] = $order['datetime'];
             array_push($d_arr, $d);
-
-            if ($order['district_id'] != null) {
-                if (!isset($dstr_arr[$order['district']['id']])) {
-                    $dstr_arr[$order['district']['id']] = $order['district'];
-                    $dstr_arr[$order['district']['id']]['qty'] = 1;
-                } else {
-                    $dstr_arr[$order['district']['id']]['qty'] += 1;
-                }
-            } else {
-                // the orde doesn't have district   
+            
+            // debug($order); die;
+            if ($order['district'] != null) {
+                $order['district']['qty'] = 1;
+                array_push($dstr_arr, $order['district']);
             }
+            // if ($order['district_id'] != '' && $order['district'] != null) {
+            //     if (!isset($dstr_arr[$order['district']]) && isset($order['district']['id'])) {
+            //         $dstr_arr[$order['district']['id']] = $order['district'];
+            //         $dstr_arr[$order['district']['id']]['qty'] = 1;
+            //     } else {
+            //         if (isset($order['district']['id'])) {
+            //             $dstr_arr[$order['district']['id']]['qty'] += 1;   
+            //         }
+            //     }
+            // } else {
+            //     // the order doesn't have district   
+            // }
             $no_dstr_orders++;
         }
+
+        $i = 0;
+        foreach ($dstr_arr as $key => $dstr) {
+            foreach ($dstr_arr as $key_2 => $dstr_2) {
+                if ($dstr['id'] == $dstr_2['id']) {
+                    $dstr_arr[$key]['qty']++;
+                }
+            }
+            $dstr_arr[$key]['qty']--;
+        }
+
+        $dstr_arr = array_unique($dstr_arr, SORT_REGULAR);
 
         usort($d_arr, function($a, $b) {
         $ad = $a['datetime'];
@@ -134,16 +154,14 @@ class OrdersController extends AppCourierController
 
         $months = [];
         $months_list = [];
-        $orders = Orders::find()->asArray()->where(['courier_id' => $courier_id])->all();
+        $orders = Orders::find()->asArray()->where(['courier_id' => $courier_id, 'view' => 1])->all();
         foreach ($orders as $key => $order) {
             $months[cutMonth($order['datetime'])][$key] = $order;
             $months_list[$key] = date('M', strtotime($order['datetime'])) . ', ' . date('Y', strtotime($order['datetime']));
         }
         $months_list = array_unique($months_list);
         asort($months_list);
-        // debug($months_list);
-        
-        
+        rsort($months);
 
 
         return $this->render('monthly-list', compact('months', 'months_list'));
@@ -151,7 +169,20 @@ class OrdersController extends AppCourierController
     
     public function actionDailyList() {
         $this->layout = 'smartbook_courier';
-        return $this->render('daily-list');
+
+        if (isset($_COOKIE['courier_id'])) {
+            $courier_id = $_COOKIE['courier_id'];
+        } else {
+            return $this->redirect('/courier/orders/logout');
+        }
+
+        $d = Yii::$app->request->get('d');
+        $orders = Orders::find()->asArray()->where(['like', 'datetime', $d])->andWhere(['courier_id' => $courier_id, 'view' => 1])->all();
+        if (empty($orders)) {
+            return $this->redirect('/courier/orders/monthly-list');
+        }
+
+        return $this->render('daily-list', compact('orders'));
     }
 
     public function actionLogout() {
