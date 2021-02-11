@@ -81,10 +81,63 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                 <span class="text-gray-500 mr-2">Umumiy:</span> <?= $overall?> so'm
             </div>
         </div>
-        <!-- <button class="button px-2 mr-1 text-gray-700 bg-gray-200 dark:text-gray-300">
-            <span class="w-5 h-5 flex items-center justify-center"> <i data-feather="printer" class="w-5 h-5"></i>
+        <button class="button px-2 mr-1 text-gray-700 bg-gray-200 dark:text-gray-300 collapse-accounting-info">
+            <span class="w-5 h-5 flex items-center justify-center"> 
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="#4A5568" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="12.0249" y1="10.494" x2="12.0249" y2="18.2678" stroke="#4A5568" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="11.9997" cy="6.76183" r="0.952381" fill="#4A5568"/>
+            </svg>
             </span>
-        </button> -->
+        </button>
+    </div>
+    <div class="accounting-info">
+        <div class="grid grid-cols-12 gap-6 p-10 border-b bg-gray-100 border-gray-200">
+        <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
+            <div class="text-md font-medium truncate mb-5">Buyurtmalar</div>
+            <div class="mr-6 flex items-center mb-3 border-b pb-3">
+                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <span class="info-delivered mr-1"><?= $delivered_qty?></span> Yetkazilgan
+            </div>
+            <div class="mr-6 flex items-center mb-3 border-b pb-3">
+                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <span class="info-not-delivered mr-1"><?= $not_delivered_qty?></span> Yetkazilmagan
+            </div>
+            <div class="mr-6 flex items-center mb-3 border-b pb-3">
+                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <span class="info-canceled mr-1"><?= $canceled_qty?></span> Qaytarilgan
+            </div>
+            <div class="mr-6 flex items-center mb-3">
+                <div class="w-2 h-2 bg-theme-11 rounded-full mr-2"></div> <span class="info-overall mr-1"><?= $delivered_qty + $not_delivered_qty + $canceled_qty?></span> Buyurtma
+            </div>
+        </div>
+        <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
+            <div class="text-md font-medium truncate mb-5 flex justify-between">
+            To'lov ma'lumot
+            </div>
+            <div class="mr-6 flex items-center mb-3 border-b pb-3">
+                <span class="text-gray-500 mr-2">Naqd:</span> <?= $cash?> so'm
+            </div>
+            <div class="mr-6 flex items-center mb-3 border-b pb-3">
+                <span class="text-gray-500 mr-2">Click:</span> <?= $click?> so'm
+            </div>
+            <div class="mr-6 flex items-center mb-3">
+                <span class="text-gray-500 mr-2">Umumiy:</span> <?= $overall?> so'm
+            </div>
+        </div>
+        <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
+            <div class="text-md font-medium truncate mb-5 flex justify-between">
+            Bugalteriya
+            <span class="date text-gray-500 font-normal flex"><i data-feather="calendar" class="w-4 h-4 mr-2"></i><?= date('d M, Y', strtotime($date))?> yil</span>
+            </div>
+            <div class="mr-6 flex items-center mb-3 border-b pb-3">
+                <span class="text-gray-500 mr-2">Berilgan:</span> <span class="accounting-paid mr-1"><?= $accounting_paid?></span> so'm
+            </div>
+            <div class="mr-6 flex items-center mb-3 border-b pb-3">
+                <span class="text-gray-500 mr-2">Olish kerak:</span> <span class="accounting-debt mr-1"><?= $accounting_debt?></span> so'm
+            </div>
+            <div class="mr-6 flex items-center mb-3">
+                <span class="text-gray-500 mr-2"><?= $courier['name']?>dan shu kundan <span class="accounting-debt-2 mr-1"><?= $accounting_debt?></span> so'm olishimiz kerak. Qo'ngiroq qilishiz boladi: <a class="underline text-gray-600" href="tel:<?= $courier['phone_number']?>"><?= $courier['phone_number']?></a></span>
+            </div>
+        </div>
+        </div>
     </div>
     <div class="p-5" id="striped-rows-table">
         <div class="filters mb-6">
@@ -140,7 +193,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                     </td>
                                     <td class="border-b dark:border-dark-5"><?= price_format($order['price'])?> so'm</td>
                                     <td class="border-b dark:border-dark-5"><?= payment_method_format($order['payment_method']);?></td>
-                                    <td class="border-b dark:border-dark-5"></td>
+                                    <td class="border-b dark:border-dark-5"><?= $order['comment']?></td>
                                     <td class="border-b dark:border-dark-5"><?= isset($order['operator']) ? $order['operator']['name'] : ''?></td>
                                     <td class="border-b dark:border-dark-5"><?= date('Y-m-d H:i', strtotime($order['datetime']))?></td>
                                     <td class="border-b dark:border-dark-5 flex justify-end">
@@ -148,40 +201,40 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                         <?php
                                             if ($order['status'] == 'delivered') {
                                                 ?>
-                                                <button id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="dropdown-toggle button button--sm inline-block bg-theme-9 text-white flex items-center w-32 justify-center">Yetkazilgan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                                <button id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="dropdown-toggle button button--sm inline-block bg-theme-9 text-white flex items-center w-32 justify-center">Yetkazilgan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                                                 <div class="dropdown-box w-32">
                                                     <div class="dropdown-box__content box dark:bg-dark-1"> 
-                                                        <button data-id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="button button--sm inline-block bg-theme-12 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilmagan</button>
-                                                        <button data-id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="canceled" data-style="bg-theme-6" class="button button--sm inline-block bg-theme-6 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Qaytarilgan</button>
+                                                        <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="button button--sm inline-block bg-theme-12 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilmagan</button>
+                                                        <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="canceled" data-style="bg-theme-6" class="button button--sm inline-block bg-theme-6 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Qaytarilgan</button>
                                                     </div>
                                                 </div>
                                                 <?php
                                             }
                                             if ($order['status'] == 'not-delivered') {
                                                 ?>
-                                                <button id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="dropdown-toggle button button--sm inline-block bg-theme-12 text-white flex items-center w-32 justify-center">Yetkazilmagan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                                <button id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="dropdown-toggle button button--sm inline-block bg-theme-12 text-white flex items-center w-32 justify-center">Yetkazilmagan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                                                 <div class="dropdown-box w-32">
                                                     <div class="dropdown-box__content box dark:bg-dark-1"> 
-                                                        <button data-id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="button button--sm inline-block bg-theme-9 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilgan</button>
-                                                        <button data-id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="canceled" data-style="bg-theme-6" class="button button--sm inline-block bg-theme-6 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Qaytarilgan</button>
+                                                        <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="button button--sm inline-block bg-theme-9 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilgan</button>
+                                                        <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="canceled" data-style="bg-theme-6" class="button button--sm inline-block bg-theme-6 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Qaytarilgan</button>
                                                     </div>
                                                 </div>
                                                 <?php
                                             }
                                             if ($order['status'] == 'canceled') {
                                                 ?>
-                                                <button id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="canceled" data-style="bg-theme-6" class="dropdown-toggle button button--sm inline-block bg-theme-6 w-32 text-white flex items-center justify-center">Qaytarilgan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                                <button id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="canceled" data-style="bg-theme-6" class="dropdown-toggle button button--sm inline-block bg-theme-6 w-32 text-white flex items-center justify-center">Qaytarilgan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                                                 <div class="dropdown-box w-32">
                                                     <div class="dropdown-box__content box dark:bg-dark-1"> 
-                                                        <button data-id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="button button--sm inline-block bg-theme-12 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilmagan</button>
-                                                        <button data-id="<?= $order['id']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="button button--sm inline-block bg-theme-9 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilgan</button>
+                                                        <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="button button--sm inline-block bg-theme-12 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilmagan</button>
+                                                        <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="button button--sm inline-block bg-theme-9 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilgan</button>
                                                     </div>
                                                 </div>
                                                 <?php
                                             }
                                         ?>
                                         </div>
-                                        <button data-id="<?= $order['id']?>" data-accounting="<?= $order['accounting']?>" class="button button--sm inline-block <?= $order['accounting'] == 0 ? 'bg-theme-6' : 'bg-theme-9'?> text-white flex items-center w-24 justify-center ml-2 accounting-toggle"><?= $order['accounting'] == 0 ? 'Berilmagan' : 'Berilgan'?></button>
+                                        <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-accounting="<?= $order['accounting']?>" data-accounting-done="0" class="button button--sm inline-block <?= $order['accounting'] == 0 ? 'bg-theme-6' : 'bg-theme-9'?> text-white flex items-center w-24 justify-center ml-2 accounting-toggle"><?= $order['accounting'] == 0 ? 'Berilmagan' : 'Berilgan'?></button>
                                     </td>
                                     <td class="border-b dark:border-dark-5 md:w-80">
                                         <div class="flex items-center justify-center">

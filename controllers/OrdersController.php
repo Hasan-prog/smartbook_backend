@@ -127,7 +127,7 @@ class OrdersController extends AppController
             $model->payment_method = $order['payment_method'];
             $model->courier_id = $order['courier_id'];
             $model->price = $order['price'];
-            $model->last_changed_time = date('Y-m-d h:m:s');
+            $model->last_changed_time = date('Y-m-d h:i:s');
             $model->last_changed_user = Yii::$app->user->identity['name'];
             $model->manager_id = Yii::$app->user->identity['id']; // For now 1, but we have to cahnge it when log in system will be created
             $model->save();
@@ -192,7 +192,7 @@ class OrdersController extends AppController
             $model->payment_method = $order['payment_method'];
             $model->courier_id = $order['courier_id'];
             $model->price = $order['price'];
-            $model->last_changed_time = date('Y-m-d h:m:s');
+            $model->last_changed_time = date('Y-m-d h:i:s');
             $model->last_changed_user = Yii::$app->user->identity['name'];
             $model->manager_id = Yii::$app->user->identity['id']; // For now 1, but we have to cahnge it when log in system will be created
             $model->save();

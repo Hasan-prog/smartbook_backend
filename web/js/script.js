@@ -82,7 +82,6 @@ $(document).ready(function () {
             count_form_data = form_data.length,
             i = 0
             form = $(this).closest('form');
-        console.log(form_data);
         form_data.forEach(field_data => {
             field_data['name'] = field_data['name'].replace('Orders','');
             field_data['name'] = field_data['name'].replace('[','');
@@ -153,12 +152,46 @@ $(document).ready(function () {
         var order_str = $(this).data('order-str');
         var courier_id = $(this).data('courier-id');
         var add_item = 0;
+
+        // Decrease from info collapse
+        if ($(dropdown_toggle).data('status') == 'delivered') {
+            // Decrease info-delivered
+            $('.info-delivered').text(parseInt($('.info-delivered').text()) - 1);
+            var selected_status_info = $('.info-' + $(this).data('status'));
+            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+        } 
+        if ($(dropdown_toggle).data('status') == 'not-delivered') {
+            // Decrease info-not-delivered
+            $('.info-not-delivered').text(parseInt($('.info-not-delivered').text()) - 1);
+            var selected_status_info = $('.info-' + $(this).data('status'));
+            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+        }
+        if ($(dropdown_toggle).data('status') == 'canceled') {
+            // Decrease info-canceled
+            $('.info-canceled').text(parseInt($('.info-canceled').text()) - 1);
+            var selected_status_info = $('.info-' + $(this).data('status'));
+            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+        }
         
-        if ($(this).data('status') == 'not-delivered' || $(this).data('status') == 'canceled') {
-            if (confirm('Shu mahsulot yetkazaildimi? Qo\'shimcha ma\'lumot yozishingiz mumkin.')) {
+        if ($(this).data('status') == 'not-delivered' && $(dropdown_toggle).data('status') != 'canceled') {
+            if (confirm('Ushbu mahsulot uchun kuryerni qayta tiklashni xohlaysizmi? OK – bitta mahsulot orqaga qo\'shish, Cancel – qoshilmasdan')) {
                 var add_item = 1;
             } else {
                 var add_item = 0;
+            }
+        }
+        if ($(dropdown_toggle).data('status') != 'not-delivered' && $(this).data('status') == 'canceled') {
+            if (confirm('Ushbu mahsulot uchun kuryerni qayta tiklashni xohlaysizmi? OK – bitta mahsulot orqaga qo\'shish, Cancel – qoshilmasdan')) {
+                var add_item = 1;
+            } else {
+                var add_item = 0;
+            }
+        }
+
+        // Add a new dept to accounting, because an order was delivered
+        if ($(this).data('status') == 'delivered') {
+            if ($('.accounting-toggle[data-id="' + $(this).data('id') + '"]').data('accounting') == 0) {
+                $('.accounting-debt').text(parseInt($('.accounting-debt').text()) + $(this).data('price'));
             }
         }
 
@@ -344,11 +377,18 @@ $(document).ready(function () {
     $('.accounting-toggle').click(function () {
         var order_id = $(this).data('id');
         var accounting = $(this).data('accounting');
+        var price = $(this).data('price');
         if (accounting == 0) {
             // Do it transfered
             $(this).removeClass('bg-theme-6');
             $(this).addClass('bg-theme-9');
             $(this).data('accounting', 1);
+            console.log($('.accounting-debt').text());
+            if (parseInt($('.accounting-debt').text()) > 0) {
+                $('.accounting-debt').text(parseInt($('.accounting-debt').text()) - price);
+            }
+            $('.accounting-paid').text(parseInt($('.accounting-paid').text()) + price);
+            $('.accounting-debt-2').text($('.accounting-debt').text());
             $(this).text('Berilgan');
         } else {
             // Do it not transfered
@@ -356,14 +396,22 @@ $(document).ready(function () {
             $(this).removeClass('bg-theme-9');
             $(this).data('accounting', 0);
             $(this).text('Berilmagan');
+            if (parseInt($('.accounting-paid').text()) > 0) {
+                $('.accounting-paid').text(parseInt($('.accounting-paid').text()) - price);
+            }
+            $('.accounting-debt').text(parseInt($('.accounting-debt').text()) + price);
+            $('.accounting-debt-2').text($('.accounting-debt').text());
         }
         var accounting = $(this).data('accounting');
         $.ajax({
             method: "POST",
             url: '/cities/daily-list',
-            data: { id: order_id, accounting: accounting },
+            data: { order_id: order_id, accounting: accounting },
             success: function (res) {
                 console.log(res);
+            },
+            error: function (xml) {
+                console.log(xml);
             }
         });
         return;
@@ -477,40 +525,50 @@ $(document).ready(function () {
     });
 
     // Sort couriers when select a certain city
-    showCouriers($('.city-select'));
     $('.city-select').change(function () {
         showCouriers($(this));
     });
+    $('.district-select').change(function () {
+        var selected_city = $('.city-select').val();
+        var dstr_id = $(this).val();
+        $('.courier-select option').each(function () {
+            console.log($(this).data('districts') + ' ' + dstr_id);
+            if ($(this).data('districts') == dstr_id && $(this).data('city') == selected_city) {
+                // A courier is from that district
+                $(this).show();
+                $('.courier-select option').removeAttr('selected');
+                $(this).attr('selected', 'selected');
+                var option = $(this);
 
-    function showCouriers(city_select) {
-        $('.dropdown-optgroup .dropdown-option').removeClass('selected');
-        var city_id = $(city_select).find('option[selected]').data('id');
-        $('.courier-select option').each(function (i) {
-            if ($(this).data('city') == city_id) {
-                if ($('#edit_order').length != 0) {
-                    $('.courier-select .label-inner').text($(this).text());
-                    $('.dropdown-optgroup .dropdown-option').removeClass('selected');
-                    return false;
-                } else {
-                    $(this).attr('selected', 'selected');
-                    $('.courier-select .label-inner').text($(this).text());
-                    $('.dropdown-optgroup .dropdown-option').removeClass('selected');
-                    $('.dropdown-optgroup .dropdown-option').each(function () {
-                        if ($(this).text() == $('.courier-select .label-inner').text()) {
-                            $(this).addClass('selected');
-                        }
-                    })
-                    return false;
-                }
+                $('.courier-select .dropdown-option').each(function () {
+                    if ($(option).data('city') == selected_city && $(this).text() == $(option).text()) {
+                        $(this).show();
+                        $(this).attr('selected', 'selected');
+                        $('.courier-select .label-inner').text($(this).text());
+                    }
+                });
             } else {
+                // A courier is from other district
+                $(this).hide();
                 $(this).removeAttr('selected');
+                var option = $(this);
+
+                $('.courier-select .dropdown-option').each(function () {
+                    if ($(option).data('city') == selected_city && $(this).text() == $(option).text()) {
+                        $(this).hide();
+                        $(this).removeAttr('selected');
+                    }
+                });
             }
         });
-    }
+        if ($('.courier-select .dropdown-option[selected="selected"]').length == 0) {
+            $('.courier-select .label-inner').text('Shu tumanda kuryerlar topilmadi');
+        }
+    });
 
     // Remove select class (active bg) from tail-select option
     $('.dropdown-option').click(function () {
-        $(this).find('.dropdown-optgroup .dropdown-option').removeClass('select');
+        $(this).find('.dropdown-optgroup .dropdown-option').removeClass('select').css({'background': 'white', 'color': ''});
         $(this).addClass('select');
     });
 
@@ -626,12 +684,26 @@ $(document).ready(function () {
     // Add masks to all phones fields
     $(":input").inputmask();
     $('input[type=phone]').inputmask({"mask": "+999 99 999 99 99"});
-    console.log($('input[type=phone]'))
     // Add new phone field
     $('.add-new-phone').click(function () {
         $(this).before('<input type="phone" class="input w-full border qty" value="+998">');
         $(":input").inputmask();
         $('input[type=phone]').inputmask({"mask": "+999 99 999 99 99"});
+    });
+
+    // Simulate click on selected districts
+    // console.log($('#new_courier .city-district-select option[data-selected="1"]'));
+    $('#new_courier .city-district-select option[data-selected="1"]').each(function () {
+        $('.district-select .dropdown-option[data-key="' + $(this).val() + '"]').click();
+    });
+
+    // Collapse accounting info
+    $('.collapse-accounting-info').click(function () {
+        if ($('.accounting-info').is(':visible')) {
+            $('.accounting-info').slideUp('fast');
+        } else {
+            $('.accounting-info').slideDown('fast');
+        }
     });
 
 });
@@ -678,3 +750,38 @@ $('.collapse-districts').click(function () {
         $(this).data('collapse', 'opened');
     }
 });
+
+
+showCouriers($('.city-select'));
+
+function showCouriers(city_select) {
+    $('.courier-select .dropdown-optgroup .dropdown-option').removeClass('selected');
+    var city_id = $(city_select).find('option[selected]').data('id');
+    $('.courier-select option').each(function (i) {
+        if ($(this).data('city') == city_id) {
+            $(this).show();
+            $('.courier-select option').removeAttr('selected');
+            $(this).attr('selected', 'selected');
+            var option = $(this);
+            $('.courier-select .dropdown-optgroup .dropdown-option').each(function (i) {
+                if ($(this).text() == $(option).text()) {
+                    $(this).show();
+                    if (i == 0) {
+                        $(this).attr('selected');
+                    }
+                    $('.courier-select .label-inner').text($(this).text());
+                }
+            });
+        } else {
+            // A courier is not from that city
+            $(this).hide();
+            var option = $(this);
+            $(this).removeAttr('selected');
+            $('.courier-select .dropdown-optgroup .dropdown-option').each(function () {
+                if ($(this).text() == $(option).text()) {
+                    $(this).hide();
+                }
+            });
+        }
+    });
+}

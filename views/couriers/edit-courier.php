@@ -94,8 +94,15 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
                         name="Couriers[districts_id][]" multiple>
                         <?php
                         foreach ($districts as $district) {
+                            $selected = '';
+                            $dstr_arr = explode(',', $model['districts_id']);
+                            if (in_array($district['id'], $dstr_arr)) {
+                                $selected = '1';
+                            } else {
+                                $selected = '0';
+                            }
                         ?>
-                            <option value="<?= $district['id']?>" <?= $courier_page['districts_id'] == $district['id'] ? 'selected' : ''?> data-city="<?= $district['city_id']?>">
+                            <option data-selected="<?= $selected?>" value="<?= $district['id']?>" <?= $courier_page['districts_id'] == $district['id'] ? 'selected' : ''?> data-city="<?= $district['city_id']?>">
                                 <?= $district['name']?></option>
                             <?php
                         }

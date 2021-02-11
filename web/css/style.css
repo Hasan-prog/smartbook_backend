@@ -321,10 +321,17 @@ body.login {
 .bg-theme-20 {
     background: #A73ED8;
 }
+.accounting-info {
+    display: none;
+}
 .mobile-menu .logo {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+}
+.active-option {
+    background: #1C3FAA;
+    color: white;
 }
 .mobile-menu .menu-item {
     width: 37px;

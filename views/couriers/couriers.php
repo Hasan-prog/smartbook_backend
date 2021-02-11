@@ -115,20 +115,22 @@ $this->title = "Smartbook DMS – Kuryerlar";
                             </td>
                             <td class="border-b dark:border-dark-5">
                                 <?php
-                                $products = explode('/', $courier['qty_left']);
-                                foreach ($products as $product) {
-                                    $product_explode = explode(':', $product);
-                                    $product_explode['info'] = explode(',', $product_explode[0]);
-                                    unset($product_explode[0]);
-                                    $product_explode['qty'] = $product_explode[1];
-                                    unset($product_explode[1]);
-                                ?>
-                                    <div class="select-handle-single my-3" data-key="3" data-group="#">
-                                        <?= $product_explode['info'][1]?> ·
-                                        <?= $product_explode['qty']?> <?= $product_explode['info'][2]?></div>
-                                    <?php
+                                if ($courier['qty_left'] != 0) {
+                                    $products = explode('/', $courier['qty_left']);
+                                    foreach ($products as $product) {
+                                        $product_explode = explode(':', $product);
+                                        $product_explode['info'] = explode(',', $product_explode[0]);
+                                        unset($product_explode[0]);
+                                        $product_explode['qty'] = $product_explode[1];
+                                        unset($product_explode[1]);
+                                    ?>
+                                        <div class="select-handle-single my-3" data-key="3" data-group="#">
+                                            <?= $product_explode['info'][1]?> ·
+                                            <?= $product_explode['qty']?> <?= $product_explode['info'][2]?></div>
+                                        <?php
+                                    }
                                 }
-                            ?>
+                                ?>
                             </td>
                             <td class="border-b dark:border-dark-5 md:w-80">
                                 <div class="flex items-center justify-center">

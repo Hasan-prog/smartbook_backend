@@ -63,7 +63,7 @@ class OrdersController extends AppCourierController
             }
 
             $model->comment = Yii::$app->request->post('comment');
-            $model->last_changed_time = date('Y-m-d h:m:s');
+            $model->last_changed_time = date('Y-m-d h:i:s');
             $model->last_changed_user = Yii::$app->user->identity['name'];
             $model->save();
 

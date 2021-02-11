@@ -64,7 +64,7 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                 <?php
                 foreach ($couriers as $courier) {
                     ?>
-                    <option value="<?= $courier['id']?>" data-city="<?= $courier['city_id']?>"><?= $courier['name']?></option>
+                    <option value="<?= $courier['id']?>" data-districts="<?= $courier['districts_id']?>" data-city="<?= $courier['city_id']?>"><?= $courier['name']?></option>
                     <?php
                 }
                 ?>
@@ -97,7 +97,7 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                     <select class="tail-select w-full flex-8">
                         <?php 
                         foreach ($products as $product) {
-                                ?>
+                        ?>
                         <option value="<?= $product['id']?>,<?= $product['name']?>,<?= $product['format']?>:1"
                             data-id="<?= $product['id']?>" data-name="<?= $product['name']?>"
                             data-format="<?= $product['format']?>" data-price="<?= $product['price']?>">

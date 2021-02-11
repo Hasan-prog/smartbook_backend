@@ -122,14 +122,14 @@ class CitiesController extends AppController
             if (Yii::$app->request->post('status') != null) {
                 $model = Orders::findOne(['id' => Yii::$app->request->post('order_id'), 'view' => 1]);
                 $model->status = Yii::$app->request->post('status');
-                $model->last_changed_time = date('Y-m-d h:m:s');
+                $model->last_changed_time = date('Y-m-d h:i:s');
                 $model->last_changed_user = Yii::$app->user->identity['name'];
                 $model->save();
             }
             if (Yii::$app->request->post('accounting') != null) {
                 $model = Orders::findOne(['id' => Yii::$app->request->post('order_id'), 'view' => 1]);
                 $model->accounting = Yii::$app->request->post('accounting');
-                $model->last_changed_time = date('Y-m-d h:m:s');
+                $model->last_changed_time = date('Y-m-d h:i:s');
                 $model->last_changed_user = Yii::$app->user->identity['name'];
                 $model->save();
             }
@@ -158,11 +158,18 @@ class CitiesController extends AppController
         $canceled_qty = 0;
         $cash = 0;
         $click = 0;
+        $accounting_paid = 0;
+        $accounting_debt = 0;
 
         foreach ($orders as $order) {
             if ($order['courier_id'] == $courier_id) {
                 if ($order['status'] == 'delivered') {
                     $delivered_qty++;
+                    if ($order['accounting'] == 1) {
+                        $accounting_paid += $order['price'];
+                    } else {
+                        $accounting_debt += $order['price'];
+                    }
                 } else if ($order['status'] == 'not-delivered') {
                     $not_delivered_qty++;
                 } else if ($order['status'] == 'canceled') {
@@ -179,7 +186,9 @@ class CitiesController extends AppController
         $cash = price_format($cash);
         $click = price_format($click);
         $overall = price_format($overall);
-        return $this->render('daily-list', compact('orders', 'date', 'date_formated', 'delivered_qty', 'not_delivered_qty', 'canceled_qty', 'cash', 'click', 'overall', 'city', 'city_id', 'courier_routing', 'courier_id', 'courier'));
+        // $accounting_paid = price_format($accounting_paid);
+        // $accounting_debt = price_format($accounting_debt);
+        return $this->render('daily-list', compact('orders', 'date', 'date_formated', 'delivered_qty', 'not_delivered_qty', 'canceled_qty', 'cash', 'click', 'overall', 'city', 'city_id', 'courier_routing', 'courier_id', 'courier', 'accounting_paid', 'accounting_debt'));
     }
 
     public function actionMonthlyList() {
