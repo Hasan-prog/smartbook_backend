@@ -11,11 +11,11 @@ class History extends ActiveRecord {
     }
 
     public function getCourier() {
-        return $this->hasOne(Couriers::className(), ['id' => 'courier_id']);
+        return $this->hasOne(Couriers::className(), ['id' => 'courier_id'])->andOnCondition(['view' => 1]);
     }
 
     public function getCity() {
-        return $this->hasOne(Cities::className(), ['id' => 'city_id']);
+        return $this->hasOne(Cities::className(), ['id' => 'city_id'])->andOnCondition(['view' => 1]);
     }
 
 }

@@ -26,19 +26,6 @@ $this->title = "Smartbook DMS – Mijozlar";
     <div class="p-5" id="striped-rows-table">
         <div class="filters mb-6">
             <form class="xl:flex sm:mr-auto" id="tabulator-html-filter-form">
-                <div class="sm:flex items-center sm:mr-4">
-                    <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Shahar</label>
-                    <select data-element="client-row" class="input w-full border col-span-4 filter-dropdown-db" name="worker_id" id="tabulator-html-filter-field">
-                        <option value="all" selected="">Hamma</option>
-                        <?php
-                        foreach ($cities as $city) {
-                            ?>
-                                <option value="<?= $city['name']?>"><?= $city['name']?></option>
-                            <?php
-                        }
-                        ?>
-                    </select>
-                </div>
 
                 <!-- <div class="sm:flex items-center sm:mr-4">
                     <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Vaqt</label>
@@ -76,7 +63,7 @@ $this->title = "Smartbook DMS – Mijozlar";
                     $i = 0;
                     foreach ($clients as $client) {
                     ?>
-                        <tr <?= $i % 2 ? 'class="bg-gray-100 dark:bg-dark-1 client-row"' : 'class="client-row"'?>>
+                        <tr data-city="<?= $client['city_id']?>" class="client-row <?= $i % 2 ? 'bg-gray-100 dark:bg-dark-1"' : ''?>">
                             <td class="border-b dark:border-dark-5"><?= $client['id']?></td>
                             <td class="border-b dark:border-dark-5"><?= $client['name']?></td>
                             <td class="border-b dark:border-dark-5"><a

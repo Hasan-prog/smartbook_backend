@@ -13,6 +13,18 @@ class CitiesController extends AppController
 
     public function actionIndex() {
         $cities = Cities::find()->asArray()->with('orders')->with('couriers')->where(['view' => 1])->all();
+        $courers_id_arr = [];
+        foreach ($cities as $key => $city) {
+            foreach ($city['couriers'] as $courier) {
+                array_push($courers_id_arr, $courier['id']);
+            }
+            foreach ($city['orders'] as $order_key => $order) {
+                if (!in_array($order['courier_id'], $courers_id_arr)) {
+                    unset($cities[$key]['orders'][$order_key]);
+                }
+            }
+        }
+
         return $this->render('cities', compact('cities'));
     }
 
@@ -23,7 +35,10 @@ class CitiesController extends AppController
             // Delete an order
             if (Yii::$app->request->post('delete') == 1) {
                 $id = Yii::$app->request->post('id');
-                $model = Orders::findOne($id);
+                $model = Orders::findOne(['id' => $id, 'view' => 1]);
+                if (empty($model)) {
+                    return;
+                }
                 $model->view = 0;
                 $model->save();
             }

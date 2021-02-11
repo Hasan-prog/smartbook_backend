@@ -89,7 +89,7 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
                         }
                         ?>
                     </select>
-                    <select data-placeholder="Hamma tumanlar..." id="equipments"
+                    <select data-placeholder="Hamma tumanlar..."
                         class="tail-select w-full district-select" id="couriers-equipment"
                         name="Couriers[districts_id][]" multiple>
                         <?php
@@ -111,18 +111,16 @@ $this->title = "Smartbook DMS – Kuryerni O'zgartirish";
                 </div>
             </div>
             <div class="intro-y col-span-12 sm:col-span-6">
-                <div class="intro-y col-span-12 sm:col-span-6" style="z-index: 50">
+                <div class="intro-y col-span-12 sm:col-span-6 courier-equipment" style="z-index: 50">
                     <div class="mb-2">Uskunalar</div>
-                    <select data-placeholder="Kuryerga nima berilgan" id="equipments" class="tail-select w-full"
-                        id="couriers-equipment" name="Couriers[equipment][]" multiple>
+                    <select data-placeholder="Kuryerga nima berilgan" id="equipments" class="tail-select w-full" name="Couriers[equipment][]" multiple>
                         <?php
                         $all_equip = ['Planshet', 'JPS', 'Moshina'];
                         ?>
-                        <option <?= in_array('Planshet', $equip_arr) ? 'selected' : ''?> value="Planshet">Planshet
-                        </option>
-                        <option <?= in_array('JPS', $equip_arr) ? 'selected' : ''?> value="JPS">JPS</option>
-                        <option <?= in_array('Moshina', $equip_arr) ? 'selected' : ''?> value="Moshina">Moshina</option>
-                        <option <?= in_array('SIM', $equip_arr) ? 'selected' : ''?> value="Moshina">SIM</option>
+                        <option <?= in_array('Planshet', $equip_arr) ? 'data-selected="1"' : ''?> value="Planshet">Planshet</option>
+                        <option <?= in_array('JPS', $equip_arr) ? 'data-selected="1"' : ''?> value="JPS">JPS</option>
+                        <option <?= in_array('Moshina', $equip_arr) ? 'data-selected="1"' : ''?> value="Moshina">Moshina</option>
+                        <option <?= in_array('SIM', $equip_arr) ? 'data-selected="1"' : ''?> value="SIM">SIM</option>
                         <?php
                         ?>
                     </select>

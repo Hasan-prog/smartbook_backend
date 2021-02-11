@@ -12,11 +12,11 @@ class Couriers extends ActiveRecord {
     }
 
     public function getCities() {
-        return $this->hasOne(Cities::className(), ['id' => 'city_id']);
+        return $this->hasOne(Cities::className(), ['id' => 'city_id'])->andOnCondition(['view' => 1]);
     }
 
     public function getOrders() {
-        return $this->hasMany(Orders::className(), ['courier_id' => 'id']);
+        return $this->hasMany(Orders::className(), ['courier_id' => 'id'])->andOnCondition(['view' => 1]);
     }
 
     public function rules()

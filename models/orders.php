@@ -31,19 +31,19 @@ class Orders extends ActiveRecord {
     }
 
     public function getManager() {
-        return $this->hasOne(Managers::className(), ['id' => 'manager_id']);
+        return $this->hasOne(Managers::className(), ['id' => 'manager_id'])->andOnCondition(['view' => 1]);
     }
 
     public function getCourier() {
-        return $this->hasOne(Couriers::className(), ['id' => 'courier_id']);
+        return $this->hasOne(Couriers::className(), ['id' => 'courier_id'])->andOnCondition(['view' => 1]);
     }
 
     public function getOperator() {
-        return $this->hasOne(Operators::className(), ['id' => 'operator_id']);
+        return $this->hasOne(Operators::className(), ['id' => 'operator_id'])->andOnCondition(['view' => 1]);
     }
 
     public function getDistrict() {
-        return $this->hasOne(Districts::className(), ['id' => 'district_id']);
+        return $this->hasOne(Districts::className(), ['id' => 'district_id'])->andOnCondition(['view' => 1]);
     }
 
 

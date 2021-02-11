@@ -63,13 +63,13 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
         </h2>
         <div class="flex text-gray-700">
             <div class="mr-6 flex items-center">
-                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazilgan
+                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <span class="info-delivered-header mr-1"><?= $delivered_qty?></span> Yetkazilgan
             </div>
             <div class="mr-6 flex items-center">
-                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $not_delivered_qty?> Yetkazilmagan
+                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <span class="info-not-delivered-header mr-1"><?= $not_delivered_qty?></span> Yetkazilmagan
             </div>
             <div class="mr-6 flex items-center">
-                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytarilgan
+                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <span class="info-canceled-header mr-1"><?= $canceled_qty?></span> Qaytarilgan
             </div>
             <div class="mr-6 flex items-center border-l pl-6">
                 <span class="text-gray-500 mr-2">Naqd:</span> <?= $cash?> so'm
@@ -201,7 +201,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                         <?php
                                             if ($order['status'] == 'delivered') {
                                                 ?>
-                                                <button id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="dropdown-toggle button button--sm inline-block bg-theme-9 text-white flex items-center w-32 justify-center">Yetkazilgan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                                <button id="<?= $order['id']?>" data-accounting="<?= $order['accounting']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="dropdown-toggle button button--sm inline-block bg-theme-9 text-white flex items-center w-32 justify-center">Yetkazilgan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                                                 <div class="dropdown-box w-32">
                                                     <div class="dropdown-box__content box dark:bg-dark-1"> 
                                                         <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="button button--sm inline-block bg-theme-12 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilmagan</button>
@@ -212,7 +212,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                             }
                                             if ($order['status'] == 'not-delivered') {
                                                 ?>
-                                                <button id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="dropdown-toggle button button--sm inline-block bg-theme-12 text-white flex items-center w-32 justify-center">Yetkazilmagan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                                <button id="<?= $order['id']?>" data-accounting="<?= $order['accounting']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="dropdown-toggle button button--sm inline-block bg-theme-12 text-white flex items-center w-32 justify-center">Yetkazilmagan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                                                 <div class="dropdown-box w-32">
                                                     <div class="dropdown-box__content box dark:bg-dark-1"> 
                                                         <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="delivered" data-style="bg-theme-9" class="button button--sm inline-block bg-theme-9 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilgan</button>
@@ -223,7 +223,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                             }
                                             if ($order['status'] == 'canceled') {
                                                 ?>
-                                                <button id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="canceled" data-style="bg-theme-6" class="dropdown-toggle button button--sm inline-block bg-theme-6 w-32 text-white flex items-center justify-center">Qaytarilgan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                                <button id="<?= $order['id']?>" data-accounting="<?= $order['accounting']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="canceled" data-style="bg-theme-6" class="dropdown-toggle button button--sm inline-block bg-theme-6 w-32 text-white flex items-center justify-center">Qaytarilgan <svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
                                                 <div class="dropdown-box w-32">
                                                     <div class="dropdown-box__content box dark:bg-dark-1"> 
                                                         <button data-id="<?= $order['id']?>" data-price="<?= $order['price']?>" data-order-str="<?= $order['product']?>" data-courier-id="<?= $courier_id?>" data-status="not-delivered" data-style="bg-theme-12" class="button button--sm inline-block bg-theme-12 text-white mx-auto w-32 text-center flex items-center justify-center mb-1">Yetkazilmagan</button>
@@ -238,7 +238,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                     </td>
                                     <td class="border-b dark:border-dark-5 md:w-80">
                                         <div class="flex items-center justify-center">
-                                            <a class="flex items-center mr-5" href="<?= Url::to(['order/edit-order?id=' . $order['id']])?>"> <i class="w-4 h-4 mr-2"
+                                            <a class="flex items-center mr-5" href="<?= Url::to(['orders/edit-order?id=' . $order['id']])?>"> <i class="w-4 h-4 mr-2"
                                                     data-feather="edit"></i> Ozgartirish </a>
                                             <a class="flex items-center text-theme-6 delete-subject" href="" data-url="<?= Url::to('/cities/daily-list')?>" data-id="<?= $order['id']?>" data-parent="order-row" data-msg="Ushbu buyurtmani o'chirmoqchimisiz?"> <i class="w-4 h-4 mr-2"
                                                     data-feather="trash-2"></i> O'chirish </a>

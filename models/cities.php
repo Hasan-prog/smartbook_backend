@@ -11,7 +11,7 @@ class Cities extends ActiveRecord {
     }
 
     public function getOrders() {
-        return $this->hasMany(Orders::className(), ['city_id' => 'id']);
+        return $this->hasMany(Orders::className(), ['city_id' => 'id'])->andOnCondition(['view' => 1]);
     }
     
     public function getCouriers() {

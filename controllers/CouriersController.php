@@ -19,7 +19,7 @@ class CouriersController extends AppController
             $model->view = 0;
             $model->save();
         }
-        $couriers = Couriers::find()->asArray()->where(['view' => 1])->with('cities')->with('orders')->all();
+        $couriers = Couriers::find()->asArray()->where(['view' => 1])->orderBy(['id' => SORT_DESC])->with('cities')->with('orders')->all();
         if (!empty($couriers)) {
 
         }
@@ -48,6 +48,7 @@ class CouriersController extends AppController
         // Edit how much the selected courier left
         $courier = $model;
         $no_items = false;
+        $courier_items = '';
         if ($courier['qty_left'] == 0) {
             $no_items = true;
         } else {
@@ -80,6 +81,10 @@ class CouriersController extends AppController
                 } else {
                     $model->equipment = "";
                 }
+            }
+
+            if (!isset($courier['equipment'])) {
+                $model->equipment = "";
             }
 
             // Parse districts array into string
@@ -125,7 +130,9 @@ class CouriersController extends AppController
             $model->phone_number = $courier['phone_number'];
             $model->address = $courier['address'];
             $model->city_id = $courier['city_id'];
-            $model->qty_left = $courier['qty_left'];
+            if (isset($courier['qty_left'])) {
+                $model->qty_left = $courier['qty_left'];
+            }
             $model->salary = $courier['salary'];
             $model->save();
             return $this->redirect('/couriers');

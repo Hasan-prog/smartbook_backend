@@ -147,31 +147,69 @@ $(document).ready(function () {
 
     // Change status of an order on dropdown select
     $('.status-dropdown .dropdown-box button').click(function () {
+        var clicked_option = $(this);
         var order_id = $(this).data('id');
         var dropdown_toggle = $('#' + order_id);
         var order_str = $(this).data('order-str');
         var courier_id = $(this).data('courier-id');
         var add_item = 0;
+        
+        // MAKE MANAGER CAN NOT SELECT YETKAZILMAGAN FROM YETKAZILGAN
+        // if ($(this).data('status') != 'delivered') {
+        //     var accounting_toggle = $('.dropdown-toggle' + '#' + $(this).data('id'));
+        //     console.log(accounting_toggle);
+        //     // Do it not transfered
+        //     $(this).addClass('bg-theme-6');
+        //     $(this).removeClass('bg-theme-9');
+        //     $(this).data('accounting', 0);
+        //     $(this).text('Berilmagan');
+        //     if (parseInt($('.accounting-paid').text()) > 0) {
+        //         $('.accounting-paid').text(parseInt($('.accounting-paid').text()) - price);
+        //     }
+        //     $('.accounting-debt').text(parseInt($('.accounting-debt').text()) + price);
+        //     $('.accounting-debt-2').text($('.accounting-debt').text());
+
+        //     var accounting = $(this).data('accounting');
+        //     $.ajax({
+        //         method: "POST",
+        //         url: '/cities/daily-list',
+        //         data: { order_id: order_id, accounting: accounting },
+        //         success: function (res) {
+        //             console.log(res);
+        //         },
+        //         error: function (xml) {
+        //             console.log(xml);
+        //         }
+        //     });
+        //     return;
+        // }
 
         // Decrease from info collapse
-        if ($(dropdown_toggle).data('status') == 'delivered') {
-            // Decrease info-delivered
-            $('.info-delivered').text(parseInt($('.info-delivered').text()) - 1);
-            var selected_status_info = $('.info-' + $(this).data('status'));
-            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
-        } 
-        if ($(dropdown_toggle).data('status') == 'not-delivered') {
-            // Decrease info-not-delivered
-            $('.info-not-delivered').text(parseInt($('.info-not-delivered').text()) - 1);
-            var selected_status_info = $('.info-' + $(this).data('status'));
-            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
-        }
-        if ($(dropdown_toggle).data('status') == 'canceled') {
-            // Decrease info-canceled
-            $('.info-canceled').text(parseInt($('.info-canceled').text()) - 1);
-            var selected_status_info = $('.info-' + $(this).data('status'));
-            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
-        }
+        // if ($(dropdown_toggle).data('status') == 'delivered') {
+        //     // Decrease info-delivered
+        //     $('.info-delivered').text(parseInt($('.info-delivered').text()) - 1);
+        //     // $('.info-delivered-header').text(parseInt($('.info-delivered-header').text()) - 1);
+        //     var selected_status_info = $('.info-' + $(this).data('status'));
+        //     $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+        //     $('.accounting-debt').text(overall_delivered_price);
+            
+        // } 
+        // if ($(dropdown_toggle).data('status') == 'not-delivered') {
+        //     // Decrease info-not-delivered
+        //     $('.info-not-delivered').text(parseInt($('.info-not-delivered').text()) - 1);
+        //     // $('.info-not-delivered-header').text(parseInt($('.info-not-delivered-header').text()) - 1);
+        //     var selected_status_info = $('.info-' + $(this).data('status'));
+        //     $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+        //     $('.accounting-debt').text(overall_delivered_price);
+        // }
+        // if ($(dropdown_toggle).data('status') == 'canceled') {
+        //     // Decrease info-canceled
+        //     $('.info-canceled').text(parseInt($('.info-canceled').text()) - 1);
+        //     // $('.info-canceled-header').text(parseInt($('.info-canceled-header').text()) - 1);
+        //     var selected_status_info = $('.info-' + $(this).data('status'));
+        //     $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+        //     $('.accounting-debt').text(overall_delivered_price);
+        // }
         
         if ($(this).data('status') == 'not-delivered' && $(dropdown_toggle).data('status') != 'canceled') {
             if (confirm('Ushbu mahsulot uchun kuryerni qayta tiklashni xohlaysizmi? OK – bitta mahsulot orqaga qo\'shish, Cancel – qoshilmasdan')) {
@@ -222,6 +260,40 @@ $(document).ready(function () {
         var svg = '<svg class="w-4 h-4 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down w-4 h-4"><polyline points="6 9 12 15 18 9"></polyline></svg>';
         $(dropdown_toggle).html(clicked_text + svg);
 
+        var overall_delivered_price = 0;
+        $('.status-dropdown .dropdown-toggle').each(function () {
+            if ($(this).data('status') == 'delivered' && $(this).data('accounting') == 0) {
+                overall_delivered_price += $(this).data('price');
+            }
+        });
+
+        // Decrease from info collapse
+        if ($(dropdown_toggle).data('status') == 'delivered') {
+            // Decrease info-delivered
+            $('.info-delivered').text(parseInt($('.info-delivered').text()) - 1);
+            // $('.info-delivered-header').text(parseInt($('.info-delivered-header').text()) - 1);
+            var selected_status_info = $('.info-' + $(this).data('status'));
+            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+            $('.accounting-debt').text(overall_delivered_price);
+            
+        } 
+        if ($(dropdown_toggle).data('status') == 'not-delivered') {
+            // Decrease info-not-delivered
+            $('.info-not-delivered').text(parseInt($('.info-not-delivered').text()) - 1);
+            // $('.info-not-delivered-header').text(parseInt($('.info-not-delivered-header').text()) - 1);
+            var selected_status_info = $('.info-' + $(this).data('status'));
+            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+            $('.accounting-debt').text(overall_delivered_price);
+        }
+        if ($(dropdown_toggle).data('status') == 'canceled') {
+            // Decrease info-canceled
+            $('.info-canceled').text(parseInt($('.info-canceled').text()) - 1);
+            // $('.info-canceled-header').text(parseInt($('.info-canceled-header').text()) - 1);
+            var selected_status_info = $('.info-' + $(this).data('status'));
+            $(selected_status_info).text(parseInt($(selected_status_info).text()) + 1);
+            $('.accounting-debt').text(overall_delivered_price);
+        }
+
         // Send Ajax to change it
         $.ajax({
             method: "POST",
@@ -237,6 +309,7 @@ $(document).ready(function () {
             .done(function (msg) {
                 //   alert( "Data Saved: " + msg );
             });
+
     });
 
     // Couriers buttons
@@ -315,16 +388,16 @@ $(document).ready(function () {
     });
 
     // Search from dropdown with DB info
-    $('.filter-dropdown-db').bind('DOMAttrModified textInput input change keypress paste focus', function () {
-        var val = $(this).val();
-        var element = $(this).data('element');
-        if (val != 'all') {
-            $('.' + element).hide();
-            $('.' + element + ':containsi(' + val + ')').show();
-        } else {
-            $('.' + element).show();
-        }
-    });
+    // $('.filter-dropdown-db').bind('DOMAttrModified textInput input change keypress paste focus', function () {
+    //     var val = $(this).val();
+    //     var element = $(this).data('element');
+    //     if (val != 'all') {
+    //         $('.' + element).hide();
+    //         $('.' + element + ':containsi(' + val + ')').show();
+    //     } else {
+    //         $('.' + element).show();
+    //     }
+    // });
 
     // END: FILTERS
 
@@ -378,6 +451,13 @@ $(document).ready(function () {
         var order_id = $(this).data('id');
         var accounting = $(this).data('accounting');
         var price = $(this).data('price');
+
+        // Before check tha product is yetkazilgan
+        if ($(this).prev().find('.dropdown-toggle').data('status') != 'delivered') {
+            alert('Shu buyurtma hali yetkazilmagan 😁');
+            return;
+        }
+
         if (accounting == 0) {
             // Do it transfered
             $(this).removeClass('bg-theme-6');
@@ -665,10 +745,10 @@ $(document).ready(function () {
 
     // Make clicked select inpur z-index top to avoid overlayering by other fields
     $('.tail-select').click(function () {
-        $('.tail-select').parent().css({
+        $('.tail-select').closest('.col-span-12').css({
             'z-index': '1',
         });
-        $(this).parent().css({
+        $(this).closest('.col-span-12').css({
             'z-index': '50',
         });
     });
@@ -692,7 +772,6 @@ $(document).ready(function () {
     });
 
     // Simulate click on selected districts
-    // console.log($('#new_courier .city-district-select option[data-selected="1"]'));
     $('#new_courier .city-district-select option[data-selected="1"]').each(function () {
         $('.district-select .dropdown-option[data-key="' + $(this).val() + '"]').click();
     });
@@ -705,6 +784,31 @@ $(document).ready(function () {
             $('.accounting-info').slideDown('fast');
         }
     });
+
+    // Select attached a courier's equipments in edit-courier
+    $('.courier-equipment option[data-selected="1"]').each(function () {
+        $('.courier-equipment .dropdown-option[data-key="' + $(this).val() + '"]').click();
+    });
+
+    $('.city-select').change(function () {
+        $(this).parent().find('.district-select').find('.select-handle').each(function () {
+            $(this).click();
+            console.log('changed');
+        });
+    });
+
+    // $('.filter-city').change(function () {
+    //     var element = $(this).data('element');
+    //     var select = $(this);
+    //     $('.' + element).each(function () {
+    //         console.log($(this).data('city'));
+    //         if ($(this).data('city') == $(select).val()) {
+    //             $(this).show();
+    //         } else {
+    //             $(this).hide();
+    //         }
+    //     });
+    // });
 
 });
 
@@ -767,7 +871,7 @@ function showCouriers(city_select) {
                 if ($(this).text() == $(option).text()) {
                     $(this).show();
                     if (i == 0) {
-                        $(this).attr('selected');
+                        $(this).attr('selected', 'selected');
                     }
                     $('.courier-select .label-inner').text($(this).text());
                 }

@@ -87,7 +87,10 @@ class OrdersController extends AppCourierController
             unset($array[$key]);
             $array = $temp + $array;
         }
-        // debug($orders); die;
+
+        $courier = Couriers::findOne($_COOKIE['courier_id']);
+        $courier_dstr = explode(',', $courier['districts_id']);
+
         foreach ($orders as $key => $order) {
             $d['day'] = date('d', strtotime($order['datetime']));
             $d['month'] = date('M', strtotime($order['datetime']));
@@ -95,9 +98,8 @@ class OrdersController extends AppCourierController
             $d['year_i'] = date('Y', strtotime($order['datetime']));
             $d['datetime'] = $order['datetime'];
             array_push($d_arr, $d);
-            
-            // debug($order); die;
-            if ($order['district'] != null) {
+
+            if ($order['district'] != null && in_array($order['district_id'], $courier_dstr)) {
                 $order['district']['qty'] = 1;
                 array_push($dstr_arr, $order['district']);
             }
@@ -115,6 +117,7 @@ class OrdersController extends AppCourierController
             // }
             $no_dstr_orders++;
         }
+
 
         $i = 0;
         foreach ($dstr_arr as $key => $dstr) {

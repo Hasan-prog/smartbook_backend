@@ -24,16 +24,9 @@ class OrdersController extends AppController
             $model->view = 0;
             $model->save();
         }
-        // $clients_query = Clients::find()->where(['view' => 1]);
-        // $countQuery = clone $clients_query;
-        // $pages = new Pagination(['totalCount' => $countQuery->count()]);
-        // $clients = $clients_query->offset($pages->offset)
-        //     ->limit($pages->limit)
-        //     ->asArray()
-        //     ->all();
 
         $provider = new ActiveDataProvider([
-            'query' => Clients::find()->where(['view' => 1]),
+            'query' => Clients::find()->orderBy(['id' => SORT_DESC])->where(['view' => 1]),
             'pagination' => [
                 'pageSize' => 5,
             ],
@@ -140,6 +133,7 @@ class OrdersController extends AppController
                 $client_model->name = $order['name'];
                 $client_model->phone_number = $order['phone_number'];
                 $client_model->address = $order['address'];
+                $client_model->city_id = $order['city_id'];
                 $client_model->orders_id = $new_order_id; // if new just paste a current generated id, if existing add by ','
                 $client_model->save();
                 $c_id = $client_model->id;
@@ -149,6 +143,7 @@ class OrdersController extends AppController
                 $client_search->name = $order['name'];
                 $client_search->phone_number = $order['phone_number'];
                 $client_search->address = $order['address'];
+                $client_search->city_id = $order['city_id'];
                 $client_search->orders_id = $client_search->orders_id . ',' . $new_order_id; // if new just paste a current generated id, if existing add by ','
                 $client_search->view = 1;
                 $client_search->save();
@@ -165,7 +160,10 @@ class OrdersController extends AppController
 
     public function actionEditOrder() {
         $id = Yii::$app->request->get('id');
-        $model = Orders::findOne($id);
+        $model = Orders::findOne(['id' => $id, 'view' => 1]);
+        if (empty($model)) {
+            return $this->goBack();
+        }
         $products = Products::find()->asArray()->where(['view' => 1])->all();
         $cities = Cities::find()->asArray()->where(['view' => 1])->all();
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->all();
