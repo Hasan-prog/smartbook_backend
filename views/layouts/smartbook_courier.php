@@ -47,7 +47,7 @@ AppAsset::register($this);
     <div class="-mt-10 md:-mt-5 -mx-3 sm:-mx-8 px-3 sm:px-8 py-5 top-bar-menu">
         <div class="top-bar-boxed flex items-center justify-center">
             <!-- BEGIN: Logo -->
-            <a href="index.html" class="-intro-x hidden md:block">
+            <a href="<?= Url::to('/courier/orders')?>" class="-intro-x hidden md:block">
                 <img alt="Midone Tailwind HTML Admin Template" width="220" src="/web/images/Logo@1x.png">
             </a>
             <!-- END: Logo -->

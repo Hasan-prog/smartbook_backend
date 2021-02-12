@@ -101,7 +101,7 @@ class OrdersController extends AppController
         $districts = Districts::find()->asArray()->where(['view' => 1])->all();
         $client_model = new Clients();
 
-        if (Yii::$app->request->isAjax) {            
+        if (Yii::$app->request->isAjax) {
             
             $order = Yii::$app->request->post('orders');
             

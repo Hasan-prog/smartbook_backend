@@ -36,29 +36,64 @@ $this->title = "Oyli Buyurtmalar";
             $month_name = date('M', strtotime($month[$random_order]['datetime']));
             $month_i = date('m', strtotime($month[$random_order]['datetime']));
             $year_i = date('Y', strtotime($month[$random_order]['datetime']));
+
+            foreach ($month as $order) {
+                // Counting this month info
+                $overall_qty = 0;
+                $delivered_qty = 0;
+                $not_delivered_qty = 0;
+                $canceled_qty = 0;
+                $cash = 0;
+                $click = 0;
+                $overall = 0;
+
+                // Count monthly stats
+                if (cutMonth($order['datetime']) == date('m')) {
+                    if ($order['status'] == 'delivered') {
+                        $delivered_qty++;
+                    } else if ($order['status'] == 'not-delivered') {
+                        $not_delivered_qty++;
+                    } else if ($order['status'] == 'canceled') {
+                        $canceled_qty++;
+                    }
+                    $overall_qty++;
+                    if ($order['payment_method'] == 'cash') {
+                        $cash += $order['price'];
+                        $payment_label = 'Naqd';
+                    } else {
+                        $click += $order['price'];
+                        $payment_label = 'Click';
+                    }
+                    $overall = $delivered_qty + $not_delivered_qty + $canceled_qty;
+                }
+            }
+
             ?>
             <!-- BEGIN: Striped Rows -->
-            <div class="box" id="<?= $month_i?>">
+            <div class="box mb-5" id="<?= $month_i?>">
                 <div class="flex flex-col md:flex-row items-center p-5 border-b border-gray-200">
                     <h2 class="font-medium mr-auto">
                         <?= getUzMonth($month_name)?>, <?= date('Y', strtotime($month[$random_order]['datetime']))?> yil
                     </h2>
                 </div>
                 <div class="text-gray-700 month-info px-5 py-4">
-                    <div class="flex items-center py-2">
-                        <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> 490 Umumiy
+                <div class="flex items-center py-2">
+                        <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazilgan
                     </div>
                     <div class="flex items-center py-2">
-                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytarilgan
+                        <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?> Umumiy
                     </div>
                     <div class="flex items-center py-2">
-                        <span class="text-gray-500 mr-2">Naqd:</span> 274 561 000 so'm
+                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytarilgan
                     </div>
                     <div class="flex items-center py-2">
-                        <span class="text-gray-500 mr-2">Click:</span> 22 663 000 so'm
+                        <span class="text-gray-500 mr-2">Naqd:</span> <?= price_format($cash)?> so'm
                     </div>
                     <div class="flex items-center py-2">
-                        <span class="text-gray-500 mr-2">Umumiy:</span> 297 224 000 so'm
+                        <span class="text-gray-500 mr-2">Click:</span> <?= price_format($click)?> so'm
+                    </div>
+                    <div class="flex items-center py-2">
+                        <span class="text-gray-500 mr-2">Umumiy:</span> <?= price_format($overall)?> so'm
                     </div>
                 </div>
                 <div class="" id="striped-rows-table">
@@ -78,97 +113,191 @@ $this->title = "Oyli Buyurtmalar";
                                 <tbody>
                                 <?php
                                 $days_qty = date('t', strtotime($month[$random_order]['datetime']));
+                                $d = date('d', time() + 18000);
+                                $m = date('M');
                                 while ($days_qty > 0) {
-                                    // Count daily stats
-                                    $delivered_qty = 0;
-                                    $not_delivered_qty = 0;
-                                    $canceled_qty = 0;
-                                    $overall_qty = 0;
-                                    $cash = 0;
-                                    $click = 0;
-                                    $loop_day = '';
-                                    $year = '';
-                                    foreach ($month as $order) {
-                                        if ($days_qty == cutDay($order['datetime'])) {
-                                            $loop_day = cutDay($order['datetime']);
-                                            $overall_qty++;
-                                            if ($order['status'] == 'delivered') {
-                                                $delivered_qty++;
-                                            } else if ($order['status'] == 'not-delivered') {
-                                                $not_delivered_qty++;
-                                            } else if ($order['status'] == 'canceled') {
-                                                $canceled_qty++;
+                                    if ($month_name == $m) {
+                                        if ($days_qty <= $d) {
+                                            // Count daily stats
+                                            $delivered_qty = 0;
+                                            $not_delivered_qty = 0;
+                                            $canceled_qty = 0;
+                                            $overall_qty = 0;
+                                            $cash = 0;
+                                            $click = 0;
+                                            $loop_day = '';
+                                            $year = '';
+                                            foreach ($month as $order) {
+                                                if ($days_qty == cutDay($order['datetime'])) {
+                                                    $loop_day = cutDay($order['datetime']);
+                                                    $overall_qty++;
+                                                    if ($order['status'] == 'delivered') {
+                                                        $delivered_qty++;
+                                                    } else if ($order['status'] == 'not-delivered') {
+                                                        $not_delivered_qty++;
+                                                    } else if ($order['status'] == 'canceled') {
+                                                        $canceled_qty++;
+                                                    }
+                                                    if ($order['payment_method'] == 'cash') {
+                                                        $cash += $order['price'];
+                                                        $payment_label = 'Naqd';
+                                                    } else {
+                                                        $click += $order['price'];
+                                                        $payment_label = 'Click';
+                                                    }
+                                                }
                                             }
-                                            if ($order['payment_method'] == 'cash') {
-                                                $cash += $order['price'];
-                                                $payment_label = 'Naqd';
+                                            if ($days_qty == $loop_day) {
+                                                ?>
+                                                <tr class="cursor-pointer" onclick="window.location.href = '<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($loop_day . '-' . $month_i . '-' . $year_i)))?>';">
+                                                    <td class="border-b dark:border-dark-5 font-medium"><?= $loop_day?>
+                                                <?= date('M', strtotime($order['datetime']))?></td>
+                                                    <td class="border-b dark:border-dark-5">
+                                                        <div class="flex text-gray-700">
+                                                            <div class="mr-6 flex items-center">
+                                                                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazildi
+                                                            </div>
+                                                            <div class="mr-6 flex items-center">
+                                                                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
+                                                            </div>
+                                                            <div class="mr-6 flex items-center">
+                                                                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?> Umumiy
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="border-b dark:border-dark-5"><?= price_format($cash)?> so'm</td>
+                                                    <td class="border-b dark:border-dark-5"><?= price_format($click)?> so'm</td>
+                                                    <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
+                                                    <td class="border-b dark:border-dark-5">
+                                                        <div class="flex items-center justify-center">
+                                                            <a class="flex items-center mr-5" href="<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($loop_day . '-' . $month_i . '-' . $year_i)))?>"> <i
+                                                                    class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <?php
                                             } else {
-                                                $click += $order['price'];
-                                                $payment_label = 'Click';
+                                                ?>
+                                                    <tr class="cursor-pointer" onclick="window.location.href = '<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($days_qty . '-' . $month_i . '-' . $year_i)))?>';">
+                                                        <td class="border-b dark:border-dark-5 font-medium"><?= $days_qty?>
+                                                <?= date('M', strtotime($order['datetime']))?></td>
+                                                        <td class="border-b dark:border-dark-5">
+                                                            <div class="flex text-gray-700">
+                                                                <div class="mr-6 flex items-center">
+                                                                    <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 0 Yetkazildi
+                                                                </div>
+                                                                <div class="mr-6 flex items-center">
+                                                                    <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
+                                                                </div>
+                                                                <div class="mr-6 flex items-center">
+                                                                <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> 0 Umumiy
+                                                            </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="border-b dark:border-dark-5">0 so'm</td>
+                                                        <td class="border-b dark:border-dark-5">0 so'm</td>
+                                                        <td class="border-b dark:border-dark-5">0 so'm</td>
+                                                        <td class="border-b dark:border-dark-5">
+                                                            <div class="flex items-center justify-center">
+                                                                <a class="flex items-center mr-5" href="<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($days_qty . '-' . $month_i . '-' . $year_i)))?>"> <i
+                                                                        class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <?php
                                             }
                                         }
-                                    }
-                                    if ($days_qty == $loop_day) {
-                                        ?>
-                                        <tr class="cursor-pointer" onclick="window.location.href = '<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($loop_day . '-' . $month_i . '-' . $year_i)))?>';">
-                                            <td class="border-b dark:border-dark-5 font-medium"><?= $loop_day?>
-                                        <?= date('M', strtotime($order['datetime']))?></td>
-                                            <td class="border-b dark:border-dark-5">
-                                                <div class="flex text-gray-700">
-                                                    <div class="mr-6 flex items-center">
-                                                        <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazildi
-                                                    </div>
-                                                    <div class="mr-6 flex items-center">
-                                                        <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
-                                                    </div>
-                                                    <div class="mr-6 flex items-center">
-                                                        <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?> Umumiy
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="border-b dark:border-dark-5"><?= price_format($cash)?> so'm</td>
-                                            <td class="border-b dark:border-dark-5"><?= price_format($click)?> so'm</td>
-                                            <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
-                                            <td class="border-b dark:border-dark-5">
-                                                <div class="flex items-center justify-center">
-                                                    <a class="flex items-center mr-5" href="<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($loop_day . '-' . $month_i . '-' . $year_i)))?>"> <i
-                                                            class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <?php
                                     } else {
-                                        ?>
-                                            <tr class="cursor-pointer" onclick="window.location.href = '<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($days_qty . '-' . $month_i . '-' . $year_i)))?>';">
-                                                <td class="border-b dark:border-dark-5 font-medium"><?= $days_qty?>
-                                        <?= date('M', strtotime($order['datetime']))?></td>
+                                        // Count daily stats
+                                        $delivered_qty = 0;
+                                        $not_delivered_qty = 0;
+                                        $canceled_qty = 0;
+                                        $overall_qty = 0;
+                                        $cash = 0;
+                                        $click = 0;
+                                        $loop_day = '';
+                                        $year = '';
+                                        foreach ($month as $order) {
+                                            if ($days_qty == cutDay($order['datetime'])) {
+                                                $loop_day = cutDay($order['datetime']);
+                                                $overall_qty++;
+                                                if ($order['status'] == 'delivered') {
+                                                    $delivered_qty++;
+                                                } else if ($order['status'] == 'not-delivered') {
+                                                    $not_delivered_qty++;
+                                                } else if ($order['status'] == 'canceled') {
+                                                    $canceled_qty++;
+                                                }
+                                                if ($order['payment_method'] == 'cash') {
+                                                    $cash += $order['price'];
+                                                    $payment_label = 'Naqd';
+                                                } else {
+                                                    $click += $order['price'];
+                                                    $payment_label = 'Click';
+                                                }
+                                            }
+                                        }
+                                        if ($days_qty == $loop_day) {
+                                            ?>
+                                            <tr class="cursor-pointer" onclick="window.location.href = '<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($loop_day . '-' . $month_i . '-' . $year_i)))?>';">
+                                                <td class="border-b dark:border-dark-5 font-medium"><?= $loop_day?>
+                                            <?= date('M', strtotime($order['datetime']))?></td>
                                                 <td class="border-b dark:border-dark-5">
                                                     <div class="flex text-gray-700">
                                                         <div class="mr-6 flex items-center">
-                                                            <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 0 Yetkazildi
+                                                            <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> <?= $delivered_qty?> Yetkazildi
                                                         </div>
                                                         <div class="mr-6 flex items-center">
-                                                            <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
+                                                            <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> <?= $canceled_qty?> Qaytargan
                                                         </div>
                                                         <div class="mr-6 flex items-center">
-                                                        <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> 0 Umumiy
-                                                    </div>
+                                                            <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> <?= $overall_qty?> Umumiy
+                                                        </div>
                                                     </div>
                                                 </td>
-                                                <td class="border-b dark:border-dark-5">0 so'm</td>
-                                                <td class="border-b dark:border-dark-5">0 so'm</td>
-                                                <td class="border-b dark:border-dark-5">0 so'm</td>
+                                                <td class="border-b dark:border-dark-5"><?= price_format($cash)?> so'm</td>
+                                                <td class="border-b dark:border-dark-5"><?= price_format($click)?> so'm</td>
+                                                <td class="border-b dark:border-dark-5"><?= price_format($cash + $click)?> so'm</td>
                                                 <td class="border-b dark:border-dark-5">
                                                     <div class="flex items-center justify-center">
-                                                        <a class="flex items-center mr-5" href="<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($days_qty . '-' . $month_i . '-' . $year_i)))?>"> <i
+                                                        <a class="flex items-center mr-5" href="<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($loop_day . '-' . $month_i . '-' . $year_i)))?>"> <i
                                                                 class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
                                                     </div>
                                                 </td>
                                             </tr>
-                                        <?php
+                                            <?php
+                                        } else {
+                                            ?>
+                                                <tr class="cursor-pointer" onclick="window.location.href = '<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($days_qty . '-' . $month_i . '-' . $year_i)))?>';">
+                                                    <td class="border-b dark:border-dark-5 font-medium"><?= $days_qty?>
+                                            <?= date('M', strtotime($order['datetime']))?></td>
+                                                    <td class="border-b dark:border-dark-5">
+                                                        <div class="flex text-gray-700">
+                                                            <div class="mr-6 flex items-center">
+                                                                <div class="w-2 h-2 bg-theme-9 rounded-full mr-2"></div> 0 Yetkazildi
+                                                            </div>
+                                                            <div class="mr-6 flex items-center">
+                                                                <div class="w-2 h-2 bg-theme-6 rounded-full mr-2"></div> 0 Qaytargan
+                                                            </div>
+                                                            <div class="mr-6 flex items-center">
+                                                            <div class="w-2 h-2 bg-theme-12 rounded-full mr-2"></div> 0 Umumiy
+                                                        </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="border-b dark:border-dark-5">0 so'm</td>
+                                                    <td class="border-b dark:border-dark-5">0 so'm</td>
+                                                    <td class="border-b dark:border-dark-5">0 so'm</td>
+                                                    <td class="border-b dark:border-dark-5">
+                                                        <div class="flex items-center justify-center">
+                                                            <a class="flex items-center mr-5" href="<?= Url::to('/courier/orders/daily-list?d=' . date('Y-m-d', strtotime($days_qty . '-' . $month_i . '-' . $year_i)))?>"> <i
+                                                                    class="w-4 h-4 mr-2" data-feather="list"></i> Xaridlar </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php
+                                        }
                                     }
                                     $days_qty--;
-                                    continue;
                                 }
                                 ?>
                                 </tbody>
