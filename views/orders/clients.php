@@ -64,7 +64,7 @@ $this->title = "Smartbook DMS – Mijozlar";
                     foreach ($clients as $client) {
                     ?>
                         <tr data-city="<?= $client['city_id']?>" class="client-row <?= $i % 2 ? 'bg-gray-100 dark:bg-dark-1"' : ''?>">
-                            <td class="border-b dark:border-dark-5"><?= $client['id']?></td>
+                            <td class="border-b dark:border-dark-5"><?= $client['client_id']?></td>
                             <td class="border-b dark:border-dark-5"><?= $client['name']?></td>
                             <td class="border-b dark:border-dark-5"><a
                                     href="tel:<?= $client['phone_number']?>"><?= $client['phone_number']?></a></td>

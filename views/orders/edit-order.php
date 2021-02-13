@@ -40,7 +40,7 @@ $info[0] = explode(',', $info[0]);
                     <?php
                     foreach ($cities as $city) {
                         ?>
-                        <option <?= $model->city_id == $city['id'] ? 'selected' : ''?> value="<?= $city['id']?>" data-id="<?= $city['id']?>"><?= $city['name']?></option>
+                        <option <?= $model->city_id == $city['id'] ? 'selected="selected"' : ''?> value="<?= $city['id']?>" data-id="<?= $city['id']?>"><?= $city['name']?></option>
                         <?php
                     }
                     ?>
@@ -50,7 +50,7 @@ $info[0] = explode(',', $info[0]);
                         <?php
                         foreach ($districts as $district) {
                             ?>
-                                <option <?= $model->district_id == $district['id'] ? 'selected' : ''?> value="<?= $district['id']?>" data-city="<?= $district['city_id']?>"><?= $district['name']?></option>
+                                <option <?= $model->district_id == $district['id'] ? 'selected="selected"' : ''?> value="<?= $district['id']?>" data-city="<?= $district['city_id']?>"><?= $district['name']?></option>
                             <?php
                         }
                         ?>
@@ -66,7 +66,7 @@ $info[0] = explode(',', $info[0]);
                 <?php
                 foreach ($couriers as $courier) {
                     ?>
-                    <option <?= $model->courier_id == $courier['id'] ? 'selected' : ''?> value="<?= $courier['id']?>" data-city="<?= $courier['city_id']?>"><?= $courier['name']?></option>
+                    <option <?= $model->courier_id == $courier['id'] ? 'selected' : ''?> value="<?= $courier['id']?>" data-city="<?= $courier['city_id']?>" data-districts="<?= $courier['districts_id']?>"><?= $courier['name']?></option>
                     <?php
                 }
                 ?>

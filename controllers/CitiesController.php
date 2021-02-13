@@ -180,9 +180,7 @@ class CitiesController extends AppController
             if ($order['courier_id'] == $courier_id) {
                 if ($order['status'] == 'delivered') {
                     $delivered_qty++;
-                    if ($order['accounting'] == 1) {
-                        $accounting_paid += $order['price'];
-                    } else {
+                    if ($order['accounting'] == 0) {
                         $accounting_debt += $order['price'];
                     }
                 } else if ($order['status'] == 'not-delivered') {
@@ -194,6 +192,10 @@ class CitiesController extends AppController
                     $cash += $order['price'];
                 } else {
                     $click += $order['price'];
+                }
+
+                if ($order['accounting'] == 1) {
+                    $accounting_paid += $order['price'];
                 }
             }
         }
@@ -210,7 +212,10 @@ class CitiesController extends AppController
         $request = Yii::$app->request;
         $city_id = $request->get('city');
         $courier = $request->get('courier');
-        $couriers = Couriers::find()->asArray()->with('cities')->where(['city_id' => $city_id, 'id' => $courier])->all();
+        $couriers = Couriers::find()->asArray()->with('cities')->where(['city_id' => $city_id, 'id' => $courier, 'view' => 1])->all();
+        if (empty($couriers)) {
+            return $this->goBack();
+        }
         $orders = Orders::find()->asArray()->with('manager')->where(['city_id' => $city_id, 'courier_id' => $courier, 'view' => 1])->all();
         $city = Cities::findOne($city_id);
 

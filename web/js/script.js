@@ -27,7 +27,7 @@ $(document).ready(function () {
     });
 
     // Products select logic
-    if ($('#edit_order').length == 0) {
+    if ($('#edit_order').length === 0) {
         $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
     }
 
@@ -101,6 +101,7 @@ $(document).ready(function () {
 
             i++;
         });
+        console.log(ajax_arr);
         // Send Ajax to add order
         if (count_form_data == i) {
             $.ajax({
@@ -109,6 +110,8 @@ $(document).ready(function () {
                 data: { orders: ajax_arr},
                 success: function (res) {
                     $(form)[0].reset();
+                    console.log(res);
+                    $('.phones-group input[type="phone"]').not(":first").remove();
                     $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
                     $('.success').slideDown('fast');
                 },
@@ -608,60 +611,66 @@ $(document).ready(function () {
     $('.city-select').change(function () {
         showCouriers($(this));
     });
+    showCourierByDistrtict($('.district-select').val());
     $('.district-select').change(function () {
+        showCourierByDistrtict($(this).val());
+
+    });
+
+    function showCourierByDistrtict(dstr_id) {
         var selected_city = $('.city-select').val();
-        var dstr_id = $(this).val();
-        $('.courier-select option').each(function () {
-            console.log($(this).data('districts') + ' ' + dstr_id);
-            if ($(this).data('districts') == dstr_id && $(this).data('city') == selected_city) {
-                // A courier is from that district
+        // var dstr_id = $(this).val();
+        $('.courier-select option[data-city="' + selected_city + '"]').each(function () {
+            // All coureirs in each are from the selected CITY
+            var dstr_arr = $(this).data('districts').split(',');
+            if (dstr_arr.includes(dstr_id)) {
+                // This courier is from the selected DISTRICT
                 $(this).show();
-                $('.courier-select option').removeAttr('selected');
+                $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').show();
                 $(this).attr('selected', 'selected');
-                var option = $(this);
+                $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').attr('selected', 'selected');
 
-                $('.courier-select .dropdown-option').each(function () {
-                    if ($(option).data('city') == selected_city && $(this).text() == $(option).text()) {
-                        $(this).show();
-                        $(this).attr('selected', 'selected');
-                        $('.courier-select .label-inner').text($(this).text());
-                    }
-                });
+                // Change label-inner and make this option active
+                $('.courier-select .label-inner').text($(this).text());
             } else {
-                // A courier is from other district
+                // This courier is NOT from the selected DISTRICT
                 $(this).hide();
+                $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').hide();
                 $(this).removeAttr('selected');
-                var option = $(this);
-
-                $('.courier-select .dropdown-option').each(function () {
-                    if ($(option).data('city') == selected_city && $(this).text() == $(option).text()) {
-                        $(this).hide();
-                        $(this).removeAttr('selected');
-                    }
-                });
+                $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').removeAttr('selected');
             }
         });
-        if ($('.courier-select .dropdown-option[selected="selected"]').length == 0) {
-            $('.courier-select .label-inner').text('Shu tumanda kuryerlar topilmadi');
-        }
-    });
+
+    }
 
     // Remove select class (active bg) from tail-select option
     $('.dropdown-option').click(function () {
         $(this).find('.dropdown-optgroup .dropdown-option').removeClass('select').css({'background': 'white', 'color': ''});
-        $(this).addClass('select');
+        $(this).addClass('selected');
     });
 
     // Change districts by selecting city
     $('.city-select').change(function () {
         showDistricts($(this).val());
+        
+        // Change inner label
+        var label = $('.district-select option[data-city="' + $(this).val() + '"]')[0];
+        if (label != undefined) {
+            $(label).show();
+            $('.district-select option').removeAttr('selected');
+            $(label).attr('selected', 'selected');
+            $('.district-select .label-inner').text($(label).text());
+        } else {
+            $('.district-select .label-inner').text('Hamma tumanlar...');
+        }
     });
 
-    showDistricts($('.city-select option[selected]').val());
+    showDistricts($('.city-select').val());
 
     function showDistricts(city_id) {
         var dstr_arr = [];
         var selected_dstr_arr = [];
+
         $('.district-select option').each(function (i) {
             $(this).removeAttr('selected');
             if ($(this).data('city') != city_id) {
@@ -677,9 +686,14 @@ $(document).ready(function () {
                 if (dstr_arr.includes($(this).text())) {
                     // leave this option
                     $(this).show();
+                    $(this).removeAttr('selected');
+                    // $('.district-select .dropdown-option').removeAttr('selected');
+                    // $('.district-select .dropdown-option').removeClass('selected');
+                    // $(this).addClass('selected');
                 } else {
                     // hide this option
                     $(this).hide();
+                    $(this).removeAttr('selected');
                 }
             });
         }
@@ -793,7 +807,6 @@ $(document).ready(function () {
     $('.city-select').change(function () {
         $(this).parent().find('.district-select').find('.select-handle').each(function () {
             $(this).click();
-            console.log('changed');
         });
     });
 
@@ -861,8 +874,10 @@ showCouriers($('.city-select'));
 function showCouriers(city_select) {
     $('.courier-select .dropdown-optgroup .dropdown-option').removeClass('selected');
     var city_id = $(city_select).find('option[selected]').data('id');
+    var isset = 0;
     $('.courier-select option').each(function (i) {
         if ($(this).data('city') == city_id) {
+            isset = 1;
             $(this).show();
             $('.courier-select option').removeAttr('selected');
             $(this).attr('selected', 'selected');
@@ -888,4 +903,7 @@ function showCouriers(city_select) {
             });
         }
     });
+    if (isset == 0) {
+        $('.courier-select .label-inner').text('Shu shaharda kuryerlar topilmadi');
+    }
 }

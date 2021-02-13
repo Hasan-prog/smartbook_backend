@@ -21,12 +21,21 @@ AppAsset::register($this);
         <meta name="description" content="Midone admin is super flexible, powerful, clean & modern responsive tailwind admin template with unlimited possibilities.">
         <meta name="keywords" content="admin template, Midone admin template, dashboard template, flat admin template, responsive admin template, web app">
         <meta name="author" content="LEFT4CODE">
+        <meta name="mobile-web-app-capable" content="yes">
         <?= Html::csrfMetaTags();?>
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <script type='text/javascript' charset='utf-8'>
+            // Hides mobile browser's address bar when page is done loading.
+              window.addEventListener('load', function(e) {
+                setTimeout(function() { window.scrollTo(0, 1); }, 1);
+              }, false);
+        </script>
     </head>
     <!-- END: Head -->
-    <body class="app">
+    <body class="app" id="body">
     <?php $this->beginBody() ?>
     <!-- BEGIN: Mobile Menu -->
     <div class="mobile-menu md:hidden flex align-center">

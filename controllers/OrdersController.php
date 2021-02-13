@@ -28,7 +28,7 @@ class OrdersController extends AppController
         $provider = new ActiveDataProvider([
             'query' => Clients::find()->orderBy(['id' => SORT_DESC])->where(['view' => 1]),
             'pagination' => [
-                'pageSize' => 5,
+                'pageSize' => 15,
             ],
         ]);
         $clients = $provider->getModels();
@@ -48,7 +48,7 @@ class OrdersController extends AppController
         
         $request = Yii::$app->request;
         $client_id = $request->get('client');
-        $client = Clients::find()->asArray()->where(['id' => $client_id])->limit(1)->one();
+        $client = Clients::find()->asArray()->where(['id' => $client_id, 'view' => 1])->limit(1)->one();
         if (empty($client)) {
             return $this->redirect('/orders/clients');
         }
@@ -120,6 +120,9 @@ class OrdersController extends AppController
             $model->payment_method = $order['payment_method'];
             $model->courier_id = $order['courier_id'];
             $model->price = $order['price'];
+            if ($order['payment_method'] == 'click-paid') {
+                $model->accounting = 1;
+            }
             $model->last_changed_time = date('Y-m-d h:i:s');
             $model->last_changed_user = Yii::$app->user->identity['name'];
             $model->manager_id = Yii::$app->user->identity['id']; // For now 1, but we have to cahnge it when log in system will be created
@@ -186,6 +189,9 @@ class OrdersController extends AppController
             } else {
                 $model->district_id = $order['district_id'];
             }
+            if ($order['payment_method'] == 'click-paid') {
+                $model->accounting = 1;
+            }
             $model->address = $order['address'];
             $model->payment_method = $order['payment_method'];
             $model->courier_id = $order['courier_id'];
@@ -203,6 +209,7 @@ class OrdersController extends AppController
                 $client_model->name = $order['name'];
                 $client_model->phone_number = $order['phone_number'];
                 $client_model->address = $order['address'];
+                $client_model->city_id = $order['city_id'];
                 $client_model->orders_id = $new_order_id; // if new just paste a current generated id, if existing add by ','
                 $client_model->save();
                 $c_id = $client_model->id;
@@ -212,6 +219,7 @@ class OrdersController extends AppController
                 $client_search->name = $order['name'];
                 $client_search->phone_number = $order['phone_number'];
                 $client_search->address = $order['address'];
+                $client_search->city_id = $order['city_id'];
                 $client_search->orders_id = $client_search->orders_id . ',' . $new_order_id; // if new just paste a current generated id, if existing add by ','
                 $client_search->view = 1;
                 $client_search->save();

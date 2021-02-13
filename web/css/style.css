@@ -225,6 +225,7 @@
     font-size: 1.05em;
     font-weight: 500;
     padding-bottom: 2px;
+    white-space: pre-wrap;
 }
 .order-card__time-left {
     border-radius: 0.375rem;
@@ -456,6 +457,18 @@ body.login {
     .month-info * {
         white-space: nowrap;
         font-size: 0.875rem!important;
+    }
+    .admins-form {
+        display: none!important;
+    }
+    .managers-form {
+        display: none!important;
+    }
+    .courier-form {
+        display: block!important;
+    }
+    .login .forms-tabs {
+        display: none;
     }
 }
 

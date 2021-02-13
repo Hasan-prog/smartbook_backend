@@ -20,7 +20,7 @@ class ProductsController extends AppController
             $model->view = 0;
             $model->save();
         }
-        $products = Products::find()->where(['view' => 1])->asArray()->all();
+        $products = Products::find()->where(['view' => 1])->orderBy(['id' => SORT_DESC])->asArray()->all();
         return $this->render('products', compact('products'));
     }
 
@@ -50,7 +50,7 @@ class ProductsController extends AppController
             $model->price = $product['price'];
             $model->format = $product['format'];
             $model->save();
-            return $this->refresh();
+            return $this->redirect('/products/');
         }
 
         return $this->render('edit-product', compact('model'));
@@ -72,7 +72,7 @@ class ProductsController extends AppController
             $model->format = $product['format'];
             $model->in_stock = $product['in_stock'];
             $model->save();
-            return $this->refresh();
+            return $this->redirect('/products/');
         }
 
         return $this->render('add-product', compact('model'));
@@ -87,8 +87,8 @@ class ProductsController extends AppController
         }
         $model = new History();
         $history = History::find()->asArray()->where(['view' => 1])->with('courier')->orderBy('id DESC')->with('city')->all();
-        $products_db = Products::find()->asArray()->all();
-        $cities = Cities::find()->asArray()->all();
+        $products_db = Products::find()->where(['view' => 1])->asArray()->all();
+        $cities = Cities::find()->where(['view' => 1])->asArray()->all();
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->all();
         
         if ($model->load(Yii::$app->request->post())) {

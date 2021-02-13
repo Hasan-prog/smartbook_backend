@@ -20,27 +20,29 @@ class CouriersController extends AppController
             $model->save();
         }
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->orderBy(['id' => SORT_DESC])->with('cities')->with('orders')->all();
-        if (!empty($couriers)) {
-
-        }
         if (empty($couriers)) {
             return $this->redirect('/couriers/add-courier');
         }
+
         return $this->render('couriers', compact('couriers'));
     }
 
     public function actionEditCourier() {
         // Get courier info
         $id = Yii::$app->request->get('id');
-        $courier_page = Couriers::find()->asArray()->with('cities')->where(['id' => $id])->limit(1)->one();
-        $districts = Districts::find()->asArray()->all();
+        $courier_page = Couriers::find()->asArray()->with('cities')->where(['id' => $id, 'view' => 1])->limit(1)->one();
+        if (empty($courier_page)) {
+            return $this->redirect('/couriers/');
+        }
+        $districts = Districts::find()->where(['view' => 1])->asArray()->all();
         $old_dstr_id = $courier_page['districts_id'];
 
         // Parse equipment into array
         $equip_arr = explode(',', $courier_page['equipment']);
 
         $model = Couriers::findOne($id);
-        $cities = Cities::find()->asArray()->all();
+        $cities = Cities::find()->asArray()->where(['view' => 1])->all();
+        // $city_selected = Cities::findOne('')
 
         $current_photo = $model->photo;
         $current_password = $model->password;
@@ -98,6 +100,8 @@ class CouriersController extends AppController
                         $dstr_str = $dstr;
                     }
                 }
+                // Districts are empty, so it's hamma tumanlar
+                
             } else {
                 $dstr_str = $old_dstr_id;
             }

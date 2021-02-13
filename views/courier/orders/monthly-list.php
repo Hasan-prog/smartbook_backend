@@ -37,35 +37,34 @@ $this->title = "Oyli Buyurtmalar";
             $month_i = date('m', strtotime($month[$random_order]['datetime']));
             $year_i = date('Y', strtotime($month[$random_order]['datetime']));
 
+            // Counting this month info
+            $overall_qty = 0;
+            $delivered_qty = 0;
+            $not_delivered_qty = 0;
+            $canceled_qty = 0;
+            $cash = 0;
+            $click = 0;
+            $overall = 0;
+
             foreach ($month as $order) {
-                // Counting this month info
-                $overall_qty = 0;
-                $delivered_qty = 0;
-                $not_delivered_qty = 0;
-                $canceled_qty = 0;
-                $cash = 0;
-                $click = 0;
-                $overall = 0;
 
                 // Count monthly stats
-                if (cutMonth($order['datetime']) == date('m')) {
-                    if ($order['status'] == 'delivered') {
-                        $delivered_qty++;
-                    } else if ($order['status'] == 'not-delivered') {
-                        $not_delivered_qty++;
-                    } else if ($order['status'] == 'canceled') {
-                        $canceled_qty++;
-                    }
-                    $overall_qty++;
-                    if ($order['payment_method'] == 'cash') {
-                        $cash += $order['price'];
-                        $payment_label = 'Naqd';
-                    } else {
-                        $click += $order['price'];
-                        $payment_label = 'Click';
-                    }
-                    $overall = $delivered_qty + $not_delivered_qty + $canceled_qty;
+                if ($order['status'] == 'delivered') {
+                    $delivered_qty++;
+                } else if ($order['status'] == 'not-delivered') {
+                    $not_delivered_qty++;
+                } else if ($order['status'] == 'canceled') {
+                    $canceled_qty++;
                 }
+                $overall_qty++;
+                if ($order['payment_method'] == 'cash') {
+                    $cash += $order['price'];
+                    $payment_label = 'Naqd';
+                } else {
+                    $click += $order['price'];
+                    $payment_label = 'Click';
+                }
+                $overall = $cash + $click;
             }
 
             ?>

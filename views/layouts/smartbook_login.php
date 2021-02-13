@@ -23,6 +23,14 @@ AppAsset::register($this);
         <meta name="author" content="LEFT4CODE">
         <?= Html::csrfMetaTags();?>
         <title><?= Html::encode($this->title) ?></title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+        <script type='text/javascript' charset='utf-8'>
+            // Hides mobile browser's address bar when page is done loading.
+              window.addEventListener('load', function(e) {
+                setTimeout(function() { window.scrollTo(0, 1); }, 1);
+              }, false);
+        </script>
         <?php $this->head() ?>
     </head>
     <!-- END: Head -->

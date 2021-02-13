@@ -54,7 +54,7 @@ $this->title = "Smartbook DMS – Mahsulotlar";
                             $formated_price = number_format ($product['price'], 0, ',', ' ');
                         ?>
                         <tr class="bg-gray-100 dark:bg-dark-1 product-row">
-                            <td class="border-b dark:border-dark-5">1</td>
+                            <td class="border-b dark:border-dark-5"><?= $product['id']?></td>
                             <td class="border-b dark:border-dark-5" width="100">
                                 <div class="w-20 h-20 image-fit">
                                     <img alt="" src="<?= $product['photo']?>">

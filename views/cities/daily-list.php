@@ -178,7 +178,7 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                 $product_format_qty['info'] = explode(',', $product_qty[0]);
                                 ?>
                                 <tr class="order-row">
-                                    <td class="border-b dark:border-dark-5"><?= $order['id']?></td>
+                                    <td class="border-b dark:border-dark-5"><?= $order['client_id']?></td>
                                     <td class="border-b dark:border-dark-5"><?= $order['name']?></td>
                                     <td class="border-b dark:border-dark-5"><?= $product_format_qty['info'][1] . ' ' . $product_format_qty['info'][2] . ', ' . $product_format_qty['qty'] . ' dona'?></td>
                                     <td class="border-b dark:border-dark-5"><?= $order['address']?></td>

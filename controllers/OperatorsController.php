@@ -21,7 +21,7 @@ class OperatorsController extends AppController
             $model->save();
         }
 
-        $operators = Operators::find()->asArray()->where(['view' => 1])->all();
+        $operators = Operators::find()->asArray()->orderBy(['id' => SORT_DESC])->where(['view' => 1])->all();
         return $this->render('operators', compact('operators'));
     }
     

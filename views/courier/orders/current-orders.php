@@ -88,8 +88,14 @@ foreach ($d_arr as $d) {
                 </div>
                 <div class="border-b card-section user-info px-3 md:px-5 py-3 md:py-3">
                     <div class="name-address">
-                        <p class="order-card__name"><?= $order['name']?></p>
-                        <p class="order-card__address"><?= $order['address']?></p>
+                        <div class="flex">
+                            <p class="order-card__name flex-1"><?= $order['name']?></p>
+                            <p class="order-card__payment-method ml-3 text-gray-500">ID: <?= $order['client_id']?></p>
+                        </div>
+                        <div class="flex">
+                            <p class="order-card__address"><?= $order['address']?></p>
+                            <p class="order-card__payment-method text-gray-500 ml-3"><?= $order['district']['name']?></p>
+                        </div>
                     </div>
                     <div class="flex mt-2 order-card__phone">
                         <?php

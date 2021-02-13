@@ -90,7 +90,7 @@ class SiteController extends AppController
         $model_courier = new LoginCourierForm();
         $cookies = Yii::$app->request->cookies;
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $manager = Managers::find()->asArray()->where(['login' => $model['username']])->limit(1)->one();
+            $manager = Managers::find()->asArray()->where(['login' => $model['username'], 'view' => 1])->limit(1)->one();
             if ($manager['view'] != 1) {
                 Yii::$app->user->logout();
                 return $this->redirect(['login']);
@@ -104,7 +104,7 @@ class SiteController extends AppController
             return $this->redirect('/admin/admin/managers');
         }
         if ($model_courier->load(Yii::$app->request->post()) && $model_courier->login()) {
-            $courier = Couriers::find()->asArray()->where(['login' => $model_courier['username']])->limit(1)->one();
+            $courier = Couriers::find()->asArray()->where(['login' => $model_courier['username'], 'view' => 1])->limit(1)->one();
             if ($courier['view'] != 1) {
                 Yii::$app->user->logout();
                 return $this->redirect(['login']);
