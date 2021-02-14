@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <h2 class=" font-bold text-2xl xl:text-3xl text-center xl:text-left">
             Kuryer Kirish
             </h2>
-            <div class=" mt-2 text-gray-500 xl:text-left text-center">Agar siz akkauntingizga kira olmasangiz, <br> <a class="text-gray-700" href="tel:+998 (97) 444-67-17">+998 (97) 444-67-17</a> raqamiga qo'ng'iroq qiling</div>
+            <div class=" mt-2 text-gray-500 xl:text-left text-center">Agar siz akkauntingizga kira olmasangiz, <br> <a class="text-gray-700" target="_blank" href="https://t.me/joinchat/H1Q2I3Qfpgx2qbBJ">Texnik Yordamiga</a> yozing.</div>
 
             <?php $form = ActiveForm::begin()?>
             <div class=" mt-8">
