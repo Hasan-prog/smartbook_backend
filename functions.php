@@ -31,6 +31,10 @@
         }
     }
 
+    function compareByName($a, $b) {
+        return strcmp($a["name"], $b["name"]);
+    }
+
     function order_actions($status) {
         if ($status == 'delivered') {
             ?>

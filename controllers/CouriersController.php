@@ -20,11 +20,12 @@ class CouriersController extends AppController
             $model->save();
         }
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->orderBy(['id' => SORT_DESC])->with('cities')->with('orders')->all();
+        $all_districts = Districts::find()->asArray()->all();
         if (empty($couriers)) {
             return $this->redirect('/couriers/add-courier');
         }
 
-        return $this->render('couriers', compact('couriers'));
+        return $this->render('couriers', compact('couriers', 'all_districts'));
     }
 
     public function actionEditCourier() {
@@ -100,10 +101,24 @@ class CouriersController extends AppController
                         $dstr_str = $dstr;
                     }
                 }
-                // Districts are empty, so it's hamma tumanlar
-                
             } else {
-                $dstr_str = $old_dstr_id;
+                // Districts are empty, so it's hamma tumanlar
+                // 1. Get all distrits of this courier's city
+                $districts = Districts::find()->asArray()->where(['city_id' => $courier['city_id']])->all();
+                $dstr_str = '';
+                if (empty($districts)) {
+                    // There is no district in that city, so return, just make $dstr_str empty string
+                    $dstr_str = '';
+                } else {
+                    // 2. Make a string from all that districts
+                    foreach ($districts as $district) {
+                        if ($dstr_str == '') {
+                            $dstr_str = $district['id'];
+                        } else {
+                            $dstr_str .= ',' . $district['id'];
+                        }
+                    }
+                }
             }
 
             // Photo upload 
@@ -121,9 +136,7 @@ class CouriersController extends AppController
             if (!empty($courier['equipment'])) {
                 $model->equipment = $equip_str;
             }
-            if (!empty($courier['districts_id'])) {
-                $model->districts_id = $dstr_str;
-            }
+            $model->districts_id = $dstr_str;
             $model->name = $courier['name'];
             $model->login = $courier['login'];
             if ($model->password != '') {
@@ -183,7 +196,23 @@ class CouriersController extends AppController
                     }
                 }
             } else {
-                $dstr_str = null;
+                // Districts are empty, so it's hamma tumanlar
+                // 1. Get all distrits of this courier's city
+                $districts = Districts::find()->asArray()->where(['city_id' => $courier['city_id']])->all();
+                $dstr_str = '';
+                if (empty($districts)) {
+                    // There is no district in that city, so return, just make $dstr_str empty string
+                    $dstr_str = '';
+                } else {
+                    // 2. Make a string from all that districts
+                    foreach ($districts as $district) {
+                        if ($dstr_str == '') {
+                            $dstr_str = $district['id'];
+                        } else {
+                            $dstr_str .= ',' . $district['id'];
+                        }
+                    }
+                }
             }
 
             // Photo upload 

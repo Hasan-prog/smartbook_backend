@@ -57,7 +57,7 @@ foreach ($d_arr as $d) {
             <?php
                 foreach ($orders as $order) {
                     $order_date = date('d M', strtotime($order['datetime']));
-                    $time_left = round(((strtotime($order['datetime']) + 154800) - time()) / 60 / 60);
+                    $time_left = round(((strtotime($order['datetime']) + 172800) - time()) / 60 / 60);
                     $label_style = 'not-late';
 
                     // Explode name on values
@@ -94,7 +94,14 @@ foreach ($d_arr as $d) {
                         </div>
                         <div class="flex">
                             <p class="order-card__address"><?= $order['address']?></p>
-                            <p class="order-card__payment-method text-gray-500 ml-3"><?= $order['district']['name']?></p>
+                            <?php
+                                if (isset($order['district']['name'])) {
+                                    $dstr_name = $order['district']['name'];
+                                } else {
+                                    $dstr_name = '';
+                                }
+                            ?>
+                            <p class="order-card__payment-method text-gray-500 ml-3"><?= $dstr_name?></p>
                         </div>
                     </div>
                     <div class="flex mt-2 order-card__phone">

@@ -36,8 +36,8 @@ $this->title = "Smartbook DMS – Mijozlar";
                     </select>
                 </div> -->
                 <div class="sm:flex items-center sm:mr-4 mt-2 xl:mt-0">
-                    <label class="w-12 flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
-                    <input data-element="client-row" type="text" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search"
+                    <label style="width: 110px" class="flex-none xl:w-auto xl:flex-initial mr-2">Qidirmoq</label>
+                    <input data-element="client-row" type="number" class="input w-full sm:w-40 xxl:w-full mt-2 sm:mt-0 border filter-search-pagination"
                         id="tabulator-html-filter-value" placeholder="Mijozlar">
                 </div>
             </form>
@@ -61,13 +61,33 @@ $this->title = "Smartbook DMS – Mijozlar";
                     // debug($clients);
                     // die;
                     $i = 0;
+                    $pagination_i = 1;
+                    $page_i = 1;
+                    $client_qty = count($clients);
                     foreach ($clients as $client) {
+                    if ($pagination_i <= 10) { // Wanna change rows quantity on one page? Change this number <---
                     ?>
-                        <tr data-city="<?= $client['city_id']?>" class="client-row <?= $i % 2 ? 'bg-gray-100 dark:bg-dark-1"' : ''?>">
+                        <tr data-city="<?= $client['city_id']?>" data-page="<?= $page_i?>" class="client-row <?= $page_i > 1 ? 'hidden' : ''?>">
                             <td class="border-b dark:border-dark-5"><?= $client['client_id']?></td>
                             <td class="border-b dark:border-dark-5"><?= $client['name']?></td>
-                            <td class="border-b dark:border-dark-5"><a
-                                    href="tel:<?= $client['phone_number']?>"><?= $client['phone_number']?></a></td>
+                            <td class="border-b dark:border-dark-5">
+                                <?php 
+                                $phones_arr = explode(',', $client['phone_number']);
+                                $i = 1;
+                                if (count($phones_arr) == 1) {
+                                    ?>
+                                        <a href="tel:<?= $phones_arr[0]?>"><?= $phones_arr[0]?></a>
+                                    <?php
+                                } else {
+                                    foreach ($phones_arr as $phone_number) {
+                                        ?>
+                                            <a href="tel:<?= $phone_number?>"><?= $phone_number?></a> <?= count($phones_arr) > $i ? ',' : ''?>
+                                        <?php
+                                        $i++;
+                                    }
+                                }
+                                ?>
+                            </td>
                             <td class="border-b dark:border-dark-5"><?= $client['address']?></td>
                             <td class="border-b dark:border-dark-5">
                             <?php 
@@ -94,42 +114,47 @@ $this->title = "Smartbook DMS – Mijozlar";
                             </td>
                         </tr>
                         <?php
-                    $i++;
-                    } 
+                        $i++;
+                        $pagination_i++;
+                        } else {
+                            $pagination_i = 1;
+                            $page_i++;
+                        }
+                    }
                     ?>
                     </tbody>
                 </table>
                 <!-- BEGIN: Pagination -->
-
                 <div class="intro-y flex flex-wrap sm:flex-row sm:flex-no-wrap items-center mt-6">
-                    <?php
-                    // display pagination
-                    echo LinkPager::widget([
-                        'pagination' => $provider->getPagination(),
-                        'options' => [
-                            'class' => 'pagination',
-                        ],
-                        'linkOptions' => [
-                            'class' => 'pagination__link',
-                            'active' => 'pagination__link--active',
-                            'prevPageLabel' => 'pagination__link',
-                            'nextPageLabel' => 'pagination__link',
-                        ],
-                        'activePageCssClass' => 'active',
-                        'prevPageLabel'=>'<svg xmlns="http://www.w3.org/2000/svg" width="24"
-                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-chevron-left w-4 h-4">
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                        </svg>',
-                        'nextPageLabel'=>'<svg xmlns="http://www.w3.org/2000/svg" width="24"
-                        height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-chevron-right w-4 h-4">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>',
-                    ]);
-                    ?>
+                    <ul class="pagination">
+                        <li>
+                            <a data-action="prev" data-pages="<?= $page_i?>" data-element="client-row" class="pagination__link pagination_arrow"> <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                    class="feather feather-chevron-left w-4 h-4">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg> </a>
+                        </li>
+                        <?php
+                        $client_qty_pages = $client_qty / 10; // Wanna change rows quantity on one page? Change this number <---
+                        $page_i = 1;
+                        while ($client_qty_pages > 1) {
+                            ?>
+                                <li> <a data-page="<?= $page_i?>" data-element="client-row" class="pagination__link page__button <?= $client_qty_pages == $client_qty / 10 ? 'pagination__link--active' : ''?>"><?= $page_i?></a> </li>
+                            <?php
+                            $client_qty_pages--;
+                            $page_i++;
+                        }
+                        ?>
+                        <li>
+                            <a data-action="next" data-pages="<?= $page_i?>" data-element="client-row" class="pagination__link pagination_arrow"> <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                    class="feather feather-chevron-right w-4 h-4">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg> </a>
+                        </li>
+                    </ul>
                 </div>
                 <!-- END: Pagination -->
             </div>

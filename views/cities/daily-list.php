@@ -184,10 +184,19 @@ $this->title = "Smartbook DMS – " . date('d M, Y', strtotime($date));
                                     <td class="border-b dark:border-dark-5"><?= $order['address']?></td>
                                     <td class="border-b dark:border-dark-5">
                                         <?php 
-                                        foreach (explode(',', $order['phone_number']) as $phone_number) {
+                                        $phones_arr = explode(',', $order['phone_number']);
+                                        $i = 1;
+                                        if (count($phones_arr) == 1) {
                                             ?>
-                                                <a href="tel:<?= $phone_number?>"><?= $phone_number?></a>, 
+                                                <a href="tel:<?= $phones_arr[0]?>"><?= $phones_arr[0]?></a>
                                             <?php
+                                        } else {
+                                            foreach ($phones_arr as $phone_number) {
+                                                ?>
+                                                    <a href="tel:<?= $phone_number?>"><?= $phone_number?></a> <?= count($phones_arr) > $i ? ',' : ''?>
+                                                <?php
+                                                $i++;
+                                            }
                                         }
                                         ?>
                                     </td>

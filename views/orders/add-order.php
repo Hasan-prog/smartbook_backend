@@ -21,7 +21,9 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
     </div>
     <div class="px-5 sm:px-20 mt-10 pt-10 border-t border-gray-200 dark:border-dark-5">
     
-    <div class="rounded-md flex items-center px-5 py-4 mb-2 bg-theme-9 text-white hidden alert success"> <i data-feather="check" class="w-6 h-6 mr-2"></i>Yangi buyurtma qoshilgan!</div>
+    <?php if (Yii::$app->session->hasFlash('success')): ?>
+        <div class="rounded-md flex items-center px-5 py-4 mb-2 bg-theme-9 text-white alert success"> <i data-feather="check" class="w-6 h-6 mr-2"></i>Yangi buyurtma qoshilgan!</div>
+    <?php endif; ?>
     <div class="rounded-md flex items-center px-5 py-4 mb-2 bg-theme-6 text-white hidden alert error"> <i data-feather="x" class="w-6 h-6 mr-2"></i>Yangi buyurtma qoshilmadi! Hamasini tekshirib korin, bomasa <a target="_blank" class="mx-1" href="https://t.me/joinchat/H1Q2I3Qfpgx2qbBJ" style="text-decoration: underline"> Textni yordamga</a> yozing</div>
         <?php $form = ActiveForm::begin([
             'method' => 'post',

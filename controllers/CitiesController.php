@@ -166,7 +166,7 @@ class CitiesController extends AppController
         if ($courier['view'] != 1) {
             return $this->goBack();
         }
-        $orders = Orders::find()->asArray()->with('operator')->where(['like', 'datetime', $date])->andWhere(['city_id' => $city_id, 'courier_id' => $courier_id, 'view' => 1])->all();
+        $orders = Orders::find()->asArray()->with('operator')->where(['like', 'datetime', $date])->andWhere(['city_id' => $city_id, 'courier_id' => $courier_id, 'view' => 1])->orderBy('id', SORT_DESC)->all();
         // Count overall day stats
         $delivered_qty = 0;
         $not_delivered_qty = 0;
@@ -281,3 +281,4 @@ class CitiesController extends AppController
     }
 
 }
+

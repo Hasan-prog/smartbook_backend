@@ -372,6 +372,12 @@ body.login {
 .add-new-phone svg {
     margin-top: -2px;
 }
+.important-show {
+    display: table-row!important;
+}
+.important-hide {
+    display: none!important;
+}
 
 @-webkit-keyframes blink { 
 	0% { color: #D32929; }

@@ -96,11 +96,11 @@ class SiteController extends AppController
                 return $this->redirect(['login']);
                 // Add falsh message that this account was deleted
             }
-            setcookie('role', 'manager', time() + (86400 * 30), "/");
+            setcookie('role', 'manager', time() + (86400 * 30 * 12 * 2), "/");
             return $this->redirect('/cities/');
         }
         if ($model_admin->load(Yii::$app->request->post()) && $model_admin->login()) {
-            setcookie('role', 'admin', time() + (86400 * 30), "/");
+            setcookie('role', 'admin', time() + (86400 * 30 * 12 * 2), "/");
             return $this->redirect('/admin/admin/managers');
         }
         if ($model_courier->load(Yii::$app->request->post()) && $model_courier->login()) {

@@ -191,7 +191,7 @@ foreach ($orders as $order) {
                             ?>
                         <tr class="day-row">
                             <td class="border-b dark:border-dark-5 font-medium"><?= $day?> <?= $current_month_word?>
-                                <?= $day == date('d', time() + 18000) ? ' <span class="text-gray-500">(BUGUN)</span>' : ''?>
+                                <?= $day == date('d', time()) ? ' <span class="text-gray-500">(BUGUN)</span>' : ''?>
                             </td>
                             <td class="border-b dark:border-dark-5">
                                 <div class="flex text-gray-700">

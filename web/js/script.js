@@ -59,7 +59,7 @@ $(document).ready(function () {
     });
 
     // Collect selects of products from add-order page and write it in the input
-    $('.add-order').click(function (e) {
+    $('.add-order').click(function () {
 
         // Collect phones and paste them into phone_number field
         var phone_number = '';
@@ -72,55 +72,57 @@ $(document).ready(function () {
         });
         $('.phone-number').val(phone_number);
 
-        $('input').blur();
-        $('.error').slideUp('fast');
-        $('.success').slideUp('fast');
+        // $('input').blur();
+        // $('.error').slideUp('fast');
+        // $('.success').slideUp('fast');
         $('.product-select .product-field').val($('.product-select :not(.hidden-select) select option[selected=selected]').val());
-        e.preventDefault();
-        var ajax_arr = {};
-        var form_data = $(this).closest('form').serializeArray(),
-            count_form_data = form_data.length,
-            i = 0
-            form = $(this).closest('form');
-        form_data.forEach(field_data => {
-            field_data['name'] = field_data['name'].replace('Orders','');
-            field_data['name'] = field_data['name'].replace('[','');
-            field_data['name'] = field_data['name'].replace(']','');
+        // e.preventDefault();
+        // var ajax_arr = {};
+        // var form_data = $(this).closest('form').serializeArray(),
+        //     count_form_data = form_data.length,
+        //     i = 0
+        //     form = $(this).closest('form');
+        // form_data.forEach(field_data => {
+        //     field_data['name'] = field_data['name'].replace('Orders','');
+        //     field_data['name'] = field_data['name'].replace('[','');
+        //     field_data['name'] = field_data['name'].replace(']','');
 
-            if (field_data['value'] != '') {
-                ajax_arr[field_data['name']] = field_data['value'];
-            } else {
-                if (field_data['name'] == '_csrf') {
-                    ajax_arr[field_data['name']] = field_data['value'];
-                } else {
-                    // not all fields are filled
-                    $('.error').slideDown('fast');
-                    i = 0;
-                }
-            }
+        //     if (field_data['value'] != '') {
+        //         ajax_arr[field_data['name']] = field_data['value'];
+        //     } else {
+        //         if (field_data['name'] == '_csrf') {
+        //             ajax_arr[field_data['name']] = field_data['value'];
+        //         } else {
+        //             // not all fields are filled
+        //             $('.error').slideDown('fast');
+        //             i = 0;
+        //         }
+        //     }
 
-            i++;
-        });
-        console.log(ajax_arr);
+        //     i++;
+        // });
+        // console.log(ajax_arr);
         // Send Ajax to add order
-        if (count_form_data == i) {
-            $.ajax({
-                method: "POST",
-                url: "/orders/add-order",
-                data: { orders: ajax_arr},
-                success: function (res) {
-                    $(form)[0].reset();
-                    console.log(res);
-                    $('.phones-group input[type="phone"]').not(":first").remove();
-                    $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
-                    $('.success').slideDown('fast');
-                },
-                error: function (xml) {
-                    console.log(xml);
-                }
-            });
-        }
+        // if (count_form_data == i) {
+        //     $.ajax({
+        //         method: "POST",
+        //         url: "/orders/add-order",
+        //         data: { orders: ajax_arr},
+        //         success: function (res) {
+        //             $(form)[0].reset();
+        //             console.log(res);
+        //             $('.phones-group input[type="phone"]').not(":first").remove();
+        //             $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
+        //             $('.success').slideDown('fast');
+        //         },
+        //         error: function (xml) {
+        //             console.log(xml);
+        //         }
+        //     });
+        // }
     });
+    
+    // alert(123);
 
         // Collect selects of products from add-order page and write it in the input
         $('.edit-order').click(function () {
@@ -390,6 +392,24 @@ $(document).ready(function () {
         $('.' + element + ':containsi(' + val + ')').show();
     });
 
+    // Search filter (find what was given in data-element)
+    $('.filter-search-pagination').bind('DOMAttrModified textInput input change keypress paste focus', function () {        
+        // if there is a pagination, hide it
+        $('.pagination').hide();
+        var val = $(this).val();
+        var element = $(this).data('element');
+        if ($('.filter-search-pagination').val() == '') {
+            $('.pagination').show();
+            $('.' + element).removeClass('important-hide');
+            $('.' + element).removeClass('important-show');
+        } else {
+            $('.' + element).removeClass('important-show');
+            $('.' + element).addClass('important-hide');
+            $('.' + element + ':containsi(' + val + ')').removeClass('important-hide');
+            $('.' + element + ':containsi(' + val + ')').addClass('important-show');
+        }
+    });
+
     // Search from dropdown with DB info
     // $('.filter-dropdown-db').bind('DOMAttrModified textInput input change keypress paste focus', function () {
     //     var val = $(this).val();
@@ -401,6 +421,57 @@ $(document).ready(function () {
     //         $('.' + element).show();
     //     }
     // });
+
+    // Logic for js pagination
+    $('.page__button').click(function () {
+        // Return false if user taps on active button
+        if ($(this).hasClass('pagination__link--active')) {
+            return;
+        }
+
+        // Showing selected page clients
+        var element = $(this).data('element'),
+            page_i = $(this).data('page');
+
+        $('.page__button').removeClass('pagination__link--active');
+        $(this).addClass('pagination__link--active');
+        $('.' + element).hide();
+        $('.' + element).addClass('hidden');
+        $('.' + element + '[data-page="' + page_i + '"]').show();
+        $('.' + element + '[data-page="' + page_i + '"]').removeClass('hidden');
+    });
+    // Clicking arrows in a pagination
+    $('.pagination_arrow').click(function () {
+        var element = $(this).data('element'),
+            action = $(this).data('action'),
+            pages_qty = $(this).data('pages') - 1;
+
+        // Select current page
+        var current_page = $('.' + element + ':not(.hidden)').data('page');
+
+        // Do the action
+        if (action == 'prev') {
+            if (current_page > 1) {
+                current_page--;
+            } else {
+                return;
+            }
+        }
+        if (action == 'next') {
+            if (current_page < pages_qty) {
+                current_page++;
+            } else {
+                return;
+            }
+        }
+        
+        $('.page__button').removeClass('pagination__link--active');
+        $('.page__button[data-page="' + current_page + '"]').addClass('pagination__link--active');
+        $('.' + element).hide();
+        $('.' + element).addClass('hidden');
+        $('.' + element + '[data-page="' + current_page + '"]').show();
+        $('.' + element + '[data-page="' + current_page + '"]').removeClass('hidden');
+    });
 
     // END: FILTERS
 
@@ -614,38 +685,61 @@ $(document).ready(function () {
     showCourierByDistrtict($('.district-select').val());
     $('.district-select').change(function () {
         showCourierByDistrtict($(this).val());
-
     });
-
+// alert(1234);
     function showCourierByDistrtict(dstr_id) {
         var selected_city = $('.city-select').val();
         // var dstr_id = $(this).val();
         $('.courier-select option[data-city="' + selected_city + '"]').each(function () {
             // All coureirs in each are from the selected CITY
-            var dstr_arr = $(this).data('districts').split(',');
-            if (dstr_arr.includes(dstr_id)) {
-                // This courier is from the selected DISTRICT
-                $(this).show();
-                $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').show();
-                $(this).attr('selected', 'selected');
-                $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').attr('selected', 'selected');
-
-                // Change label-inner and make this option active
-                $('.courier-select .label-inner').text($(this).text());
+            if (isNaN($(this).data('districts'))) {
+                var dstr_arr = $(this).data('districts').split(',');
+            }
+            var dstr_arr = $(this).data('districts');
+            $(this).attr('selected', 'selected');
+            $('.courier-select .dropdown-option').removeAttr('selected');
+            if (isNaN($(this).data('districts'))) {
+                if (dstr_arr.includes(dstr_id)) {
+                    // This courier is from the selected DISTRICT
+                    $(this).show();
+                    $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').show();
+                    $(this).attr('selected', 'selected');
+                    $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').attr('selected', 'selected');
+    
+                    // Change label-inner and make this option active
+                    $('.courier-select .label-inner').text($(this).text());
+                } else {
+                    // This courier is NOT from the selected DISTRICT
+                    $(this).hide();
+                    $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').hide();
+                    $(this).removeAttr('selected');
+                    $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').removeAttr('selected');
+                }
             } else {
-                // This courier is NOT from the selected DISTRICT
-                $(this).hide();
-                $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').hide();
-                $(this).removeAttr('selected');
-                $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').removeAttr('selected');
+                    if (dstr_arr == dstr_id) {
+                    // This courier is from the selected DISTRICT
+                    $(this).show();
+                    $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').show();
+                    $(this).attr('selected', 'selected');
+                    $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').attr('selected', 'selected');
+    
+                    // Change label-inner and make this option active
+                    $('.courier-select .label-inner').text($(this).text());
+                } else {
+                    // This courier is NOT from the selected DISTRICT
+                    $(this).hide();
+                    $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').hide();
+                    $(this).removeAttr('selected');
+                    $('.courier-select .dropdown-option[data-key="' + $(this).val() + '"]').removeAttr('selected');
+                }
             }
         });
-
     }
+    // alert(12399)
 
     // Remove select class (active bg) from tail-select option
     $('.dropdown-option').click(function () {
-        $(this).find('.dropdown-optgroup .dropdown-option').removeClass('select').css({'background': 'white', 'color': ''});
+        $(this).parent().find('.dropdown-option').removeClass('selected');
         $(this).addClass('selected');
     });
 
@@ -872,7 +966,8 @@ $('.collapse-districts').click(function () {
 showCouriers($('.city-select'));
 
 function showCouriers(city_select) {
-    $('.courier-select .dropdown-optgroup .dropdown-option').removeClass('selected');
+    
+    // $('.courier-select .dropdown-optgroup .dropdown-option').removeClass('selected');
     var city_id = $(city_select).find('option[selected]').data('id');
     var isset = 0;
     $('.courier-select option').each(function (i) {
@@ -887,6 +982,7 @@ function showCouriers(city_select) {
                     $(this).show();
                     if (i == 0) {
                         $(this).attr('selected', 'selected');
+                        $(this).addClass('selected');
                     }
                     $('.courier-select .label-inner').text($(this).text());
                 }
@@ -896,8 +992,10 @@ function showCouriers(city_select) {
             $(this).hide();
             var option = $(this);
             $(this).removeAttr('selected');
+            $(this).removeClass('selected');
             $('.courier-select .dropdown-optgroup .dropdown-option').each(function () {
                 if ($(this).text() == $(option).text()) {
+                    $(this).removeClass('selected');
                     $(this).hide();
                 }
             });

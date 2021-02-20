@@ -25,16 +25,20 @@ class OrdersController extends AppController
             $model->save();
         }
 
-        $provider = new ActiveDataProvider([
-            'query' => Clients::find()->orderBy(['id' => SORT_DESC])->where(['view' => 1]),
-            'pagination' => [
-                'pageSize' => 15,
-            ],
-        ]);
-        $clients = $provider->getModels();
+        // **PAGINATION**
+        // $provider = new ActiveDataProvider([
+        //     'query' => Clients::find()->orderBy(['id' => SORT_DESC])->where(['view' => 1]),
+        //     'pagination' => [
+        //         'pageSize' => 15,
+        //     ],
+        // ]);
+        // $clients = $provider->getModels();
+        // **PAGINATION**
+
+        $clients = Clients::find()->asArray()->where(['view' => 1])->all();
         $orders = Orders::find()->asArray()->where(['view' => 1])->all();
-        $cities = Cities::find()->asArray()->all();
-        return $this->render('clients', compact('clients', 'orders', 'cities', 'provider'));
+        $cities = Cities::find()->asArray()->where(['view' => 1])->all();
+        return $this->render('clients', compact('clients', 'orders', 'cities'));
     }
 
     public function actionClientList() {
@@ -55,7 +59,7 @@ class OrdersController extends AppController
         if ($client['view'] != 1) {
             return $this->redirect('/orders/clients');
         }
-        $orders = Orders::find()->with('manager')->asArray()->with('courier')->where(['name' => $client['name'], 'phone_number' => $client['phone_number'], 'view' => 1])->all();
+        $orders = Orders::find()->with('manager')->asArray()->with('courier')->orderBy('id DESC')->where(['name' => $client['name'], 'phone_number' => $client['phone_number'], 'view' => 1])->all();
 
         // Count stats
         $delivered_qty = 0;
@@ -99,11 +103,12 @@ class OrdersController extends AppController
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->all();
         $operators = Operators::find()->asArray()->where(['view' => 1])->all();
         $districts = Districts::find()->asArray()->where(['view' => 1])->all();
+        usort($districts, 'compareByName');
         $client_model = new Clients();
 
-        if (Yii::$app->request->isAjax) {
+        if ($model->load(Yii::$app->request->post())) {
             
-            $order = Yii::$app->request->post('orders');
+            $order = Yii::$app->request->post('Orders');
             
             $model->name = $order['name'];
             $model->phone_number = $order['phone_number'];
@@ -128,6 +133,9 @@ class OrdersController extends AppController
             $model->manager_id = Yii::$app->user->identity['id']; // For now 1, but we have to cahnge it when log in system will be created
             $model->save();
             $new_order_id = $model->id;
+
+            Yii::$app->session->setFlash('success', "Yangi buyurtma qoshilgan!");
+
             
             // Building a new client
             $client_search = Clients::find()->where(['name' => $order['name'], 'phone_number' => $order['phone_number']])->limit(1)->one();
@@ -155,7 +163,7 @@ class OrdersController extends AppController
             }
             
             // return $this->redirect('/orders/client-list?client=' . $c_id);
-            return true;    
+            return $this->refresh();
         }
 
         return $this->render('add-order', compact('model', 'products', 'cities', 'couriers', 'operators', 'districts'));

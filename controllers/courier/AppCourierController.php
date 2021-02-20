@@ -26,6 +26,7 @@ class AppCourierController extends Controller {
                 return true;
             }
         }
+
     }
 
     public function behaviors()

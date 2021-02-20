@@ -12,6 +12,10 @@ class OrdersController extends AppCourierController
 {
 
     public function actionIndex() {
+        if (isset($_COOKIE['_identity'])) {
+            $_identity_cookie = $_COOKIE['_identity'];
+            setcookie('_identity', $_identity_cookie, time() + (86400 * 30 * 12 * 2), "/");
+        }
         if (Yii::$app->request->isAjax) {
             $id = Yii::$app->request->post('id');
             $status = Yii::$app->request->post('status');

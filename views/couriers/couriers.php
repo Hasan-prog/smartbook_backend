@@ -44,6 +44,7 @@ $this->title = "Smartbook DMS – Kuryerlar";
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Shahar</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Bugun sotilgan</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Oyli sotilgan</th>
+                            <!-- <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Tumanlar</th> -->
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap">Dona qogan</th>
                             <th class="border-b-2 dark:border-dark-4 whitespace-no-wrap text-right"></th>
                         </tr>
@@ -113,6 +114,26 @@ $this->title = "Smartbook DMS – Kuryerlar";
                                     </div>
                                 </div>
                             </td>
+                            <!-- <td class="border-b dark:border-dark-5">
+                                <?php
+                                    if (!empty($all_districts)) {
+                                        $i = 0;
+                                        foreach ($all_districts as $district) {
+                                            if (strpos($courier['districts_id'], $district['id'])) {
+                                                ?>
+                                                    <div class="select-handle-single my-1" data-group="#"><?= $district['name']?></div>
+                                                <?php
+                                                if ($i == 2) {
+                                                    echo '<br>';
+                                                    $i = 0;
+                                                }
+                                            }
+                                            $i++;
+                                        }
+                                        $i = 0;
+                                    }
+                                ?>
+                            </td> -->
                             <td class="border-b dark:border-dark-5">
                                 <?php
                                 if ($courier['qty_left'] != 0) {

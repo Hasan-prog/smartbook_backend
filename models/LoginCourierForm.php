@@ -78,7 +78,7 @@ class LoginCourierForm extends Model
             $session = \Yii::$app->session;
             $session->open();
             $session['table'] = 'couriers';
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30*12 : 0);
         }
         return false;
     }
