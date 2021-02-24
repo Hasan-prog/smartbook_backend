@@ -18,6 +18,16 @@ class OrdersController extends AppCourierController
         }
         if (Yii::$app->request->isAjax) {
             $id = Yii::$app->request->post('id');
+
+            // Writing a new comment from a note input
+            if (Yii::$app->request->post('note')) {
+                $comment = Yii::$app->request->post('comment');
+                $order = Orders::findOne(['id' => $id, 'view' => 1]);
+                $order->comment = $comment;
+                $order->save();
+                return;
+            }
+
             $status = Yii::$app->request->post('status');
             $courier_id = Yii::$app->request->post('courier_id');
             $order_str = Yii::$app->request->post('order_str');

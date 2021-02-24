@@ -1,3 +1,4 @@
+console.log('Loaded')
 $(document).ready(function () {
 
     // Change photo on select
@@ -684,7 +685,7 @@ $(document).ready(function () {
     });
     showCourierByDistrtict($('.district-select').val());
     $('.district-select').change(function () {
-        showCourierByDistrtict($(this).val());
+        showCouriersByDistrict($('.city-select'), this.options[this.selectedIndex]);
     });
 // alert(1234);
     function showCourierByDistrtict(dstr_id) {
@@ -735,7 +736,6 @@ $(document).ready(function () {
             }
         });
     }
-    // alert(12399)
 
     // Remove select class (active bg) from tail-select option
     $('.dropdown-option').click(function () {
@@ -917,6 +917,36 @@ $(document).ready(function () {
     //     });
     // });
 
+    // Opening note section in orders cards
+    $('.open-note').click(function () {
+        var note = $(this).closest('.order-card').find('.card-note');
+        $(note).removeClass('hidden');
+        $(note).find('input').focus();
+    });
+
+    $('.card-note input').focusout(function () {
+        if ($(this).val() != '') {
+            var comment = $(this).val(),
+                order_id = $(this).data('id');
+        } else {
+            var comment = '',
+                order_id = $(this).data('id');
+        }
+
+        // Send a new comment for the order via Ajax 
+        $.ajax({
+            method: "POST",
+            url: '/courier/orders/index',
+            data: { id: order_id, comment: comment, note: true },
+            success: function (res) {
+                console.log(res);
+            },
+            error: function (xml) {
+                console.log(xml);
+            }
+        });
+    });
+
 });
 
 
@@ -972,6 +1002,51 @@ function showCouriers(city_select) {
     var isset = 0;
     $('.courier-select option').each(function (i) {
         if ($(this).data('city') == city_id) {
+            isset = 1;
+            $(this).show();
+            $('.courier-select option').removeAttr('selected');
+            $(this).attr('selected', 'selected');
+            var option = $(this);
+            $('.courier-select .dropdown-optgroup .dropdown-option').each(function (i) {
+                if ($(this).text() == $(option).text()) {
+                    $(this).show();
+                    if (i == 0) {
+                        $(this).attr('selected', 'selected');
+                        $(this).addClass('selected');
+                    }
+                    $('.courier-select .label-inner').text($(this).text());
+                }
+            });
+        } else {
+            // A courier is not from that city
+            $(this).hide();
+            var option = $(this);
+            $(this).removeAttr('selected');
+            $(this).removeClass('selected');
+            $('.courier-select .dropdown-optgroup .dropdown-option').each(function () {
+                if ($(this).text() == $(option).text()) {
+                    $(this).removeClass('selected');
+                    $(this).hide();
+                }
+            });
+        }
+    });
+    if (isset == 0) {
+        $('.courier-select .label-inner').text('Shu shaharda kuryerlar topilmadi');
+    }
+}
+
+function showCouriersByDistrict(city_select, clicked_dstr) {
+    
+    // $('.courier-select .dropdown-optgroup .dropdown-option').removeClass('selected');
+    var city_id = $(city_select).find('option[selected]').data('id');
+    var district_id = $(clicked_dstr).data('id');
+    var isset = 0;
+
+    $('.courier-select option').each(function (i) {
+        console.log($(this).data('districts'));
+console.log($(clicked_dstr).val())
+        if ($(this).data('city') == city_id && $(this).data('districts').includes($(clicked_dstr).val())) {
             isset = 1;
             $(this).show();
             $('.courier-select option').removeAttr('selected');

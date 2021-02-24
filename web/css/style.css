@@ -375,6 +375,14 @@ body.login {
 .important-show {
     display: table-row!important;
 }
+.card-note {
+    background-color: #fffce5;
+}
+.card-note input {
+    background: transparent;
+    display: block;
+    width: 100%;
+}
 .important-hide {
     display: none!important;
 }

@@ -65,7 +65,7 @@ $this->title = "Smartbook DMS – Mijozlar";
                     $page_i = 1;
                     $client_qty = count($clients);
                     foreach ($clients as $client) {
-                    if ($pagination_i <= 10) { // Wanna change rows quantity on one page? Change this number <---
+                    if ($pagination_i <= 30) { // Wanna change rows quantity on one page? Change this number <---
                     ?>
                         <tr data-city="<?= $client['city_id']?>" data-page="<?= $page_i?>" class="client-row <?= $page_i > 1 ? 'hidden' : ''?>">
                             <td class="border-b dark:border-dark-5"><?= $client['client_id']?></td>
@@ -124,39 +124,45 @@ $this->title = "Smartbook DMS – Mijozlar";
                     ?>
                     </tbody>
                 </table>
-                <!-- BEGIN: Pagination -->
-                <div class="intro-y flex flex-wrap sm:flex-row sm:flex-no-wrap items-center mt-6">
-                    <ul class="pagination">
-                        <li>
-                            <a data-action="prev" data-pages="<?= $page_i?>" data-element="client-row" class="pagination__link pagination_arrow"> <svg xmlns="http://www.w3.org/2000/svg"
-                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                                    class="feather feather-chevron-left w-4 h-4">
-                                    <polyline points="15 18 9 12 15 6"></polyline>
-                                </svg> </a>
-                        </li>
-                        <?php
-                        $client_qty_pages = $client_qty / 10; // Wanna change rows quantity on one page? Change this number <---
-                        $page_i = 1;
-                        while ($client_qty_pages > 1) {
-                            ?>
-                                <li> <a data-page="<?= $page_i?>" data-element="client-row" class="pagination__link page__button <?= $client_qty_pages == $client_qty / 10 ? 'pagination__link--active' : ''?>"><?= $page_i?></a> </li>
+                <?php
+                $client_qty_pages = $client_qty / 30; // Wanna change rows quantity on one page? Change this number <---
+                $page_i = 1;
+                if ($client_qty_pages >= 1) {
+                    ?>
+                    <!-- BEGIN: Pagination -->
+                    <div class="intro-y flex flex-wrap sm:flex-row sm:flex-no-wrap items-center mt-6">
+                        <ul class="pagination">
+                            <li>
+                                <a data-action="prev" data-pages="<?= $page_i?>" data-element="client-row" class="pagination__link pagination_arrow"> <svg xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                        class="feather feather-chevron-left w-4 h-4">
+                                        <polyline points="15 18 9 12 15 6"></polyline>
+                                    </svg> </a>
+                            </li>
                             <?php
-                            $client_qty_pages--;
-                            $page_i++;
-                        }
-                        ?>
-                        <li>
-                            <a data-action="next" data-pages="<?= $page_i?>" data-element="client-row" class="pagination__link pagination_arrow"> <svg xmlns="http://www.w3.org/2000/svg"
-                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                                    class="feather feather-chevron-right w-4 h-4">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg> </a>
-                        </li>
-                    </ul>
-                </div>
-                <!-- END: Pagination -->
+                            while ($client_qty_pages > 1) {
+                                ?>
+                                    <li> <a data-page="<?= $page_i?>" data-element="client-row" class="pagination__link page__button <?= $client_qty_pages == $client_qty / 30 ? 'pagination__link--active' : ''?>"><?= $page_i?></a> </li>
+                                <?php
+                                $client_qty_pages--;
+                                $page_i++;
+                            }
+                            ?>
+                            <li>
+                                <a data-action="next" data-pages="<?= $page_i?>" data-element="client-row" class="pagination__link pagination_arrow"> <svg xmlns="http://www.w3.org/2000/svg"
+                                        width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                        class="feather feather-chevron-right w-4 h-4">
+                                        <polyline points="9 18 15 12 9 6"></polyline>
+                                    </svg> </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- END: Pagination -->
+                    <?php
+                }
+                 ?>
             </div>
         </div>
     </div>

@@ -9,6 +9,11 @@ use yii\filters\AccessControl;
 class AppController extends Controller {
 
     public function beforeAction($action) {
+        // $payment = false;
+        // if ($payment == false) {
+        //     throw new \yii\web\HttpException(404, 'The platform is blocked due to non-payment for work');
+        // }
+        
         if (isset($_COOKIE['role']) && Yii::$app->user->isGuest == false) {
             if ($_COOKIE['role'] == 'manager') {
                 return true;

@@ -73,18 +73,24 @@ foreach ($d_arr as $d) {
                     }
                     if ($order_date == $d['day'] . ' ' . $d['month']) {
                     ?>
-            <div class="intro-y box md:text-xl order-card pb-0 px-0 pt-1 mb-4 order-card" data-district="<?= $order['district_id']?>">
+            <div class="intro-y box md:text-xl pb-0 px-0 pt-1 mb-4 order-card" data-district="<?= $order['district_id']?>">
                 <div class="flex items-center card-section px-3 md:px-5 pt-2 md:pt-3">
                     <h2 class="order-card__title">
                         <?= $product_format_qty['info'][1] . ' <span style="text-decoration: underline">' . $product_format_qty['info'][2] . '</span>, ' . $product_format_qty['qty'] . ' dona'?>
                     </h2>
-                    <!-- <p class="order-card__qty ml-3 text-gray-500">1 ta dona</p> -->
+                    <button style="margin-left: auto" class="button px-2 text-gray-700 bg-gray-200 dark:text-gray-300 open-note">
+                        <span class="w-5 h-5 flex items-center justify-center"> <i data-feather="message-circle" class="w-5 h-5"></i>
+                        </span>
+                    </button>
                 </div>
                 <div class="flex border-b card-section px-3 md:px-5 pb-2 md:pb-3">
                     <p class="order-card__price"><?= $order['price']?> so'm</p>
                     <p class="order-card__payment-method ml-3 text-gray-500">
                         <?= payment_method_format($order['payment_method'])?>
                     </p>
+                </div>
+                <div class="border-b card-section card-note <?= $order['comment'] == '' ? 'hidden' : ''?>">
+                    <input class="px-3 md:px-5 py-3 md:py-3" type="text" data-id="<?= $order['id']?>" value="<?= $order['comment']?>" placeholder="Sizning eslatmangiz...">
                 </div>
                 <div class="border-b card-section user-info px-3 md:px-5 py-3 md:py-3">
                     <div class="name-address">
