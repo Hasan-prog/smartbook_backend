@@ -20,23 +20,52 @@ class ProductsController extends AppController
             $model->view = 0;
             $model->save();
         }
-        $products = Products::find()->where(['view' => 1])->orderBy(['id' => SORT_DESC])->asArray()->all();
+        $products = Products::find()->where(['view' => 1, 'parent_id' => 0])->with('subprods')->orderBy(['id' => SORT_DESC])->asArray()->all();
         return $this->render('products', compact('products'));
     }
 
     public function actionEditProduct() {
         $id = Yii::$app->request->get('id');
-        $model = Products::findOne($id);
+        $model = Products::find()->where(['id' => $id])->with('subprods')->limit(1)->one();
         $current_photo = $model->photo;
 
         if (Yii::$app->request->post('new_arrival')) {
             $model->in_stock += Yii::$app->request->post('new_arrival');
             $model->save();
+
+            // Changing in stock of parent product
+            if ($model->parent_id > 0) {
+                $parent_product = Products::find()->with('subprods')->where(['id' => $model->parent_id, 'view' => 1])->limit(1)->one();
+            }
+            if (isset($parent_product)) {
+                if ($parent_product->in_stock > $model->in_stock) {
+                    $parent_product->in_stock = $model->in_stock;
+                    $parent_product->save();
+                } else {
+                    $lowest_qty = 0;
+                    $i = 0;
+                    foreach ($parent_product->subprods as $subprod) {
+                        if ($i == 0) {
+                            $lowest_qty = $subprod['in_stock'];
+                        } else {
+                            if ($lowest_qty > $subprod['in_stock']) {
+                                $lowest_qty = $subprod['in_stock'];
+                            }
+                        }
+                        $i++;
+                    }
+                    
+                    $parent_product->in_stock = $lowest_qty;
+                    $parent_product->save();
+                }
+            }
+            
             return $this->refresh();
         }
 
         if ($model->load(Yii::$app->request->post())) {
             $product = Yii::$app->request->post('Products');
+            debug($product); die;
             // Photo upload 
             if (UploadedFile::getInstance($model, 'photo')) {
                 $model->photo = UploadedFile::getInstance($model, 'photo');
@@ -46,6 +75,7 @@ class ProductsController extends AppController
             } else {
                 $model->photo = $current_photo;
             }
+
             $model->name = $product['name'];
             $model->price = $product['price'];
             $model->format = $product['format'];
@@ -58,6 +88,11 @@ class ProductsController extends AppController
 
     public function actionAddProduct() {
         $model = new Products;
+        if (isset($_GET['parent_id'])) {
+            $parent_id = Yii::$app->request->get('parent_id');
+        } else {
+            $parent_id = 0;
+        }
 
         if ($model->load(Yii::$app->request->post())) {
             // Photo upload 
@@ -67,15 +102,29 @@ class ProductsController extends AppController
             $model->photo = '/web/images/' . $photo_name;
 
             $product = Yii::$app->request->post('Products');
+
             $model->name = $product['name'];
+            $model->parent_id = $product['parent_id'];
             $model->price = $product['price'];
             $model->format = $product['format'];
             $model->in_stock = $product['in_stock'];
             $model->save();
+
+            // Changing in stock of parent product
+            if ($model->parent_id > 0) {
+                $parent_product = Products::find()->with('subprods')->where(['id' => $model->parent_id, 'view' => 1])->limit(1)->one();
+            }
+            if (isset($parent_product) && isset($_GET['parent_id'])) {
+                if ($parent_product->in_stock > $product['in_stock']) {
+                    $parent_product->in_stock = $product['in_stock'];
+                    $parent_product->save();
+                }
+            }
+
             return $this->redirect('/products/');
         }
 
-        return $this->render('add-product', compact('model'));
+        return $this->render('add-product', compact('model', 'parent_id'));
     }
 
     public function actionHistory() {
@@ -87,7 +136,7 @@ class ProductsController extends AppController
         }
         $model = new History();
         $history = History::find()->asArray()->where(['view' => 1])->with('courier')->orderBy('id DESC')->with('city')->all();
-        $products_db = Products::find()->where(['view' => 1])->asArray()->all();
+        $products_db = Products::find()->where(['view' => 1, 'parent_id' => 0])->asArray()->all();
         $cities = Cities::find()->where(['view' => 1])->asArray()->all();
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->all();
         
@@ -96,11 +145,20 @@ class ProductsController extends AppController
 
             // Decrease in-stock of a product 
             $products = explode('/', $history['products_id']);
+
             foreach ($products as $product) {
                 $product_explode = explode(',', $product);
                 $product_id = $product_explode[0];
                 $product_qty = explode(':', $product_explode[2])[1];
-                $product_db = Products::findOne($product_id);
+                $product_db = Products::find()->where(['id' => $product_id, 'parent_id' => 0])->with('subprods')->limit(1)->one();
+                
+                // Decrease all sub products in stock and assign new qty for whole package
+                foreach ($product_db->subprods as $subprod) {
+                    $subprod_db = Products::find()->where(['id' => $subprod['id']])->limit(1)->one();
+                    $subprod_db->in_stock -= $product_qty;
+                    $subprod_db->save();
+                }
+                
                 $product_db->in_stock -= $product_qty;
                 $product_db->save();
             }

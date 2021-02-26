@@ -98,7 +98,7 @@ class OrdersController extends AppController
 
     public function actionAddOrder() {
         $model = new Orders();
-        $products = Products::find()->asArray()->where(['view' => 1])->all();
+        $products = Products::find()->asArray()->where(['view' => 1, 'parent_id' => 0])->all();
         $cities = Cities::find()->asArray()->where(['view' => 1])->all();
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->all();
         $operators = Operators::find()->asArray()->where(['view' => 1])->all();
@@ -106,9 +106,9 @@ class OrdersController extends AppController
         usort($districts, 'compareByName');
         $client_model = new Clients();
 
-        if ($model->load(Yii::$app->request->post())) {
+        if (Yii::$app->request->isAjax) {
             
-            $order = Yii::$app->request->post('Orders');
+            $order = Yii::$app->request->post('orders');
             
             $model->name = $order['name'];
             $model->phone_number = $order['phone_number'];
@@ -163,7 +163,7 @@ class OrdersController extends AppController
             }
             
             // return $this->redirect('/orders/client-list?client=' . $c_id);
-            return $this->refresh();
+            // return $this->refresh();
         }
 
         return $this->render('add-order', compact('model', 'products', 'cities', 'couriers', 'operators', 'districts'));
@@ -175,7 +175,7 @@ class OrdersController extends AppController
         if (empty($model)) {
             return $this->goBack();
         }
-        $products = Products::find()->asArray()->where(['view' => 1])->all();
+        $products = Products::find()->asArray()->where(['view' => 1, 'parent_id' => 0])->all();
         $cities = Cities::find()->asArray()->where(['view' => 1])->all();
         $couriers = Couriers::find()->asArray()->where(['view' => 1])->all();
         $operators = Operators::find()->asArray()->where(['view' => 1])->all();

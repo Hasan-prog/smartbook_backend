@@ -63,19 +63,44 @@ $this->title = "Smartbook DMS – Yangi Buyurtma";
                     <div class="mb-4">
                         <?= $form->field($model, 'price', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'number', 'class' => 'input w-full border flex-1'])->label("Narx")?>
                     </div>
-                    <div class="mb-4">
-                        <label>Format</label>
-                        <select class="tail-select w-full" name="Products[format]">
-                            <option value="kiril">Kiril</option>
-                            <option value="lotin">Lotin</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <?= $form->field($model, 'in_stock', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'number', 'class' => 'input w-full border flex-1'])->label("Dona Bor")?>
-                    </div>
+                    <?php
+                    if ($parent_id == 0) {
+                        ?>
+                        <div class="mb-4">
+                            <label>Format</label>
+                            <select class="tail-select w-full" name="Products[format]">
+                                <option value="kiril">Kiril</option>
+                                <option value="lotin">Lotin</option>
+                                <option value="-">-</option>
+                            </select>
+                        </div>
+                        <?php
+                    } else {
+                        ?>
+                        <div class="mb-4 hidden">
+                            <label>Format</label>
+                            <select class="tail-select w-full" name="Products[format]">
+                                <option value="kiril">Kiril</option>
+                                <option value="lotin">Lotin</option>
+                                <option selected="selected" value="-">-</option>
+                            </select>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                    <?php
+                    if ($parent_id != 0) {
+                        ?>
+                        <div class="mb-4">
+                            <?= $form->field($model, 'in_stock', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['type' => 'number', 'class' => 'input w-full border flex-1'])->label("Dona Bor")?>
+                        </div>
+                        <?php
+                    }
+                    ?>
                     <button type="submit" class="button w-20 bg-theme-1 text-white mt-3">Qo'shish</button>
                 </div>
             </div>
+            <?= $form->field($model, 'parent_id', ['labelOptions' => ['class' => 'mb-2 block']])->textInput(['class' => 'input w-full border flex-1 hidden', 'value' => $parent_id])->label(false)?>
             <?php ActiveForm::end()?>
         </div>
     </div>

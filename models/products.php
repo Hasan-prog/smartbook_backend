@@ -10,6 +10,10 @@ class Products extends ActiveRecord {
         return 'products';
     }
 
+    public function getSubprods() {
+        return $this->hasMany(Products::className(), ['parent_id' => 'id'])->andOnCondition(['view' => 1]);
+    }
+
     public function rules()
     {
         return [

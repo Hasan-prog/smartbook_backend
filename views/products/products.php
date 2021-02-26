@@ -50,10 +50,11 @@ $this->title = "Smartbook DMS – Mahsulotlar";
                     </thead>
                     <tbody>
                         <?php
+                        $i = 1;
                         foreach ($products as $product) {
                             $formated_price = number_format ($product['price'], 0, ',', ' ');
                         ?>
-                        <tr class="bg-gray-100 dark:bg-dark-1 product-row">
+                        <tr class="product-row">
                             <td class="border-b dark:border-dark-5"><?= $product['id']?></td>
                             <td class="border-b dark:border-dark-5" width="100">
                                 <div class="w-20 h-20 image-fit">
@@ -73,6 +74,33 @@ $this->title = "Smartbook DMS – Mahsulotlar";
                             </td>
                         </tr>
                         <?php
+                        foreach ($product['subprods'] as $subprod) {
+                            $formated_price = number_format($subprod['price'], 0, ',', ' ');
+                            ?>
+                            <tr class="bg-gray-100 dark:bg-dark-1 product-row subproduct-row">
+                                <td class="border-b dark:border-dark-5"></td>
+                                <td class="border-b dark:border-dark-5" width="100">
+                                    <div class="w-10 h-10 image-fit">
+                                        <img alt="" src="<?= $subprod['photo']?>">
+                                    </div>
+                                </td>
+                                <td class="border-b dark:border-dark-5"><?= $subprod['name']?></td>
+                                <td class="border-b dark:border-dark-5"><?= $formated_price == 0 ? '-' : $formated_price . ' so\'m'?></td>
+                                <td class="border-b dark:border-dark-5"><?= $subprod['format'] == 0 ? '-' : $subprod['format']?></td>
+                                <td class="border-b dark:border-dark-5"><?= $subprod['in_stock']?> ta</td>
+                                <td class="border-b dark:border-dark-5 md:w-80">
+                                    <div class="flex items-center justify-center">
+                                        <a class="flex items-center mr-5" href="<?= Url::to(['products/edit-product?id=' . $subprod['id']])?>"> <i class="w-4 h-4 mr-2"
+                                                data-feather="edit"></i> Ozgartirish </a>
+                                        <a class="flex items-center text-theme-6 delete-subject" href="" data-url="<?= Url::to(['products/'])?>" data-id="<?= $subprod['id']?>" data-parent="product-row" data-msg="Ushbu mahsulotni o'chirmoqchimisiz?"><i class="w-4 h-4 mr-2" data-feather="trash-2"></i> O'chirish </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                        <?php
+                        $i++;
                         }?>
                     </tbody>
                 </table>

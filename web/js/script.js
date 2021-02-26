@@ -1,4 +1,4 @@
-console.log('Loaded')
+console.log('Loaded2')
 $(document).ready(function () {
 
     // Change photo on select
@@ -60,7 +60,10 @@ $(document).ready(function () {
     });
 
     // Collect selects of products from add-order page and write it in the input
-    $('.add-order').click(function () {
+    $('.add-order').click(function (e) {
+        e.preventDefault();
+        $('.success').hide();
+        $('.error').hide();
 
         // Collect phones and paste them into phone_number field
         var phone_number = '';
@@ -73,54 +76,57 @@ $(document).ready(function () {
         });
         $('.phone-number').val(phone_number);
 
-        // $('input').blur();
-        // $('.error').slideUp('fast');
-        // $('.success').slideUp('fast');
         $('.product-select .product-field').val($('.product-select :not(.hidden-select) select option[selected=selected]').val());
-        // e.preventDefault();
-        // var ajax_arr = {};
-        // var form_data = $(this).closest('form').serializeArray(),
-        //     count_form_data = form_data.length,
-        //     i = 0
-        //     form = $(this).closest('form');
-        // form_data.forEach(field_data => {
-        //     field_data['name'] = field_data['name'].replace('Orders','');
-        //     field_data['name'] = field_data['name'].replace('[','');
-        //     field_data['name'] = field_data['name'].replace(']','');
 
-        //     if (field_data['value'] != '') {
-        //         ajax_arr[field_data['name']] = field_data['value'];
-        //     } else {
-        //         if (field_data['name'] == '_csrf') {
-        //             ajax_arr[field_data['name']] = field_data['value'];
-        //         } else {
-        //             // not all fields are filled
-        //             $('.error').slideDown('fast');
-        //             i = 0;
-        //         }
-        //     }
+        var ajax_arr = {};
+        var form_data = $(this).closest('form').serializeArray(),
+            count_form_data = form_data.length,
+            i = 0
+            form = $(this).closest('form');
+        form_data.forEach(field_data => {
+            field_data['name'] = field_data['name'].replace('Orders','');
+            field_data['name'] = field_data['name'].replace('[','');
+            field_data['name'] = field_data['name'].replace(']','');
 
-        //     i++;
-        // });
-        // console.log(ajax_arr);
+            if (field_data['value'] != '') {
+                ajax_arr[field_data['name']] = field_data['value'];
+            } else {
+                if (field_data['name'] == '_csrf') {
+                    ajax_arr[field_data['name']] = field_data['value'];
+                } else {
+                    // not all fields are filled
+                    $('.error').slideDown('fast');
+                    i = 0;
+                }
+            }
+
+            i++;
+        });
+        console.log(ajax_arr);
         // Send Ajax to add order
-        // if (count_form_data == i) {
-        //     $.ajax({
-        //         method: "POST",
-        //         url: "/orders/add-order",
-        //         data: { orders: ajax_arr},
-        //         success: function (res) {
-        //             $(form)[0].reset();
-        //             console.log(res);
-        //             $('.phones-group input[type="phone"]').not(":first").remove();
-        //             $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
-        //             $('.success').slideDown('fast');
-        //         },
-        //         error: function (xml) {
-        //             console.log(xml);
-        //         }
-        //     });
-        // }
+        if (count_form_data == i) {
+            $.ajax({
+                method: "POST",
+                url: "/orders/add-order",
+                data: { orders: ajax_arr},
+                success: function (res) {
+                    $(form)[0].reset();
+                    console.log(res);
+                    $('.phones-group input[type="phone"]').not(":first").remove();
+                    $('.overall').val($('.qty').prevAll('select').find('option[selected=selected]').data('price'));
+                    $('.success').slideDown('fast');
+
+                    // Clear personal inputs
+                    $('#orders-client_id').val('');
+                    $('#orders-name').val('');
+                    $('.phones-group input[type="phone"]').val('998');
+                    $('#orders-address').val('');
+                },
+                error: function (xml) {
+                    console.log(xml);
+                }
+            });
+        }
     });
     
     // alert(123);
